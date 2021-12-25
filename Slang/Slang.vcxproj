@@ -141,7 +141,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Main.cpp" />
-    <ClCompile Include="processLine.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="olcPixelGameEngine.h" />

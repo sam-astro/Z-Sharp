@@ -1,34 +1,31 @@
 int x = 1
 
+void Next(in, sin)
+{
+	string green = "bean"
+	green += " "
+	green += in
+
+	print in
+	print sin
+	print green
+}
+
 void Main(input)
 {
-	int a = 8
+	int a = -8
+	int b = 4
 
 	print input
 	int k = 0
 	while x < 1000
 	{
-		a /= 7.2
-		a += 9.12867
-		int xThou = x
-		xThou /= 10000
-		a *= xThou
-
+		
 		x += 1
-
-		if x > 0
-		{
-			print a
-		}
+		
+		print x
 	}
-	Next "seen"
+	Next "seen" "bop"
 }
 
-void Next()
-{
-	string green = "bean"
-
-	print green
-}
-
-Main hi
+Main "hi"

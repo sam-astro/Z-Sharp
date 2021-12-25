@@ -44,7 +44,7 @@ int ExecuteFunction(string functionName, vector<string> inputVarVals);
 bool isNumber(const string& str)
 {
 	for (char const& c : str) {
-		if (isdigit(c) == 0 && c!='.') return false;
+		if (isdigit(c) == 0 && c != '.') return false;
 	}
 	return true;
 }
@@ -103,7 +103,7 @@ int countNoOverlap(string str, char ch1, char ch2) {
 }
 
 int indexInStr(string str, char ch) {
-	
+
 	for (int i = 0; i < (int)str.size(); i++)
 		if (str[i] == ch)
 			return i;
@@ -112,7 +112,7 @@ int indexInStr(string str, char ch) {
 }
 
 int charIndexInVec(vector<string> str, char ch) {
-	
+
 	for (int i = 0; i < (int)str.size(); i++)
 		for (int w = 0; w < (int)str[i].size(); w++)
 			if (str[i][w] == ch)
@@ -159,7 +159,7 @@ vector<string> removeTabs(vector<string> str, int amnt) {
 
 vector<string> rangeInVec(vector<string> str, int min, int max) {
 	if (max == -1)
-		max == (int)str.size();
+		max = (int)str.size();
 
 	vector<string> newStr;
 
@@ -171,7 +171,7 @@ vector<string> rangeInVec(vector<string> str, int min, int max) {
 
 string rangeInStr(string str, int min, int max) {
 	if (max == -1)
-		max == (int)str.size();
+		max = (int)str.size();
 
 	string newStr;
 
@@ -260,7 +260,7 @@ string GetRealValue(string var, vector<string>& variables, vector<string>& varia
 	else if (!isNumber(var) && count(var, '\"') > 0)
 	{
 		string withoutQuotes;
-		for (int ch = 1; ch < (int)var.size()-1; ch++)
+		for (int ch = 1; ch < (int)var.size() - 1; ch++)
 		{
 			withoutQuotes += var[ch];
 		}
@@ -296,7 +296,51 @@ bool BooleanLogic(string valA, string determinant, string valB, vector<string>& 
 	return false;
 }
 
-string PEMDAS(string equ)
+string evalEqu(vector<string> str, vector<string>& variables, vector<string>& variableValues)
+{
+	// Second, iterate all existing local variable names
+	for (int v = 0; v < (int)variables.size(); v++)
+	{
+		if (str[0] == variables[v])
+		{
+			if (str[1] == "=")
+				variableValues[v] = str[2];
+			else if (str[1] == "+=")
+				variableValues[v] = AddItem(variableValues[v], GetRealValue(str[2], variables, variableValues));
+			else if (str[1] == "-=")
+				variableValues[v] = to_string(stof(variableValues[v]) - stof(GetRealValue(str[2], variables, variableValues)));
+			else if (str[1] == "*=")
+				variableValues[v] = to_string(stof(variableValues[v]) * stof(GetRealValue(str[2], variables, variableValues)));
+			else if (str[1] == "/=")
+				variableValues[v] = to_string(stof(variableValues[v]) / stof(GetRealValue(str[2], variables, variableValues)));
+
+			//cout << words[l][1] << " is " << words[l][3] << endl << endl;
+			return 0;
+		}
+	}
+	// Third, iterate all existing global variable names
+	for (int v = 0; v < (int)globalVariables.size(); v++)
+	{
+		if (str[0] == globalVariables[v])
+		{
+			if (str[1] == "=")
+				globalVariableValues[v] = str[2];
+			else if (str[1] == "+=")
+				globalVariableValues[v] = AddItem(globalVariableValues[v], GetRealValue(str[2], variables, variableValues));
+			else if (str[1] == "-=")
+				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) - stof(GetRealValue(str[2], variables, variableValues)));
+			else if (str[1] == "*=")
+				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) * stof(GetRealValue(str[2], variables, variableValues)));
+			else if (str[1] == "/=")
+				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) / stof(GetRealValue(str[2], variables, variableValues)));
+
+			//cout << words[l][1] << " is " << words[l][3] << endl << endl;
+			return 0;
+		}
+	}
+}
+
+string PEMDAS(string equ, vector<string>& variables, vector<string>& variableValues)
 {
 	if (split(equ, ',').size() == 1)
 		return equ;
@@ -324,7 +368,7 @@ string PEMDAS(string equ)
 			}
 		}
 
-		equ = replace(equ, "(" + unWrapVec(insideParenthesis) + ")", PEMDAS(unWrapVec(insideParenthesis)));
+		equ = replace(equ, "(" + unWrapVec(insideParenthesis) + ")", PEMDAS(unWrapVec(insideParenthesis), variables, variableValues));
 	}
 }
 
@@ -478,6 +522,8 @@ int ProcessLine(vector<vector<string>> words, int l, vector<string>& variables, 
 
 int ExecuteFunction(string functionName, vector<string> inputVarVals)
 {
+	//vector<string> inputVarVals = split(replace(inVals, " ", ""), ',');
+
 	vector<string> functionLines;
 	int functionIndex = 0;
 	//Get index of function
@@ -494,7 +540,7 @@ int ExecuteFunction(string functionName, vector<string> inputVarVals)
 	vector<string> functionNameParts = split(functions[functionIndex], ' ');
 	for (int i = 1; i < (int)functionNameParts.size(); i++)
 	{
-		variables.push_back(functionNameParts[i]);
+		variables.push_back(replace(replace(functionNameParts[i], ",", ""), " ", ""));
 		variableValues.push_back(inputVarVals[i - 1]);
 	}
 	vector<vector<string>> words;
