@@ -315,6 +315,42 @@ int ProcessLine(vector<vector<string>> words, int l, vector<string> variables, v
 			}
 		}
 	}
+	// Gathers if statement contents
+	if (words[l][0] == "if")
+	{
+		vector<string> ifContents;
+		vector<string> ifParameters;
+
+		for (int w = 1; w < (int)words[l].size(); w++)
+			ifParameters.push_back(words[l][w]);
+
+		int numOfBrackets = 1;
+		for (int p = l + 2; p < (int)words.size(); p++)
+		{
+			numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
+			if (numOfBrackets == 0)
+				break;
+			ifContents.push_back("");
+			for (int w = 0; w < (int)words[p].size(); w++)
+			{
+				ifContents[(int)ifContents.size() - 1] += words[p][w] + " ";
+			}
+		}
+		ifContents = removeTabs(ifContents, 1);
+
+		vector<vector<string>> words;
+		for (int i = 0; i < (int)ifContents.size(); i++)
+			words.push_back(split(ifContents[i], ' '));
+
+		if (BooleanLogic(ifParameters[0], ifParameters[1], ifParameters[2], variables, variableValues))
+		{
+			//Iterate through all lines in while loop
+			for (int l = 0; l < (int)ifContents.size(); l++)
+			{
+				ProcessLine(words, l, variables, variableValues);
+			}
+		}
+	}
 
 	return 0;
 }
@@ -427,6 +463,10 @@ int main(int argc, char* argv[])
 	std::stringstream scriptString;
 	scriptString << t.rdbuf();
 
+	while (true) {
+		system("pause");
+		break;
+	}
 	parseSlang(scriptString.str());
 
 	/*if (argc >= 2)
