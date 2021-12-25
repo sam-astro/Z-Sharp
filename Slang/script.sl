@@ -2,39 +2,33 @@ int x = 1
 
 void Main(input)
 {
-	string c = 8
-	string d = 8
-	string e = 8
-	string f = 8
-	string g = 8
-	string h = 8
-	string i = 8
-	string j = 8
-	c /= 2
-	d /= 2
-	e /= 2
-	f /= 2
-	g /= 2
-	h /= 2
-	i /= 2
-	g /= 2
+	int a = 8
+
 	print input
-	while x < 10000
+	int k = 0
+	while x < 1000
 	{
-		g /= 2
-		h /= 2
-		i /= 2
-		g /= 2
+		a /= 7.2
+		a += 9.12867
+		int xThou = x
+		xThou /= 10000
+		a *= xThou
+
 		x += 1
+
 		if x > 0
 		{
-			print x
+			print a
 		}
 	}
-	x += 1
-	print x
-    x -= 1
-	print x
+	Next "seen"
 }
 
-Main "hi"
+void Next()
+{
+	string green = "bean"
+
+	print green
+}
+
+Main hi

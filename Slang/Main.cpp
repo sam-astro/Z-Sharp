@@ -39,6 +39,8 @@ public:
 	}
 };
 
+int ExecuteFunction(string functionName, vector<string> inputVarVals);
+
 bool isNumber(const string& str)
 {
 	for (char const& c : str) {
@@ -81,6 +83,44 @@ int count(string str, char ch) {
 	return cnt;
 }
 
+int countNoOverlap(string str, char ch1, char ch2) {
+	int cnt = 0;
+
+	bool waitingForClose = false;
+
+	for (int i = 0; i < (int)str.size(); i++)
+	{
+		if (str[i] == ch1)
+			waitingForClose = true;
+		else if (str[i] == ch2 && waitingForClose == true)
+		{
+			cnt++;
+			waitingForClose = false;
+		}
+	}
+
+	return cnt;
+}
+
+int indexInStr(string str, char ch) {
+	
+	for (int i = 0; i < (int)str.size(); i++)
+		if (str[i] == ch)
+			return i;
+
+	return -1;
+}
+
+int charIndexInVec(vector<string> str, char ch) {
+	
+	for (int i = 0; i < (int)str.size(); i++)
+		for (int w = 0; w < (int)str[i].size(); w++)
+			if (str[i][w] == ch)
+				return i;
+
+	return -1;
+}
+
 int countInVector(vector<string> str, string ch) {
 	int cnt = 0;
 
@@ -112,6 +152,43 @@ vector<string> removeTabs(vector<string> str, int amnt) {
 			if (str[i][c] != '\t' || c >= amnt)
 				newStr[i] += str[i][c];
 		}
+	}
+
+	return newStr;
+}
+
+vector<string> rangeInVec(vector<string> str, int min, int max) {
+	if (max == -1)
+		max == (int)str.size();
+
+	vector<string> newStr;
+
+	for (int i = min; i < (int)str.size() && i < max; i++)
+		newStr.push_back(str[i]);
+
+	return newStr;
+}
+
+string rangeInStr(string str, int min, int max) {
+	if (max == -1)
+		max == (int)str.size();
+
+	string newStr;
+
+	for (int i = min; i < (int)str.size() && i < max; i++)
+		newStr += str[i];
+
+	return newStr;
+}
+
+string unWrapVec(vector<string> vec) {
+	string newStr;
+
+	for (int i = 0; i < (int)vec.size(); i++)
+	{
+		newStr += vec[i];
+		if (i != (int)vec.size() - 1)
+			newStr += " ";
 	}
 
 	return newStr;
@@ -163,7 +240,7 @@ string AddItem(string variableContent, string addItem)
 	}
 }
 
-string GetRealValue(string var, vector<string> variables, vector<string> variableVals)
+string GetRealValue(string var, vector<string>& variables, vector<string>& variableVals)
 {
 	if (!isNumber(var) && count(var, '\"') == 0)
 	{
@@ -193,7 +270,7 @@ string GetRealValue(string var, vector<string> variables, vector<string> variabl
 	return var;
 }
 
-bool BooleanLogic(string valA, string determinant, string valB, vector<string> variables, vector<string> variableVals)
+bool BooleanLogic(string valA, string determinant, string valB, vector<string>& variables, vector<string>& variableVals)
 {
 	string valARealValue = GetRealValue(valA, variables, variableVals);
 	string valBRealValue = GetRealValue(valB, variables, variableVals);
@@ -219,11 +296,53 @@ bool BooleanLogic(string valA, string determinant, string valB, vector<string> v
 	return false;
 }
 
-int ProcessLine(vector<vector<string>> words, int l, vector<string> variables, vector<string> variableValues)
+string PEMDAS(string equ)
+{
+	if (split(equ, ',').size() == 1)
+		return equ;
+
+	int parenthesisSetsCount = countNoOverlap(equ, '(', ')');
+
+	vector<string> equationWords = split(equ, ' ');
+	for (int s = 0; s < parenthesisSetsCount; s++)
+	{
+		int startOfNextParenthesis = 0;
+		int numofParenthesis = 0;
+		vector<string> insideParenthesis;
+		for (int p = startOfNextParenthesis; p < (int)equationWords.size(); p++)
+		{
+			numofParenthesis += count(equationWords[p], '(') - count(equationWords[p], ')');
+			if (numofParenthesis == 0)
+			{
+				startOfNextParenthesis = indexInStr(equationWords[charIndexInVec(equationWords, '(')], '(');
+				break;
+			}
+			insideParenthesis.push_back("");
+			for (int w = 0; w < (int)equationWords[p].size(); w++)
+			{
+				insideParenthesis[(int)insideParenthesis.size() - 1] += equationWords[p][w] + " ";
+			}
+		}
+
+		equ = replace(equ, "(" + unWrapVec(insideParenthesis) + ")", PEMDAS(unWrapVec(insideParenthesis)));
+	}
+}
+
+int ProcessLine(vector<vector<string>> words, int l, vector<string>& variables, vector<string>& variableValues)
 {
 	if (words[l][0] == "print") {
 		cout << GetRealValue(words[l][1], variables, variableValues) << endl;
 		return 0;
+	}
+
+	// Iterate through all functions
+	for (int t = 0; t < (int)functions.size(); t++)
+	{
+		if (words[l][0] == split(functions[t], ' ')[0])
+		{
+			ExecuteFunction(words[l][0], rangeInVec(words[l], 1, -1));
+			return 0;
+		}
 	}
 
 	// First iterate through all types to see if line
@@ -234,9 +353,9 @@ int ProcessLine(vector<vector<string>> words, int l, vector<string> variables, v
 		{
 			//Checks if it is variable
 			variables.push_back(words[l][1]);
-			variableValues.push_back((string)words[l][3]);
+			variableValues.push_back(GetRealValue((string)words[l][3], variables, variableValues));
 			//cout << words[l][1] << " is " << words[l][3] << endl << endl;
-			break;
+			return 0;
 		}
 	}
 	// Second, iterate all existing local variable names
@@ -247,16 +366,16 @@ int ProcessLine(vector<vector<string>> words, int l, vector<string> variables, v
 			if (words[l][1] == "=")
 				variableValues[v] = words[l][2];
 			else if (words[l][1] == "+=")
-				variableValues[v] = AddItem(variableValues[v], words[l][2]);
+				variableValues[v] = AddItem(variableValues[v], GetRealValue(words[l][2], variables, variableValues));
 			else if (words[l][1] == "-=")
-				variableValues[v] = to_string(stof(variableValues[v]) - stof(words[l][2]));
+				variableValues[v] = to_string(stof(variableValues[v]) - stof(GetRealValue(words[l][2], variables, variableValues)));
 			else if (words[l][1] == "*=")
-				variableValues[v] = to_string(stof(variableValues[v]) * stof(words[l][2]));
+				variableValues[v] = to_string(stof(variableValues[v]) * stof(GetRealValue(words[l][2], variables, variableValues)));
 			else if (words[l][1] == "/=")
-				variableValues[v] = to_string(stof(variableValues[v]) / stof(words[l][2]));
+				variableValues[v] = to_string(stof(variableValues[v]) / stof(GetRealValue(words[l][2], variables, variableValues)));
 
 			//cout << words[l][1] << " is " << words[l][3] << endl << endl;
-			break;
+			return 0;
 		}
 	}
 	// Third, iterate all existing global variable names
@@ -267,16 +386,16 @@ int ProcessLine(vector<vector<string>> words, int l, vector<string> variables, v
 			if (words[l][1] == "=")
 				globalVariableValues[v] = words[l][2];
 			else if (words[l][1] == "+=")
-				globalVariableValues[v] = AddItem(globalVariableValues[v], words[l][2]);
+				globalVariableValues[v] = AddItem(globalVariableValues[v], GetRealValue(words[l][2], variables, variableValues));
 			else if (words[l][1] == "-=")
-				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) - stof(words[l][2]));
+				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) - stof(GetRealValue(words[l][2], variables, variableValues)));
 			else if (words[l][1] == "*=")
-				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) * stof(words[l][2]));
+				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) * stof(GetRealValue(words[l][2], variables, variableValues)));
 			else if (words[l][1] == "/=")
-				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) / stof(words[l][2]));
+				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) / stof(GetRealValue(words[l][2], variables, variableValues)));
 
 			//cout << words[l][1] << " is " << words[l][3] << endl << endl;
-			break;
+			return 0;
 		}
 	}
 	// Gathers while loop contents
@@ -314,6 +433,7 @@ int ProcessLine(vector<vector<string>> words, int l, vector<string> variables, v
 				ProcessLine(words, l, variables, variableValues);
 			}
 		}
+		return 0;
 	}
 	// Gathers if statement contents
 	if (words[l][0] == "if")
@@ -350,6 +470,7 @@ int ProcessLine(vector<vector<string>> words, int l, vector<string> variables, v
 				ProcessLine(words, l, variables, variableValues);
 			}
 		}
+		return 0;
 	}
 
 	return 0;
@@ -399,12 +520,10 @@ int parseSlang(string script)
 		words.push_back(split(lines[i], ' '));
 	}
 
+	// First go through entire script and iterate through all types to see if line is a variable
+	// or function declaration, then store it with it's value
 	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
-	{
-		// First go through entire script and iterate through all types to see if line is a variable
-		// or function declaration, then store it with it's value
 		for (int t = 0; t < (int)types.size(); t++)
-		{
 			if (words[lineNum][0] == types[t])
 			{
 				//Checks if it is function
@@ -449,9 +568,8 @@ int parseSlang(string script)
 					cout << words[lineNum][1] << " is " << words[lineNum][3] << endl << endl;
 				}
 			}
-		}
-	}
 
+	// Executes main, which is the starting function
 	ExecuteFunction("Main", vector<string> {"hi"});
 
 	return 0;
