@@ -13,6 +13,8 @@ void Next(string in, string sin)
 
 void Main(string input, int in2)
 {
+	int x = 0
+
 	int a = 0
 	int b = 1
 
@@ -21,14 +23,20 @@ void Main(string input, int in2)
 	
 	int k = 0
 
-	while x < 1
+	while x < 100
 	{
 		k = a
 		k += b
 		a = b
 		b = k
+
+		string str = x
+
+		str += "::"
+		str += k
 		
-		print k
+		x += 10
+		print str
 	}
 	Next "seen", "bop"
 }

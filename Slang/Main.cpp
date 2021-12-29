@@ -474,6 +474,18 @@ int ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& varia
 	{
 		if (words[lineNum][0] == types[t])
 		{
+			//Checks if it is a re-init of an existing variable
+			for (int v = 0; v < (int)variables.size(); v++)
+			{
+				if (words[lineNum][1] == split(variables[v], ' ')[1])
+				{
+					vector<string> inputs = { words[lineNum][1], words[lineNum][2], words[lineNum][3] };
+					evalEqu(inputs, variables, variableValues);
+
+					return 0;
+				}
+			}
+
 			//Checks if it is variable
 			variables.push_back(words[lineNum][0] + " " + words[lineNum][1]);
 			variableValues.push_back(GetRealValue((string)words[lineNum][3], variables, variableValues));
@@ -481,7 +493,7 @@ int ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& varia
 			return 0;
 		}
 	}
-	// Second, iterate all existing local variable names
+	// Second, iterate all existing variable names
 	for (int v = 0; v < (int)variables.size(); v++)
 	{
 		if (words[lineNum][0] == split(variables[v], ' ')[1])
