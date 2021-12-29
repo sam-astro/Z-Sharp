@@ -4,6 +4,8 @@
 #include <fstream>
 #include <string>
 #include <regex>
+#include <limits>
+#include <algorithm>
 
 using namespace std;
 
@@ -47,6 +49,24 @@ bool isNumber(const string& str)
 		if (isdigit(c) == 0 && c != '.') return false;
 	}
 	return true;
+}
+
+const string WHITESPACE = " \n\r\t\f\v";
+
+string ltrim(const string& s)
+{
+	size_t start = s.find_first_not_of(WHITESPACE);
+	return (start == string::npos) ? "" : s.substr(start);
+}
+
+string rtrim(const string& s)
+{
+	size_t end = s.find_last_not_of(WHITESPACE);
+	return (end == string::npos) ? "" : s.substr(0, end + 1);
+}
+
+string trim(const string& s) {
+	return rtrim(ltrim(s));
 }
 
 vector<string> split(string str, char del) {
@@ -194,6 +214,22 @@ string unWrapVec(vector<string> vec) {
 	return newStr;
 }
 
+float floatval(string s)
+{
+	float outfloat;
+
+	if (s == "inf")
+		outfloat = numeric_limits<float>::max();
+	else if (s == "-inf")
+		outfloat = -numeric_limits<float>::max();
+	else if (s == "")
+		outfloat = 0;
+	else
+		outfloat = stof(s);
+
+	return outfloat;
+}
+
 string replace(string str, string strToReplace, string replaceWith) {
 	string newStr;
 	string savedLetters;;
@@ -228,11 +264,13 @@ string replace(string str, string strToReplace, string replaceWith) {
 	return newStr;
 }
 
-string AddItem(string variableContent, string addItem)
+string AddItem(string varName, string variableContent, string addItem)
 {
-	if (isNumber(variableContent))
+	string typ = split(varName, ' ')[0];
+
+	if (typ == "int" || typ == "float" || typ == "double" && isNumber(addItem))
 	{
-		return to_string(stof(variableContent) + stof(addItem));
+		return to_string(floatval(to_string(floatval(variableContent) + floatval(addItem))));
 	}
 	else
 	{
@@ -240,34 +278,75 @@ string AddItem(string variableContent, string addItem)
 	}
 }
 
-string GetRealValue(string var, vector<string>& variables, vector<string>& variableVals)
+string GetRealValue(string varName, vector<string>& variables, vector<string>& variableVals)
 {
-	if (!isNumber(var) && count(var, '\"') == 0)
+	string typ = "string";
+	bool isVar = false;
+
+	// Checks against global vars
+	for (int v = 0; v < (int)globalVariables.size(); v++)
+		if (varName == split(globalVariables[v], ' ')[1])
+		{
+			typ = split(globalVariables[v], ' ')[0];
+			isVar = true;
+		}
+	// Checks against local vars
+	for (int v = 0; v < (int)variables.size(); v++)
+		if (varName == split(variables[v], ' ')[1])
+		{
+			typ = split(variables[v], ' ')[0];
+			isVar = true;
+		}
+
+	//if ((typ == "int" || typ == "float" || typ == "double") && isVar)
+	//{
+	//	// Checks against global vars
+	//	for (int v = 0; v < (int)globalVariables.size(); v++)
+	//		if (varName == split(globalVariables[v], ' ')[1])
+	//		{
+	//			if (globalVariableValues[v] == "inf")
+	//				globalVariableValues[v] = 2147483646;
+	//			if (globalVariableValues[v] == "-inf")
+	//				globalVariableValues[v] = -2147483646;
+	//		}
+	//	// Checks against local vars
+	//	for (int v = 0; v < (int)variables.size(); v++)
+	//		if (varName == split(variables[v], ' ')[1])
+	//		{
+	//			if (variableVals[v] == "inf")
+	//				variableVals[v] = 2147483646;
+	//			if (variableVals[v] == "-inf")
+	//				variableVals[v] = -2147483646;
+	//		}
+	//}
+
+	// If it is a var
+	if (isVar)
 	{
 		// Checks against global vars
 		for (int v = 0; v < (int)globalVariables.size(); v++)
-			if (var == globalVariables[v])
+			if (varName == split(globalVariables[v], ' ')[1])
 			{
 				return globalVariableValues[v];
 			}
 		// Checks against local vars
 		for (int v = 0; v < (int)variables.size(); v++)
-			if (var == variables[v])
+			if (varName == split(variables[v], ' ')[1])
 			{
 				return variableVals[v];
 			}
 	}
-	else if (!isNumber(var) && count(var, '\"') > 0)
+	else if (!isVar && count(varName, '\"') > 0)
 	{
 		string withoutQuotes;
-		for (int ch = 1; ch < (int)var.size() - 1; ch++)
+		for (int ch = 1; ch < (int)varName.size() - 1; ch++)
 		{
-			withoutQuotes += var[ch];
+			withoutQuotes += varName[ch];
 		}
 		return withoutQuotes;
 	}
 
-	return var;
+	return varName;
 }
 
 bool BooleanLogic(string valA, string determinant, string valB, vector<string>& variables, vector<string>& variableVals)
@@ -282,59 +361,59 @@ bool BooleanLogic(string valA, string determinant, string valB, vector<string>& 
 		return valARealValue != valBRealValue;
 	}
 	if (determinant == ">=") {
-		return stof(valARealValue) >= stof(valBRealValue);
+		return floatval(valARealValue) >= floatval(valBRealValue);
 	}
 	if (determinant == "<=") {
-		return stof(valARealValue) <= stof(valBRealValue);
+		return floatval(valARealValue) <= floatval(valBRealValue);
 	}
 	if (determinant == ">") {
-		return stof(valARealValue) > stof(valBRealValue);
+		return floatval(valARealValue) > floatval(valBRealValue);
 	}
 	if (determinant == "<") {
-		return stof(valARealValue) < stof(valBRealValue);
+		return floatval(valARealValue) < floatval(valBRealValue);
 	}
 	return false;
 }
 
-string evalEqu(vector<string> str, vector<string>& variables, vector<string>& variableValues)
+int evalEqu(vector<string> str, vector<string>& variables, vector<string>& variableValues)
 {
-	// Second, iterate all existing local variable names
+	// Iterate all existing local variable names
 	for (int v = 0; v < (int)variables.size(); v++)
 	{
-		if (str[0] == variables[v])
+		if (str[0] == split(variables[v], ' ')[1])
 		{
 			if (str[1] == "=")
-				variableValues[v] = str[2];
+				variableValues[v] = GetRealValue(str[2], variables, variableValues);
 			else if (str[1] == "+=")
-				variableValues[v] = AddItem(variableValues[v], GetRealValue(str[2], variables, variableValues));
+				variableValues[v] = AddItem(variables[v], variableValues[v], GetRealValue(str[2], variables, variableValues));
 			else if (str[1] == "-=")
-				variableValues[v] = to_string(stof(variableValues[v]) - stof(GetRealValue(str[2], variables, variableValues)));
+				variableValues[v] = to_string(floatval(variableValues[v]) - floatval(GetRealValue(str[2], variables, variableValues)));
 			else if (str[1] == "*=")
-				variableValues[v] = to_string(stof(variableValues[v]) * stof(GetRealValue(str[2], variables, variableValues)));
+				variableValues[v] = to_string(floatval(variableValues[v]) * floatval(GetRealValue(str[2], variables, variableValues)));
 			else if (str[1] == "/=")
-				variableValues[v] = to_string(stof(variableValues[v]) / stof(GetRealValue(str[2], variables, variableValues)));
+				variableValues[v] = to_string(floatval(variableValues[v]) / floatval(GetRealValue(str[2], variables, variableValues)));
 
-			//cout << words[l][1] << " is " << words[l][3] << endl << endl;
+			//cout << words[lineNum][1] << " is " << words[lineNum][3] << endl << endl;
 			return 0;
 		}
 	}
-	// Third, iterate all existing global variable names
+	// Iterate all existing global variable names
 	for (int v = 0; v < (int)globalVariables.size(); v++)
 	{
-		if (str[0] == globalVariables[v])
+		if (str[0] == split(globalVariables[v], ' ')[1])
 		{
 			if (str[1] == "=")
-				globalVariableValues[v] = str[2];
+				globalVariableValues[v] = GetRealValue(str[2], variables, variableValues);
 			else if (str[1] == "+=")
-				globalVariableValues[v] = AddItem(globalVariableValues[v], GetRealValue(str[2], variables, variableValues));
+				globalVariableValues[v] = AddItem(variables[v], globalVariableValues[v], GetRealValue(str[2], variables, variableValues));
 			else if (str[1] == "-=")
-				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) - stof(GetRealValue(str[2], variables, variableValues)));
+				globalVariableValues[v] = to_string(floatval(globalVariableValues[v]) - floatval(GetRealValue(str[2], variables, variableValues)));
 			else if (str[1] == "*=")
-				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) * stof(GetRealValue(str[2], variables, variableValues)));
+				globalVariableValues[v] = to_string(floatval(globalVariableValues[v]) * floatval(GetRealValue(str[2], variables, variableValues)));
 			else if (str[1] == "/=")
-				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) / stof(GetRealValue(str[2], variables, variableValues)));
+				globalVariableValues[v] = to_string(floatval(globalVariableValues[v]) / floatval(GetRealValue(str[2], variables, variableValues)));
 
-			//cout << words[l][1] << " is " << words[l][3] << endl << endl;
+			//cout << words[lineNum][1] << " is " << words[lineNum][3] << endl << endl;
 			return 0;
 		}
 	}
@@ -372,19 +451,19 @@ string PEMDAS(string equ, vector<string>& variables, vector<string>& variableVal
 	}
 }
 
-int ProcessLine(vector<vector<string>> words, int l, vector<string>& variables, vector<string>& variableValues)
+int ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& variables, vector<string>& variableValues)
 {
-	if (words[l][0] == "print") {
-		cout << GetRealValue(words[l][1], variables, variableValues) << endl;
+	if (words[lineNum][0] == "print") {
+		cout << GetRealValue(words[lineNum][1], variables, variableValues) << endl;
 		return 0;
 	}
 
 	// Iterate through all functions
 	for (int t = 0; t < (int)functions.size(); t++)
 	{
-		if (words[l][0] == split(functions[t], ' ')[0])
+		if (words[lineNum][0] == split(functions[t], ' ')[0])
 		{
-			ExecuteFunction(words[l][0], rangeInVec(words[l], 1, -1));
+			ExecuteFunction(words[lineNum][0], split(unWrapVec(rangeInVec(words[lineNum], 1, -1)), ','));
 			return 0;
 		}
 	}
@@ -393,66 +472,37 @@ int ProcessLine(vector<vector<string>> words, int l, vector<string>& variables, 
 	// is a variable then store it with it's value
 	for (int t = 0; t < (int)types.size(); t++)
 	{
-		if (words[l][0] == types[t])
+		if (words[lineNum][0] == types[t])
 		{
 			//Checks if it is variable
-			variables.push_back(words[l][1]);
-			variableValues.push_back(GetRealValue((string)words[l][3], variables, variableValues));
-			//cout << words[l][1] << " is " << words[l][3] << endl << endl;
+			variables.push_back(words[lineNum][0] + " " + words[lineNum][1]);
+			variableValues.push_back(GetRealValue((string)words[lineNum][3], variables, variableValues));
+			cout << variables[(int)variables.size() - 1] << " is " << variableValues[(int)variableValues.size() -1] << endl;
 			return 0;
 		}
 	}
 	// Second, iterate all existing local variable names
 	for (int v = 0; v < (int)variables.size(); v++)
 	{
-		if (words[l][0] == variables[v])
+		if (words[lineNum][0] == split(variables[v], ' ')[1])
 		{
-			if (words[l][1] == "=")
-				variableValues[v] = words[l][2];
-			else if (words[l][1] == "+=")
-				variableValues[v] = AddItem(variableValues[v], GetRealValue(words[l][2], variables, variableValues));
-			else if (words[l][1] == "-=")
-				variableValues[v] = to_string(stof(variableValues[v]) - stof(GetRealValue(words[l][2], variables, variableValues)));
-			else if (words[l][1] == "*=")
-				variableValues[v] = to_string(stof(variableValues[v]) * stof(GetRealValue(words[l][2], variables, variableValues)));
-			else if (words[l][1] == "/=")
-				variableValues[v] = to_string(stof(variableValues[v]) / stof(GetRealValue(words[l][2], variables, variableValues)));
+			vector<string> inputs = { words[lineNum][0], words[lineNum][1], words[lineNum][2] };
+			evalEqu(inputs, variables, variableValues);
 
-			//cout << words[l][1] << " is " << words[l][3] << endl << endl;
-			return 0;
-		}
-	}
-	// Third, iterate all existing global variable names
-	for (int v = 0; v < (int)globalVariables.size(); v++)
-	{
-		if (words[l][0] == globalVariables[v])
-		{
-			if (words[l][1] == "=")
-				globalVariableValues[v] = words[l][2];
-			else if (words[l][1] == "+=")
-				globalVariableValues[v] = AddItem(globalVariableValues[v], GetRealValue(words[l][2], variables, variableValues));
-			else if (words[l][1] == "-=")
-				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) - stof(GetRealValue(words[l][2], variables, variableValues)));
-			else if (words[l][1] == "*=")
-				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) * stof(GetRealValue(words[l][2], variables, variableValues)));
-			else if (words[l][1] == "/=")
-				globalVariableValues[v] = to_string(stof(globalVariableValues[v]) / stof(GetRealValue(words[l][2], variables, variableValues)));
-
-			//cout << words[l][1] << " is " << words[l][3] << endl << endl;
 			return 0;
 		}
 	}
 	// Gathers while loop contents
-	if (words[l][0] == "while")
+	if (words[lineNum][0] == "while")
 	{
 		vector<string> whileContents;
 		vector<string> whileParameters;
 
-		for (int w = 1; w < (int)words[l].size(); w++)
-			whileParameters.push_back(words[l][w]);
+		for (int w = 1; w < (int)words[lineNum].size(); w++)
+			whileParameters.push_back(words[lineNum][w]);
 
 		int numOfBrackets = 1;
-		for (int p = l + 2; p < (int)words.size(); p++)
+		for (int p = lineNum + 2; p < (int)words.size(); p++)
 		{
 			numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
 			if (numOfBrackets == 0)
@@ -472,24 +522,24 @@ int ProcessLine(vector<vector<string>> words, int l, vector<string>& variables, 
 		while (BooleanLogic(whileParameters[0], whileParameters[1], whileParameters[2], variables, variableValues))
 		{
 			//Iterate through all lines in while loop
-			for (int l = 0; l < (int)whileContents.size(); l++)
+			for (int lineNum = 0; lineNum < (int)whileContents.size(); lineNum++)
 			{
-				ProcessLine(words, l, variables, variableValues);
+				ProcessLine(words, lineNum, variables, variableValues);
 			}
 		}
 		return 0;
 	}
 	// Gathers if statement contents
-	if (words[l][0] == "if")
+	if (words[lineNum][0] == "if")
 	{
 		vector<string> ifContents;
 		vector<string> ifParameters;
 
-		for (int w = 1; w < (int)words[l].size(); w++)
-			ifParameters.push_back(words[l][w]);
+		for (int w = 1; w < (int)words[lineNum].size(); w++)
+			ifParameters.push_back(words[lineNum][w]);
 
 		int numOfBrackets = 1;
-		for (int p = l + 2; p < (int)words.size(); p++)
+		for (int p = lineNum + 2; p < (int)words.size(); p++)
 		{
 			numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
 			if (numOfBrackets == 0)
@@ -509,9 +559,9 @@ int ProcessLine(vector<vector<string>> words, int l, vector<string>& variables, 
 		if (BooleanLogic(ifParameters[0], ifParameters[1], ifParameters[2], variables, variableValues))
 		{
 			//Iterate through all lines in while loop
-			for (int l = 0; l < (int)ifContents.size(); l++)
+			for (int lineNum = 0; lineNum < (int)ifContents.size(); lineNum++)
 			{
-				ProcessLine(words, l, variables, variableValues);
+				ProcessLine(words, lineNum, variables, variableValues);
 			}
 		}
 		return 0;
@@ -537,20 +587,21 @@ int ExecuteFunction(string functionName, vector<string> inputVarVals)
 
 	vector<string> variables;
 	vector<string> variableValues;
-	vector<string> functionNameParts = split(functions[functionIndex], ' ');
-	for (int i = 1; i < (int)functionNameParts.size(); i++)
+	vector<string> functionNameParts = split(replace(functions[functionIndex], functionName + " ", ""), ',');
+	for (int i = 0; i < (int)functionNameParts.size(); i++)
 	{
-		variables.push_back(replace(replace(functionNameParts[i], ",", ""), " ", ""));
-		variableValues.push_back(inputVarVals[i - 1]);
+		variables.push_back(trim(functionNameParts[i]));
+		variableValues.push_back(GetRealValue(trim(inputVarVals[i]), variables, variableValues));
+		cout << variables[(int)variables.size() - 1] << " is " << variableValues[(int)variableValues.size() - 1] << endl;
 	}
 	vector<vector<string>> words;
 	for (int i = 0; i < (int)functionLines.size(); i++)
 		words.push_back(split(functionLines[i], ' '));
 
 	//Iterate through all lines in function
-	for (int l = 0; l < (int)functionLines.size(); l++)
+	for (int lineNum = 0; lineNum < (int)functionLines.size(); lineNum++)
 	{
-		ProcessLine(words, l, variables, variableValues);
+		ProcessLine(words, lineNum, variables, variableValues);
 	}
 	return 0;
 }
@@ -609,22 +660,22 @@ int parseSlang(string script)
 				//Checks if it is variable
 				else
 				{
-					globalVariables.push_back(words[lineNum][1]);
+					globalVariables.push_back(words[lineNum][0] + " " + words[lineNum][1]);
 					globalVariableValues.push_back((string)words[lineNum][3]);
-					cout << words[lineNum][1] << " is " << words[lineNum][3] << endl << endl;
+					cout << words[lineNum][1] << " is " << words[lineNum][3] << endl;
 				}
 			}
 
 	// Executes main, which is the starting function
-	ExecuteFunction("Main", vector<string> {"hi"});
+	ExecuteFunction("Main", vector<string> {"hi", "7"});
 
 	return 0;
 }
 
 int main(int argc, char* argv[])
 {
-	std::ifstream t("../Slang/script.sl");
-	std::stringstream scriptString;
+	ifstream t("../Slang/script.sl");
+	stringstream scriptString;
 	scriptString << t.rdbuf();
 
 	while (true) {
