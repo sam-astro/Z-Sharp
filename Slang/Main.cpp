@@ -686,7 +686,7 @@ int parseSlang(string script)
 
 int main(int argc, char* argv[])
 {
-	ifstream t("../Slang/script.sl");
+	ifstream t("../Slang/script.slng");
 	stringstream scriptString;
 	scriptString << t.rdbuf();
 
