@@ -140,13 +140,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="eval.cpp" />
     <ClCompile Include="Main.cpp" />
+    <ClCompile Include="strops.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="eval.h" />
     <ClInclude Include="olcPixelGameEngine.h" />
+    <ClInclude Include="strops.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="script.sl" />
+    <None Include="script.slg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

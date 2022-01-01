@@ -6,6 +6,8 @@
 #include <regex>
 #include <limits>
 #include <algorithm>
+#include "eval.h"
+#include "strops.h"
 
 using namespace std;
 
@@ -51,231 +53,14 @@ bool isNumber(const string& str)
 	return true;
 }
 
-const string WHITESPACE = " \n\r\t\f\v";
-
-string ltrim(const string& s)
-{
-	size_t start = s.find_first_not_of(WHITESPACE);
-	return (start == string::npos) ? "" : s.substr(start);
-}
-
-string rtrim(const string& s)
-{
-	size_t end = s.find_last_not_of(WHITESPACE);
-	return (end == string::npos) ? "" : s.substr(0, end + 1);
-}
-
-string trim(const string& s) {
-	return rtrim(ltrim(s));
-}
-
-vector<string> split(string str, char del) {
-	// declaring temp string to store the curr "word" upto del
-	string temp = "";
-	vector<string> splitWords;
-
-	for (int i = 0; i < (int)str.size(); i++)
-	{
-		// If cur char is not del, then append it to the cur "word", otherwise
-		// you have completed the word, print it, and start a new word.
-		if (str[i] != del)
-		{
-			temp += str[i];
-		}
-		else
-		{
-			splitWords.push_back(temp);
-			temp = "";
-		}
-	}
-	splitWords.push_back(temp);
-
-	return splitWords;
-}
-
-int count(string str, char ch) {
-	int cnt = 0;
-
-	for (int i = 0; i < (int)str.size(); i++)
-		if (str[i] == ch)
-			cnt++;
-
-	return cnt;
-}
-
-int countNoOverlap(string str, char ch1, char ch2) {
-	int cnt = 0;
-
-	bool waitingForClose = false;
-
-	for (int i = 0; i < (int)str.size(); i++)
-	{
-		if (str[i] == ch1)
-			waitingForClose = true;
-		else if (str[i] == ch2 && waitingForClose == true)
-		{
-			cnt++;
-			waitingForClose = false;
-		}
-	}
-
-	return cnt;
-}
-
-int indexInStr(string str, char ch) {
-
-	for (int i = 0; i < (int)str.size(); i++)
-		if (str[i] == ch)
-			return i;
-
-	return -1;
-}
-
-int charIndexInVec(vector<string> str, char ch) {
-
-	for (int i = 0; i < (int)str.size(); i++)
-		for (int w = 0; w < (int)str[i].size(); w++)
-			if (str[i][w] == ch)
-				return i;
-
-	return -1;
-}
-
-int countInVector(vector<string> str, string ch) {
-	int cnt = 0;
-
-	for (int i = 0; i < (int)str.size(); i++)
-		if (str[i] == ch)
-			cnt++;
-
-	return cnt;
-}
-
-string Vec2Str(vector<string> str) {
-	string outStr;
-
-	for (int i = 0; i < (int)str.size(); i++)
-		outStr += str[i] + "\n";
-
-	return outStr;
-}
-
-vector<string> removeTabs(vector<string> str, int amnt) {
-	vector<string> newStr;
-
-	for (int i = 0; i < (int)str.size(); i++)
-	{
-		newStr.push_back("");
-
-		for (int c = 0; c < (int)str[i].size(); c++)
-		{
-			if (str[i][c] != '\t' || c >= amnt)
-				newStr[i] += str[i][c];
-		}
-	}
-
-	return newStr;
-}
-
-vector<string> rangeInVec(vector<string> str, int min, int max) {
-	if (max == -1)
-		max = (int)str.size();
-
-	vector<string> newStr;
-
-	for (int i = min; i < (int)str.size() && i < max; i++)
-		newStr.push_back(str[i]);
-
-	return newStr;
-}
-
-string rangeInStr(string str, int min, int max) {
-	if (max == -1)
-		max = (int)str.size();
-
-	string newStr;
-
-	for (int i = min; i < (int)str.size() && i < max; i++)
-		newStr += str[i];
-
-	return newStr;
-}
-
-string unWrapVec(vector<string> vec) {
-	string newStr;
-
-	for (int i = 0; i < (int)vec.size(); i++)
-	{
-		newStr += vec[i];
-		if (i != (int)vec.size() - 1)
-			newStr += " ";
-	}
-
-	return newStr;
-}
-
-float floatval(string s)
-{
-	float outfloat;
-
-	if (s == "inf")
-		outfloat = numeric_limits<float>::max();
-	else if (s == "-inf")
-		outfloat = -numeric_limits<float>::max();
-	else if (s == "")
-		outfloat = 0;
-	else
-		outfloat = stof(s);
-
-	return outfloat;
-}
-
-string replace(string str, string strToReplace, string replaceWith) {
-	string newStr;
-	string savedLetters;;
-
-	int sameLetters = 0;
-	int startReplaceIndex = 0;
-	for (int i = 0; i < (int)str.size(); i++)
-	{
-		if (str[i] == strToReplace[sameLetters])
-		{
-			savedLetters += str[i];
-			if (sameLetters == 0)
-				startReplaceIndex = i;
-			sameLetters++;
-
-			if ((int)strToReplace.size() == sameLetters)
-			{
-				//cout << "replaced " << "\"" << strToReplace << "\"" << startReplaceIndex << endl;
-				newStr += replaceWith;
-				sameLetters = 0;
-				savedLetters = "";
-			}
-		}
-		else
-		{
-			newStr += savedLetters + str[i];
-			sameLetters = 0;
-			savedLetters = "";
-		}
-	}
-
-	return newStr;
-}
-
 string AddItem(string varName, string variableContent, string addItem)
 {
 	string typ = split(varName, ' ')[0];
 
 	if (typ == "int" || typ == "float" || typ == "double" && isNumber(addItem))
-	{
 		return to_string(floatval(to_string(floatval(variableContent) + floatval(addItem))));
-	}
 	else
-	{
 		return variableContent + addItem;
-	}
 }
 
 string GetRealValue(string varName, vector<string>& variables, vector<string>& variableVals)
@@ -298,28 +83,6 @@ string GetRealValue(string varName, vector<string>& variables, vector<string>& v
 			isVar = true;
 		}
 
-	//if ((typ == "int" || typ == "float" || typ == "double") && isVar)
-	//{
-	//	// Checks against global vars
-	//	for (int v = 0; v < (int)globalVariables.size(); v++)
-	//		if (varName == split(globalVariables[v], ' ')[1])
-	//		{
-	//			if (globalVariableValues[v] == "inf")
-	//				globalVariableValues[v] = 2147483646;
-	//			if (globalVariableValues[v] == "-inf")
-	//				globalVariableValues[v] = -2147483646;
-	//		}
-	//	// Checks against local vars
-	//	for (int v = 0; v < (int)variables.size(); v++)
-	//		if (varName == split(variables[v], ' ')[1])
-	//		{
-	//			if (variableVals[v] == "inf")
-	//				variableVals[v] = 2147483646;
-	//			if (variableVals[v] == "-inf")
-	//				variableVals[v] = -2147483646;
-	//		}
-	//}
-
 	// If it is a var
 	if (isVar)
 	{
@@ -339,14 +102,63 @@ string GetRealValue(string varName, vector<string>& variables, vector<string>& v
 	else if (!isVar && count(varName, '\"') > 0)
 	{
 		string withoutQuotes;
+
 		for (int ch = 1; ch < (int)varName.size() - 1; ch++)
-		{
 			withoutQuotes += varName[ch];
-		}
+
 		return withoutQuotes;
 	}
 
 	return varName;
+}
+
+string EvalExpression(string expression, vector<string>& variables, vector<string>& variableVals)
+{
+	string newExpression = "";
+
+	for (int i = 0; i < expression.size(); i++)
+	{
+		if (isalpha(expression[i]))
+		{
+			string name = "";
+
+			string val = "";
+
+			while (i < expression.size() && isalpha(expression[i]))
+			{
+				name += expression[i];
+
+				i++;
+			}
+
+			newExpression += GetRealValue(val, variables, variableVals);
+
+			i--;
+		}
+		else
+		{
+			newExpression += expression[i];
+		}
+	}
+
+	vector<string> trimmedVersion = split(replace(replace(newExpression, "(", ""), ")", ""), '+');
+	bool addStrings = false;
+	string newStr = "";
+	for (int i = 0; i < newExpression.size(); i++)
+		if (isalpha(expression[i]))
+		{
+			addStrings = true;
+			break;
+		}
+	if (addStrings)
+	{
+		for (int i = 0; i < trimmedVersion.size(); i++)
+			newStr += trimmedVersion[i];
+
+		return newStr;
+	}
+	else
+		return to_string(evaluate(newExpression));
 }
 
 bool BooleanLogic(string valA, string determinant, string valB, vector<string>& variables, vector<string>& variableVals)
@@ -354,24 +166,19 @@ bool BooleanLogic(string valA, string determinant, string valB, vector<string>& 
 	string valARealValue = GetRealValue(valA, variables, variableVals);
 	string valBRealValue = GetRealValue(valB, variables, variableVals);
 
-	if (determinant == "==") {
+	if (determinant == "==")
 		return valARealValue == valBRealValue;
-	}
-	if (determinant == "!=") {
+	if (determinant == "!=")
 		return valARealValue != valBRealValue;
-	}
-	if (determinant == ">=") {
+	if (determinant == ">=")
 		return floatval(valARealValue) >= floatval(valBRealValue);
-	}
-	if (determinant == "<=") {
+	if (determinant == "<=")
 		return floatval(valARealValue) <= floatval(valBRealValue);
-	}
-	if (determinant == ">") {
+	if (determinant == ">")
 		return floatval(valARealValue) > floatval(valBRealValue);
-	}
-	if (determinant == "<") {
+	if (determinant == "<")
 		return floatval(valARealValue) < floatval(valBRealValue);
-	}
+
 	return false;
 }
 
@@ -383,15 +190,15 @@ int evalEqu(vector<string> str, vector<string>& variables, vector<string>& varia
 		if (str[0] == split(variables[v], ' ')[1])
 		{
 			if (str[1] == "=")
-				variableValues[v] = GetRealValue(str[2], variables, variableValues);
+				variableValues[v] = EvalExpression("(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 			else if (str[1] == "+=")
-				variableValues[v] = AddItem(variables[v], variableValues[v], GetRealValue(str[2], variables, variableValues));
+				variableValues[v] = EvalExpression(variableValues[v] + "+(" + unWrapVec(vector<string>(str.begin()+2, str.end())) + ")", variables, variableValues);
 			else if (str[1] == "-=")
-				variableValues[v] = to_string(floatval(variableValues[v]) - floatval(GetRealValue(str[2], variables, variableValues)));
+				variableValues[v] = EvalExpression(variableValues[v] + "-(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 			else if (str[1] == "*=")
-				variableValues[v] = to_string(floatval(variableValues[v]) * floatval(GetRealValue(str[2], variables, variableValues)));
+				variableValues[v] = EvalExpression(variableValues[v] + "*(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 			else if (str[1] == "/=")
-				variableValues[v] = to_string(floatval(variableValues[v]) / floatval(GetRealValue(str[2], variables, variableValues)));
+				variableValues[v] = EvalExpression(variableValues[v] + "/(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 
 			//cout << words[lineNum][1] << " is " << words[lineNum][3] << endl << endl;
 			return 0;
@@ -403,15 +210,15 @@ int evalEqu(vector<string> str, vector<string>& variables, vector<string>& varia
 		if (str[0] == split(globalVariables[v], ' ')[1])
 		{
 			if (str[1] == "=")
-				globalVariableValues[v] = GetRealValue(str[2], variables, variableValues);
+				globalVariableValues[v] = EvalExpression("(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 			else if (str[1] == "+=")
-				globalVariableValues[v] = AddItem(variables[v], globalVariableValues[v], GetRealValue(str[2], variables, variableValues));
+				globalVariableValues[v] = EvalExpression(variableValues[v] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 			else if (str[1] == "-=")
-				globalVariableValues[v] = to_string(floatval(globalVariableValues[v]) - floatval(GetRealValue(str[2], variables, variableValues)));
+				globalVariableValues[v] = EvalExpression(variableValues[v] + "-(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 			else if (str[1] == "*=")
-				globalVariableValues[v] = to_string(floatval(globalVariableValues[v]) * floatval(GetRealValue(str[2], variables, variableValues)));
+				globalVariableValues[v] = EvalExpression(variableValues[v] + "*(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 			else if (str[1] == "/=")
-				globalVariableValues[v] = to_string(floatval(globalVariableValues[v]) / floatval(GetRealValue(str[2], variables, variableValues)));
+				globalVariableValues[v] = EvalExpression(variableValues[v] + "/(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 
 			//cout << words[lineNum][1] << " is " << words[lineNum][3] << endl << endl;
 			return 0;
@@ -419,40 +226,11 @@ int evalEqu(vector<string> str, vector<string>& variables, vector<string>& varia
 	}
 }
 
-string PEMDAS(string equ, vector<string>& variables, vector<string>& variableValues)
-{
-	if (split(equ, ',').size() == 1)
-		return equ;
-
-	int parenthesisSetsCount = countNoOverlap(equ, '(', ')');
-
-	vector<string> equationWords = split(equ, ' ');
-	for (int s = 0; s < parenthesisSetsCount; s++)
-	{
-		int startOfNextParenthesis = 0;
-		int numofParenthesis = 0;
-		vector<string> insideParenthesis;
-		for (int p = startOfNextParenthesis; p < (int)equationWords.size(); p++)
-		{
-			numofParenthesis += count(equationWords[p], '(') - count(equationWords[p], ')');
-			if (numofParenthesis == 0)
-			{
-				startOfNextParenthesis = indexInStr(equationWords[charIndexInVec(equationWords, '(')], '(');
-				break;
-			}
-			insideParenthesis.push_back("");
-			for (int w = 0; w < (int)equationWords[p].size(); w++)
-			{
-				insideParenthesis[(int)insideParenthesis.size() - 1] += equationWords[p][w] + " ";
-			}
-		}
-
-		equ = replace(equ, "(" + unWrapVec(insideParenthesis) + ")", PEMDAS(unWrapVec(insideParenthesis), variables, variableValues));
-	}
-}
-
 int ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& variables, vector<string>& variableValues)
 {
+	if (words[lineNum][0][0] == '/' && words[lineNum][0][1] == '/')
+		return 0;
+
 	if (words[lineNum][0] == "print") {
 		cout << GetRealValue(words[lineNum][1], variables, variableValues) << endl;
 		return 0;
@@ -480,7 +258,7 @@ int ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& varia
 				if (words[lineNum][1] == split(variables[v], ' ')[1])
 				{
 					vector<string> inputs = { words[lineNum][1], words[lineNum][2], words[lineNum][3] };
-					evalEqu(inputs, variables, variableValues);
+					evalEqu(vector<string>(words[lineNum].begin() + 1, words[lineNum].end()), variables, variableValues);
 
 					return 0;
 				}
@@ -489,7 +267,7 @@ int ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& varia
 			//Checks if it is variable
 			variables.push_back(words[lineNum][0] + " " + words[lineNum][1]);
 			variableValues.push_back(GetRealValue((string)words[lineNum][3], variables, variableValues));
-			cout << variables[(int)variables.size() - 1] << " is " << variableValues[(int)variableValues.size() -1] << endl;
+			cout << variables[(int)variables.size() - 1] << " is " << variableValues[(int)variableValues.size() - 1] << endl;
 			return 0;
 		}
 	}

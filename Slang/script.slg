@@ -25,14 +25,11 @@ void Main(string input, int in2)
 
 	while x < 100
 	{
-		k = a
-		k += b
-		a = b
-		b = k
-
+		k = 10*4/3+(6.2-5.8)
+		print k
 		string str = x
 
-		str += "::"
+		//str += "::"
 		str += k
 		
 		x += 10
