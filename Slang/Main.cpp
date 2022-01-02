@@ -73,6 +73,11 @@ string StringRaw(string str)
 	return withoutQuotes;
 }
 
+string Quoted(string str)
+{
+	return "\"" + str + "\"";
+}
+
 string GetVariableValue(string varName, vector<string>& variables, vector<string>& variableVals)
 {
 	string typ = "string";
@@ -127,7 +132,8 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 	expression = trim(expression);
 	cout << "EXPRESSION: " << expression << endl;
 
-	if (count(expression, '+') == 0 && count(expression, '-') == 0 && count(expression, '*') == 0 && count(expression, '/') == 0)
+	// If no operations are applied, then return self
+	if (count(expression, '+') == 0 && count(expression, '-') == 0 && count(expression, '*') == 0 && count(expression, '/') == 0 && count(expression, '(') == 0 && count(expression, '^') == 0)
 		return GetVariableValue(expression, variables, variableVals);
 
 	string newExpression = "";
@@ -166,7 +172,6 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 		}
 	if (addStrings)
 	{
-		string newStr = "";
 		inQuotes = false;
 		string withoutParenthesis = "";
 		for (int i = 0; i < (int)newExpression.size(); i++)
@@ -182,8 +187,8 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 				withoutParenthesis += newExpression[i];
 		}
 
-		cout << "NewSTRING = " << withoutParenthesis << endl;
-		return withoutParenthesis;
+		cout << "NewSTRING = " << Quoted(withoutParenthesis) << endl;
+		return Quoted(withoutParenthesis);
 	}
 	else
 		return to_string(evaluate(newExpression));
