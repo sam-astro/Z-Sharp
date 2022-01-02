@@ -34,7 +34,7 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
-		ExecuteFunction("Update", vector<string> {""});
+		ExecuteFunction("Update", vector<string> {""}, -1);
 		 
 		// Called once per frame
 		//for (int x = 0; x < ScreenWidth(); x++)

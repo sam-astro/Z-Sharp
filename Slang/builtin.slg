@@ -3,6 +3,7 @@ float EulersNumber = 2.71828183
 
 float Sin(float input)
 {
+	print input
 	float out = CPP.Math.Sin(input)
 	return out
 }

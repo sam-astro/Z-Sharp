@@ -176,14 +176,14 @@ vector<string> VarValues(vector<string> varNames, vector<string>& variables, vec
 	return realValues;
 }
 
-bool IsFunction(string funcName)
+int IsFunction(string funcName)
 {
 	// Iterate through all functions
 	for (int t = 0; t < (int)functions.size(); t++)
 		if (trim(funcName) == split(functions[t], ' ')[0])
-			return true;
+			return t;
 
-	return false;
+	return -1;
 }
 
 string EvalExpression(string expression, vector<string>& variables, vector<string>& variableVals)
@@ -194,7 +194,8 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 	// If no operations are applied, then return self
 	if ((count(expression, '+') == 0 && count(expression, '-') == 0 && count(expression, '*') == 0 && count(expression, '/') == 0 && count(expression, '(') == 0 && count(expression, '^') == 0) || split(expression, '.')[0] == "CPP")
 	{
-		if (IsFunction(split(expression, '(')[0]) && !inQuotes)
+		int funcIndex = IsFunction(split(expression, '(')[0]);
+		if (funcIndex != -1 && !inQuotes)
 		{
 			//cout << split(expression, '(')[0] << endl;
 			string argContents = "";
@@ -206,7 +207,7 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 				y++;
 			}
 			//cout << split(expression, '(')[0] << "  " << argContents << endl;
-			string returnVal = ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variables, variableVals));
+			string returnVal = ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variables, variableVals), funcIndex);
 			return returnVal;
 		}
 		else if (split(expression, '.')[0] == "CPP" && !inQuotes)
@@ -246,7 +247,8 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 			}
 
 			//string varVal = GetVariableValue(name, variables, variableVals);
-			if (IsFunction(name) && !inQuotes)
+			int funcIndex = IsFunction(name);
+			if (funcIndex != -1 && !inQuotes)
 			{
 				string argContents = "";
 				i++;
@@ -256,7 +258,7 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 
 					i++;
 				}
-				string returnVal = ExecuteFunction(name, VarValues(split(argContents, ','), variables, variableVals));
+				string returnVal = ExecuteFunction(name, VarValues(split(argContents, ','), variables, variableVals), funcIndex);
 				newExpression += returnVal;
 				//cout << newExpression << endl;
 			}
@@ -414,7 +416,7 @@ string ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& va
 	{
 		if (split(words[lineNum][0], '(')[0] == split(functions[t], ' ')[0])
 		{
-			ExecuteFunction(split(functions[t], ' ')[0], VarValues(split(RMParenthesis(replace(unWrapVec(words[lineNum]), split(functions[t], ' ')[0], "")), ','), variables, variableValues));
+			ExecuteFunction(split(functions[t], ' ')[0], VarValues(split(RMParenthesis(replace(unWrapVec(words[lineNum]), split(functions[t], ' ')[0], "")), ','), variables, variableValues), t);
 			return "";
 		}
 	}
@@ -575,20 +577,23 @@ string ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& va
 	return "";
 }
 
-string ExecuteFunction(string functionName, vector<string> inputVarVals)
+string ExecuteFunction(string functionName, vector<string> inputVarVals, int functionIndex)
 {
 	//vector<string> inputVarVals = split(replace(inVals, " ", ""), ',');
-
 	vector<string> functionLines;
-	int functionIndex = 0;
 	//Get index of function
-	for (int f = 0; f < (int)functions.size(); f++)
-		if (split(functions[f], ' ')[0] == functionName)
-		{
-			functionLines = functionValues[f];
-			functionIndex = f;
-			break;
-		}
+	if (functionIndex == -1)
+	{
+		for (int f = 0; f < (int)functions.size(); f++)
+			if (split(functions[f], ' ')[0] == functionName)
+			{
+				functionLines = functionValues[f];
+				functionIndex = f;
+				break;
+			}
+	}
+	else
+		functionLines = functionValues[functionIndex];
 
 	vector<string> variables;
 	vector<string> variableValues;
@@ -683,7 +688,7 @@ int parseSlang(string script)
 			}
 
 	// Executes main, which is the starting function
-	ExecuteFunction("Main", vector<string> {"\"hi\"", "0"});
+	ExecuteFunction("Main", vector<string> {"\"hi\"", "0"}, -1);
 
 	return 0;
 }

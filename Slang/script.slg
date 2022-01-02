@@ -4,12 +4,14 @@ void Main(string input, int in)
 {
 	print "PI is: " + PI
 	int x = 1
-	
+	print x
 	float k = 0
-
+	print k
 	while x < 5
 	{
+		print x
 		float s = Sin(x)
+		print s
 		int k = Sigmoid(s)
 		print k
 		
@@ -19,9 +21,19 @@ void Main(string input, int in)
 	CPP.Graphics.Init(64, 64, 4)
 }
 
-void Update(string x, string y)
+void Update(string input)
 {
-	SetPixel(x, y, 255, 0, 0)
-	y += 1
-	// print "updating"
+	int x = 0
+	int y = 0
+	while x < 64
+	{
+		while y < 64
+		{
+			SetPixel(x, y, 255, 0, 0)
+			y += 1
+		}
+		y = 0
+		x += 1
+	}
+	print "updating"
 }

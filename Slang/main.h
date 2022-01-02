@@ -4,6 +4,6 @@
 
 using namespace std;
 
-string ExecuteFunction(string functionName, vector<string> inputVarVals);
+string ExecuteFunction(string functionName, vector<string> inputVarVals, int functionIndex);
 
 #endif
