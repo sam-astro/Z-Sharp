@@ -145,11 +145,13 @@
     <ClCompile Include="strops.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="builtin.h" />
     <ClInclude Include="eval.h" />
     <ClInclude Include="olcPixelGameEngine.h" />
     <ClInclude Include="strops.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="builtin.slg" />
     <None Include="script.slg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

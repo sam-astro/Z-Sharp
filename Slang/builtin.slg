@@ -1,0 +1,7 @@
+float pi = 3.14159265358979
+
+float Sin(float input)
+{
+	float out = CPP.Math.Sin(input)
+	return out
+}

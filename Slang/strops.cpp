@@ -25,6 +25,9 @@ string trim(const string& s) {
 }
 
 vector<string> split(string str, char del) {
+	if (count(str, del) == 0)
+		return vector<string>{str};
+
 	// declaring temp string to store the curr "word" upto del
 	string temp = "";
 	vector<string> splitWords;

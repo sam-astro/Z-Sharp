@@ -35,8 +35,12 @@
     <ClInclude Include="strops.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="builtin.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="script.slg" />
+    <None Include="builtin.slg" />
   </ItemGroup>
 </Project>

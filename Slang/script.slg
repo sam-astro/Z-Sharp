@@ -8,17 +8,19 @@ void Next(string in, string sin)
 	print in
 	print sin
 	print green
+	return "awe"
 }
 
-void Main(string input, int in2)
+void Main(string input, int in)
 {
+	print pi
 	int x = 1
 
 	int a = 0
 	int b = 1
 
 	print input
-	print in2
+	print in
 	
 	int k = 0
 
@@ -26,15 +28,10 @@ void Main(string input, int in2)
 	{
 		int k = 1 / (1+2.71828^-x)
 		print k
-		print "X is " + x
-		string str = x
-
-		// str=  0+(" :: ")
-		str += " :: "
-		str += k
+		float s = Sin(x)
+		print "Sin is " + s
 		
 		x += 10
-		print str
 	}
-	Next "seen", "bop"
+	print Next("seen", "bop")
 }
