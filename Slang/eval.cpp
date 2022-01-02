@@ -6,6 +6,7 @@
 #include <limits>
 #include <stack>
 #include "eval.h"
+#include "strops.h"
 using namespace std;
 
 float precedence(char op) {
@@ -13,6 +14,8 @@ float precedence(char op) {
 		return 1;
 	if (op == '*' || op == '/')
 		return 2;
+	if (op == '^')
+		return 3;
 	return 0;
 }
 
@@ -22,16 +25,20 @@ float applyOp(float a, float b, char op) {
 	case '-': return a - b;
 	case '*': return a * b;
 	case '/': return a / b;
+	case '^': return pow(a, b);
 	}
 }
 
 // Function that returns value of
 // expression after evaluation.
 float evaluate(string tokens) {
+	tokens = replace(tokens, " ", "");
+
 	float i;
 
 	stack <float> values;
 	stack <char> ops;
+	bool negative = false;
 
 	for (i = 0; i < tokens.length(); i++) {
 
@@ -49,9 +56,9 @@ float evaluate(string tokens) {
 
 		// Current token is a number, push
 		// it to stack for numbers.
-		else if (isdigit(tokens[i])) {
+		else if (isdigit(tokens[i]))
+		{
 			float val = 0;
-
 			bool encounteredDecimal = false;
 			int decPlaces = 0;
 			// There may be more than one
@@ -76,7 +83,7 @@ float evaluate(string tokens) {
 
 				i++;
 			}
-
+			
 			values.push(val);
 
 			i--;
@@ -105,21 +112,34 @@ float evaluate(string tokens) {
 		// Current token is an operator.
 		else
 		{
-			while (!ops.empty() && precedence(ops.top())
-				>= precedence(tokens[i])) {
-				float val2 = values.top();
-				values.pop();
-
-				float val1 = values.top();
-				values.pop();
-
-				char op = ops.top();
-				ops.pop();
-
-				values.push(applyOp(val1, val2, op));
+			if (tokens[i] == '-' && (i == 0 || tokens[i-1] == '*' || tokens[i-1] == '/' || tokens[i-1] == '+' || tokens[i-1] == '-' || tokens[i-1] == '^'))
+			{
+				negative = true;
+				continue;
 			}
+			else
+			{
+				while (!ops.empty() && precedence(ops.top()) >= precedence(tokens[i])) {
+					float val2 = values.top();
+					values.pop();
 
-			ops.push(tokens[i]);
+					float val1 = values.top();
+					values.pop();
+
+					char op = ops.top();
+					ops.pop();
+
+					values.push(applyOp(val1, val2, op));
+				}
+
+				ops.push(tokens[i]);
+			}
+		}
+
+		if (negative)
+		{
+			values.top() *= -1;
+			negative = false;
 		}
 	}
 
@@ -144,9 +164,9 @@ float evaluate(string tokens) {
 
 // Used to test evaluator
 //int main() {
-//	cout << evaluate("10 + 2 * 6") << "\n";
+//	cout << evaluate("-10 + 2 * 6 * -3") << "\n";
 //	cout << evaluate("100 * 2 + 12") << "\n";
-//	cout << evaluate("100 * ( 2 + 12 )") << "\n";
+//	cout << evaluate("100 * (0 + (12 - 3))") << "\n";
 //	cout << evaluate("0.05*0.05");
 //	return 0;
 //}

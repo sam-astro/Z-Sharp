@@ -63,7 +63,17 @@ string AddItem(string varName, string variableContent, string addItem)
 		return variableContent + addItem;
 }
 
-string GetRealValue(string varName, vector<string>& variables, vector<string>& variableVals)
+string StringRaw(string str)
+{
+	string withoutQuotes;
+
+	for (int ch = 1; ch < (int)str.size() - 1; ch++)
+		withoutQuotes += str[ch];
+
+	return withoutQuotes;
+}
+
+string GetVariableValue(string varName, vector<string>& variables, vector<string>& variableVals)
 {
 	string typ = "string";
 	bool isVar = false;
@@ -99,30 +109,35 @@ string GetRealValue(string varName, vector<string>& variables, vector<string>& v
 				return variableVals[v];
 			}
 	}
-	else if (!isVar && count(varName, '\"') > 0)
-	{
-		string withoutQuotes;
+	//else if (!isVar && count(varName, '\"') > 0)
+	//{
+	//	string withoutQuotes;
 
-		for (int ch = 1; ch < (int)varName.size() - 1; ch++)
-			withoutQuotes += varName[ch];
+	//	for (int ch = 1; ch < (int)varName.size() - 1; ch++)
+	//		withoutQuotes += varName[ch];
 
-		return withoutQuotes;
-	}
+	//	return withoutQuotes;
+	//}
 
 	return varName;
 }
 
 string EvalExpression(string expression, vector<string>& variables, vector<string>& variableVals)
 {
+	expression = trim(expression);
+	cout << "EXPRESSION: " << expression << endl;
+
+	if (count(expression, '+') == 0 && count(expression, '-') == 0 && count(expression, '*') == 0 && count(expression, '/') == 0)
+		return GetVariableValue(expression, variables, variableVals);
+
 	string newExpression = "";
+	bool inQuotes = false;
 
 	for (int i = 0; i < expression.size(); i++)
 	{
 		if (isalpha(expression[i]))
 		{
 			string name = "";
-
-			string val = "";
 
 			while (i < expression.size() && isalpha(expression[i]))
 			{
@@ -131,7 +146,7 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 				i++;
 			}
 
-			newExpression += GetRealValue(val, variables, variableVals);
+			newExpression += GetVariableValue(name, variables, variableVals);
 
 			i--;
 		}
@@ -140,22 +155,35 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 			newExpression += expression[i];
 		}
 	}
+	cout << "NEW EXPRESSION: " << newExpression << endl;
 
-	vector<string> trimmedVersion = split(replace(replace(newExpression, "(", ""), ")", ""), '+');
 	bool addStrings = false;
-	string newStr = "";
-	for (int i = 0; i < newExpression.size(); i++)
-		if (isalpha(expression[i]))
+	for (int i = 0; i < (int)newExpression.size(); i++)
+		if (isalpha(newExpression[i]) || newExpression[i] == '\"')
 		{
 			addStrings = true;
 			break;
 		}
 	if (addStrings)
 	{
-		for (int i = 0; i < trimmedVersion.size(); i++)
-			newStr += trimmedVersion[i];
+		string newStr = "";
+		inQuotes = false;
+		string withoutParenthesis = "";
+		for (int i = 0; i < (int)newExpression.size(); i++)
+		{
+			if (newExpression[i] == '\"')
+			{
+				inQuotes = !inQuotes;
+				continue;
+			}
+			if (inQuotes)
+				withoutParenthesis += newExpression[i];
+			if (!inQuotes && newExpression[i] != '(' && newExpression[i] != ')' && newExpression[i] != '+' && newExpression[i] != ' ')
+				withoutParenthesis += newExpression[i];
+		}
 
-		return newStr;
+		cout << "NewSTRING = " << withoutParenthesis << endl;
+		return withoutParenthesis;
 	}
 	else
 		return to_string(evaluate(newExpression));
@@ -163,8 +191,8 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 
 bool BooleanLogic(string valA, string determinant, string valB, vector<string>& variables, vector<string>& variableVals)
 {
-	string valARealValue = GetRealValue(valA, variables, variableVals);
-	string valBRealValue = GetRealValue(valB, variables, variableVals);
+	string valARealValue = GetVariableValue(valA, variables, variableVals);
+	string valBRealValue = GetVariableValue(valB, variables, variableVals);
 
 	if (determinant == "==")
 		return valARealValue == valBRealValue;
@@ -190,9 +218,9 @@ int evalEqu(vector<string> str, vector<string>& variables, vector<string>& varia
 		if (str[0] == split(variables[v], ' ')[1])
 		{
 			if (str[1] == "=")
-				variableValues[v] = EvalExpression("(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
+				variableValues[v] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variables, variableValues);
 			else if (str[1] == "+=")
-				variableValues[v] = EvalExpression(variableValues[v] + "+(" + unWrapVec(vector<string>(str.begin()+2, str.end())) + ")", variables, variableValues);
+				variableValues[v] = EvalExpression(variableValues[v] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 			else if (str[1] == "-=")
 				variableValues[v] = EvalExpression(variableValues[v] + "-(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 			else if (str[1] == "*=")
@@ -200,7 +228,7 @@ int evalEqu(vector<string> str, vector<string>& variables, vector<string>& varia
 			else if (str[1] == "/=")
 				variableValues[v] = EvalExpression(variableValues[v] + "/(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 
-			//cout << words[lineNum][1] << " is " << words[lineNum][3] << endl << endl;
+			cout << variables[v] << " is " << variableValues[v] << endl;
 			return 0;
 		}
 	}
@@ -210,7 +238,7 @@ int evalEqu(vector<string> str, vector<string>& variables, vector<string>& varia
 		if (str[0] == split(globalVariables[v], ' ')[1])
 		{
 			if (str[1] == "=")
-				globalVariableValues[v] = EvalExpression("(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
+				globalVariableValues[v] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variables, variableValues);
 			else if (str[1] == "+=")
 				globalVariableValues[v] = EvalExpression(variableValues[v] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 			else if (str[1] == "-=")
@@ -220,7 +248,7 @@ int evalEqu(vector<string> str, vector<string>& variables, vector<string>& varia
 			else if (str[1] == "/=")
 				globalVariableValues[v] = EvalExpression(variableValues[v] + "/(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variables, variableValues);
 
-			//cout << words[lineNum][1] << " is " << words[lineNum][3] << endl << endl;
+			cout << variables[v] << " is " << variableValues[v] << endl;
 			return 0;
 		}
 	}
@@ -232,7 +260,7 @@ int ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& varia
 		return 0;
 
 	if (words[lineNum][0] == "print") {
-		cout << GetRealValue(words[lineNum][1], variables, variableValues) << endl;
+		cout << EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variables, variableValues) << endl;
 		return 0;
 	}
 
@@ -247,7 +275,7 @@ int ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& varia
 	}
 
 	// First iterate through all types to see if line
-	// is a variable then store it with it's value
+	// inits a variable then store it with it's value
 	for (int t = 0; t < (int)types.size(); t++)
 	{
 		if (words[lineNum][0] == types[t])
@@ -257,7 +285,6 @@ int ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& varia
 			{
 				if (words[lineNum][1] == split(variables[v], ' ')[1])
 				{
-					vector<string> inputs = { words[lineNum][1], words[lineNum][2], words[lineNum][3] };
 					evalEqu(vector<string>(words[lineNum].begin() + 1, words[lineNum].end()), variables, variableValues);
 
 					return 0;
@@ -266,7 +293,7 @@ int ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& varia
 
 			//Checks if it is variable
 			variables.push_back(words[lineNum][0] + " " + words[lineNum][1]);
-			variableValues.push_back(GetRealValue((string)words[lineNum][3], variables, variableValues));
+			variableValues.push_back(EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 3, words[lineNum].end())), variables, variableValues));
 			cout << variables[(int)variables.size() - 1] << " is " << variableValues[(int)variableValues.size() - 1] << endl;
 			return 0;
 		}
@@ -276,8 +303,7 @@ int ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& varia
 	{
 		if (words[lineNum][0] == split(variables[v], ' ')[1])
 		{
-			vector<string> inputs = { words[lineNum][0], words[lineNum][1], words[lineNum][2] };
-			evalEqu(inputs, variables, variableValues);
+			evalEqu(vector<string>(words[lineNum].begin(), words[lineNum].end()), variables, variableValues);
 
 			return 0;
 		}
@@ -381,7 +407,7 @@ int ExecuteFunction(string functionName, vector<string> inputVarVals)
 	for (int i = 0; i < (int)functionNameParts.size(); i++)
 	{
 		variables.push_back(trim(functionNameParts[i]));
-		variableValues.push_back(GetRealValue(trim(inputVarVals[i]), variables, variableValues));
+		variableValues.push_back(EvalExpression(inputVarVals[i], variables, variableValues));
 		cout << variables[(int)variables.size() - 1] << " is " << variableValues[(int)variableValues.size() - 1] << endl;
 	}
 	vector<vector<string>> words;
@@ -457,7 +483,7 @@ int parseSlang(string script)
 			}
 
 	// Executes main, which is the starting function
-	ExecuteFunction("Main", vector<string> {"hi", "7"});
+	ExecuteFunction("Main", vector<string> {"\"hi\"", "7"});
 
 	return 0;
 }

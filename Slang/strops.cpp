@@ -187,7 +187,7 @@ float floatval(string s)
 
 string replace(string str, string strToReplace, string replaceWith) {
 	string newStr;
-	string savedLetters;;
+	string savedLetters;
 
 	int sameLetters = 0;
 	int startReplaceIndex = 0;
