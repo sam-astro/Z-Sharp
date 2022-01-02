@@ -1,7 +1,58 @@
-float pi = 3.14159265358979
+float PI = 3.14159265358979
+float EulersNumber = 2.71828183
 
 float Sin(float input)
 {
 	float out = CPP.Math.Sin(input)
+	return out
+}
+
+float Cos(float input)
+{
+	float out = CPP.Math.Cos(input)
+	return out
+}
+
+float Tan(float input)
+{
+	float out = CPP.Math.Tan(input)
+	return out
+}
+
+float Sigmoid(float input)
+{
+	float out = 1 / (1+EulersNumber^-input)
+	return out
+}
+
+float Tanh(float input)
+{
+	float out = ((EulersNumber^input)-(EulersNumber^-input))/((EulersNumber^input)+(EulersNumber^-input))
+	return out
+}
+
+float Round(float input)
+{
+	float out = CPP.Math.Round(input)
+	return out
+}
+
+float Clamp(float input, float min, float max)
+{
+	if input < min
+	{
+		return min
+	}
+	if input > max
+	{
+		return max
+	}
+	return input
+}
+
+// Sets color of pixel to RGB value
+float SetPixel(int x, int y, int r, int g, int b)
+{
+	string out = CPP.Graphics.SetPixel(x, y, r, g, b)
 	return out
 }

@@ -38,6 +38,12 @@
     <ClInclude Include="builtin.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="graphics.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="script.slg" />

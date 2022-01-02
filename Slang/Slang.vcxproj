@@ -147,6 +147,8 @@
   <ItemGroup>
     <ClInclude Include="builtin.h" />
     <ClInclude Include="eval.h" />
+    <ClInclude Include="graphics.h" />
+    <ClInclude Include="main.h" />
     <ClInclude Include="olcPixelGameEngine.h" />
     <ClInclude Include="strops.h" />
   </ItemGroup>

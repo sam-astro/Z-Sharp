@@ -1,37 +1,27 @@
 
-void Next(string in, string sin)
-{
-	string green = "bean"
-	green += " "
-	green += in
-
-	print in
-	print sin
-	print green
-	return "awe"
-}
 
 void Main(string input, int in)
 {
-	print pi
+	print "PI is: " + PI
 	int x = 1
-
-	int a = 0
-	int b = 1
-
-	print input
-	print in
 	
-	int k = 0
+	float k = 0
 
-	while x < 100
+	while x < 5
 	{
-		int k = 1 / (1+2.71828^-x)
-		print k
 		float s = Sin(x)
-		print "Sin is " + s
+		int k = Sigmoid(s)
+		print k
 		
-		x += 10
+		x += 1
 	}
-	print Next("seen", "bop")
+	
+	CPP.Graphics.Init(64, 64, 4)
+}
+
+void Update(string x, string y)
+{
+	SetPixel(x, y, 255, 0, 0)
+	y += 1
+	// print "updating"
 }

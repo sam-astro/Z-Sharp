@@ -8,6 +8,7 @@
 #include <limits>
 #include <algorithm>
 #include "strops.h"
+#include "graphics.h"
 
 using namespace std;
 
@@ -17,6 +18,8 @@ vector<string> builtinFunctions;
 vector<vector<string>> builtinFunctionValues;
 vector<string> builtinVars;
 vector<string> builtinVarVals;
+
+Parser mainWindow;
 
 int GetBuiltins(string script)
 {
@@ -82,9 +85,22 @@ int GetBuiltins(string script)
 
 string CPPFunction(string name, vector<string> args)
 {
-	cout << name << "  --  " << args[0] << endl;
 	if (name == "CPP.Math.Sin")
 		return to_string(sin(stof(args[0])));
+	else if (name == "CPP.Math.Cos")
+		return to_string(cos(stof(args[0])));
+	else if (name == "CPP.Math.Tan")
+		return to_string(tan(stof(args[0])));
+	else if (name == "CPP.Math.Round")
+		return to_string(round(stof(args[0])));
+	else if (name == "CPP.Graphics.Init")
+	{
+		cout << "\x1B[32mInit graphics\033[0m\t\t" << endl;
+		if (mainWindow.Construct(stoi(args[0]), stoi(args[1]), stoi(args[2]), stoi(args[2])))
+			mainWindow.Start();
+	}
+	else if (name == "CPP.Graphics.SetPixel")
+		mainWindow.Draw(stoi(args[0]), stoi(args[1]), olc::Pixel(stoi(args[2]), stoi(args[3]), stoi(args[4])));
 
 	return "";
 }

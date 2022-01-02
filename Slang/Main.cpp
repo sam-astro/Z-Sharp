@@ -1,4 +1,4 @@
-#define OLC_PGE_APPLICATION
+
 #include "olcPixelGameEngine.h"
 #include <iostream>
 #include <fstream>
@@ -9,6 +9,7 @@
 #include "eval.h"
 #include "strops.h"
 #include "builtin.h"
+#include "main.h"
 
 using namespace std;
 
@@ -16,33 +17,6 @@ vector<string> globalVariables;
 vector<string> globalVariableValues;
 vector<string> functions;
 vector<vector<string>> functionValues;
-
-class Parser : public olc::PixelGameEngine
-{
-public:
-	Parser()
-	{
-		sAppName = "Parser";
-	}
-
-public:
-	bool OnUserCreate() override
-	{
-		// Called once at the start
-		return true;
-	}
-
-	bool OnUserUpdate(float fElapsedTime) override
-	{
-		// Called once per frame
-		for (int x = 0; x < ScreenWidth(); x++)
-			for (int y = 0; y < ScreenHeight(); y++)
-				Draw(x, y, olc::Pixel(rand() % 128, rand() % 128, rand() % 128));
-		return true;
-	}
-};
-
-string ExecuteFunction(string functionName, vector<string> inputVarVals);
 
 bool isNumber(const string& str)
 {
@@ -52,18 +26,10 @@ bool isNumber(const string& str)
 	return true;
 }
 
-string AddItem(string varName, string variableContent, string addItem)
-{
-	string typ = split(varName, ' ')[0];
-
-	if (typ == "int" || typ == "float" || typ == "double" && isNumber(addItem))
-		return to_string(floatval(to_string(floatval(variableContent) + floatval(addItem))));
-	else
-		return variableContent + addItem;
-}
-
 string StringRaw(string str)
 {
+	str = trim(str);
+
 	if (str.size() < 3)
 		return str;
 
@@ -83,6 +49,8 @@ string StringRaw(string str)
 
 string Quoted(string str)
 {
+	str = trim(str);
+
 	string withQuotes;
 
 	if (str[0] != '\"')
@@ -118,20 +86,23 @@ string GetVariableValue(string varName, vector<string>& variables, vector<string
 	string typ = "string";
 	bool isVar = false;
 
-	// Checks against global vars
-	for (int v = 0; v < (int)globalVariables.size(); v++)
-		if (varName == split(globalVariables[v], ' ')[1])
-		{
-			typ = split(globalVariables[v], ' ')[0];
-			isVar = true;
-		}
-	// Checks against local vars
-	for (int v = 0; v < (int)variables.size(); v++)
-		if (varName == split(variables[v], ' ')[1])
-		{
-			typ = split(variables[v], ' ')[0];
-			isVar = true;
-		}
+	if (count(varName, '\"') == 0)
+	{
+		// Checks against global vars
+		for (int v = 0; v < (int)globalVariables.size(); v++)
+			if (varName == split(globalVariables[v], ' ')[1])
+			{
+				typ = split(globalVariables[v], ' ')[0];
+				isVar = true;
+			}
+		// Checks against local vars
+		for (int v = 0; v < (int)variables.size(); v++)
+			if (varName == split(variables[v], ' ')[1])
+			{
+				typ = split(variables[v], ' ')[0];
+				isVar = true;
+			}
+	}
 
 	// If it is a var
 	if (isVar)
@@ -159,23 +130,28 @@ vector<string> VarValues(vector<string> varNames, vector<string>& variables, vec
 
 	for (int varIndex = 0; varIndex < varNames.size(); varIndex++)
 	{
+		varNames[varIndex] = trim(varNames[varIndex]);
+
 		string typ = "string";
 		bool isVar = false;
 
-		// Checks against global vars
-		for (int v = 0; v < (int)globalVariables.size(); v++)
-			if (varNames[varIndex] == split(globalVariables[v], ' ')[1])
-			{
-				typ = split(globalVariables[v], ' ')[0];
-				isVar = true;
-			}
-		// Checks against local vars
-		for (int v = 0; v < (int)variables.size(); v++)
-			if (varNames[varIndex] == split(variables[v], ' ')[1])
-			{
-				typ = split(variables[v], ' ')[0];
-				isVar = true;
-			}
+		if (count(varNames[varIndex], '\"') == 0)
+		{
+			// Checks against global vars
+			for (int v = 0; v < (int)globalVariables.size(); v++)
+				if (varNames[varIndex] == split(globalVariables[v], ' ')[1])
+				{
+					typ = split(globalVariables[v], ' ')[0];
+					isVar = true;
+				}
+			// Checks against local vars
+			for (int v = 0; v < (int)variables.size(); v++)
+				if (varNames[varIndex] == split(variables[v], ' ')[1])
+				{
+					typ = split(variables[v], ' ')[0];
+					isVar = true;
+				}
+		}
 
 		// If it is a var
 		if (isVar)
@@ -213,12 +189,12 @@ bool IsFunction(string funcName)
 string EvalExpression(string expression, vector<string>& variables, vector<string>& variableVals)
 {
 	expression = trim(expression);
-	//cout << "EXPRESSION: " << expression << endl;
+	bool inQuotes = false;
 
 	// If no operations are applied, then return self
 	if ((count(expression, '+') == 0 && count(expression, '-') == 0 && count(expression, '*') == 0 && count(expression, '/') == 0 && count(expression, '(') == 0 && count(expression, '^') == 0) || split(expression, '.')[0] == "CPP")
 	{
-		if (IsFunction(split(expression, '(')[0]))
+		if (IsFunction(split(expression, '(')[0]) && !inQuotes)
 		{
 			//cout << split(expression, '(')[0] << endl;
 			string argContents = "";
@@ -233,7 +209,7 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 			string returnVal = ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variables, variableVals));
 			return returnVal;
 		}
-		else if (split(expression, '.')[0] == "CPP")
+		else if (split(expression, '.')[0] == "CPP" && !inQuotes)
 		{
 			string argContents = "";
 			int y = indexInStr(expression, '(') + 1;
@@ -243,7 +219,7 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 
 				y++;
 			}
-			cout << split(expression, '(')[0] << " " << argContents << endl;
+			//cout << split(expression, '(')[0] << " " << unWrapVec(VarValues(split(argContents, ','), variables, variableVals)) << endl;
 			string returnVal = CPPFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variables, variableVals));
 			return returnVal;
 		}
@@ -252,10 +228,13 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 	}
 
 	string newExpression = "";
-	bool inQuotes = false;
+	inQuotes = false;
 
 	for (int i = 0; i < expression.size(); i++)
 	{
+		if (expression[i] == '\"')
+			inQuotes = !inQuotes;
+
 		if (isalpha(expression[i]))
 		{
 			string name = "";
@@ -263,12 +242,11 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 			while (i < expression.size() && (isalpha(expression[i]) || expression[i] == '.'))
 			{
 				name += expression[i];
-
 				i++;
 			}
 
 			//string varVal = GetVariableValue(name, variables, variableVals);
-			if (IsFunction(name))
+			if (IsFunction(name) && !inQuotes)
 			{
 				string argContents = "";
 				i++;
@@ -282,7 +260,7 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 				newExpression += returnVal;
 				//cout << newExpression << endl;
 			}
-			else if (split(name, '.')[0] == "CPP")
+			else if (split(name, '.')[0] == "CPP" && !inQuotes)
 			{
 				string argContents = "";
 				int y = indexInStr(expression, '(') + 1;
@@ -292,12 +270,17 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 
 					y++;
 				}
-				cout << split(expression, '(')[0] << " " << argContents << endl;
+				//cout << split(expression, '(')[0] << " " << argContents << endl;
 				string returnVal = CPPFunction(split(name, '(')[0], VarValues(split(argContents, ','), variables, variableVals));
-				return returnVal;
+				newExpression += returnVal;
 			}
 			else
-				newExpression += GetVariableValue(name, variables, variableVals);
+			{
+				if (inQuotes)
+					newExpression += name;
+				else
+					newExpression += GetVariableValue(name, variables, variableVals);
+			}
 
 			i--;
 		}
@@ -341,8 +324,8 @@ string EvalExpression(string expression, vector<string>& variables, vector<strin
 
 bool BooleanLogic(string valA, string determinant, string valB, vector<string>& variables, vector<string>& variableVals)
 {
-	string valARealValue = GetVariableValue(valA, variables, variableVals);
-	string valBRealValue = GetVariableValue(valB, variables, variableVals);
+	string valARealValue = EvalExpression(valA, variables, variableVals);
+	string valBRealValue = EvalExpression(valB, variables, variableVals);
 
 	if (determinant == "==")
 		return valARealValue == valBRealValue;
@@ -416,8 +399,14 @@ string ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& va
 	}
 
 	if (words[lineNum][0] == "return") {
-		//cout << StringRaw(EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variables, variableValues)) << endl;
+		//cout << StringRaw(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end()))) << endl;
 		return EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variables, variableValues);
+	}
+
+	if (split(words[lineNum][0], '.')[0] == "CPP")
+	{
+		string output = EvalExpression(unWrapVec(words[lineNum]), variables, variableValues);
+		return output;
 	}
 
 	// Iterate through all functions
@@ -487,16 +476,18 @@ string ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& va
 		}
 		whileContents = removeTabs(whileContents, 1);
 
-		vector<vector<string>> words;
+		vector<vector<string>> innerWords;
 		for (int i = 0; i < (int)whileContents.size(); i++)
-			words.push_back(split(whileContents[i], ' '));
+			innerWords.push_back(split(whileContents[i], ' '));
 
 		while (BooleanLogic(whileParameters[0], whileParameters[1], whileParameters[2], variables, variableValues))
 		{
 			//Iterate through all lines in while loop
 			for (int lineNum = 0; lineNum < (int)whileContents.size(); lineNum++)
 			{
-				ProcessLine(words, lineNum, variables, variableValues);
+				string returnVal = ProcessLine(innerWords, lineNum, variables, variableValues);
+				if (returnVal != "")
+					return returnVal;
 			}
 		}
 		return "";
@@ -511,33 +502,75 @@ string ProcessLine(vector<vector<string>> words, int lineNum, vector<string>& va
 			ifParameters.push_back(words[lineNum][w]);
 
 		int numOfBrackets = 1;
-		for (int p = lineNum + 2; p < (int)words.size(); p++)
+		lineNum += 2;
+		while (lineNum < (int)words.size())
 		{
-			numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
+			numOfBrackets += countInVector(words[lineNum], "{") - countInVector(words[lineNum], "}");
 			if (numOfBrackets == 0)
 				break;
 			ifContents.push_back("");
-			for (int w = 0; w < (int)words[p].size(); w++)
+			for (int w = 0; w < (int)words[lineNum].size(); w++)
 			{
-				ifContents[(int)ifContents.size() - 1] += words[p][w] + " ";
+				ifContents[(int)ifContents.size() - 1] += words[lineNum][w] + " ";
 			}
+			lineNum++;
 		}
 		ifContents = removeTabs(ifContents, 1);
 
-		vector<vector<string>> words;
+		vector<vector<string>> innerWords;
 		for (int i = 0; i < (int)ifContents.size(); i++)
-			words.push_back(split(ifContents[i], ' '));
+			innerWords.push_back(split(ifContents[i], ' '));
 
 		if (BooleanLogic(ifParameters[0], ifParameters[1], ifParameters[2], variables, variableValues))
 		{
-			//Iterate through all lines in while loop
-			for (int lineNum = 0; lineNum < (int)ifContents.size(); lineNum++)
+			//Iterate through all lines in if statement
+			for (int l = 0; l < (int)ifContents.size(); l++)
 			{
-				ProcessLine(words, lineNum, variables, variableValues);
+				string returnVal = ProcessLine(innerWords, l, variables, variableValues);
+				if (returnVal != "")
+					return returnVal;
 			}
 		}
+		else if (words.size() > lineNum + 1)
+			if (words[lineNum + 1][0] == "else")
+			{
+				lineNum += 1;
+
+				vector<string> elseContents;
+
+				int numOfBrackets = 1;
+				while (lineNum < (int)words.size())
+				{
+					numOfBrackets += countInVector(words[lineNum], "{") - countInVector(words[lineNum], "}");
+					if (numOfBrackets == 0)
+						break;
+					elseContents.push_back("");
+					for (int w = 0; w < (int)words[lineNum].size(); w++)
+					{
+						elseContents[(int)elseContents.size() - 1] += words[lineNum][w] + " ";
+					}
+					lineNum++;
+				}
+				elseContents = removeTabs(elseContents, 2);
+
+				vector<vector<string>> innerWords;
+				for (int i = 0; i < (int)elseContents.size(); i++)
+					words.push_back(split(elseContents[i], ' '));
+
+				//Iterate through all lines in else statement
+				for (int lineNum = 0; lineNum < (int)elseContents.size(); lineNum++)
+				{
+					ProcessLine(innerWords, lineNum, variables, variableValues);
+				}
+				return "";
+			}
 		return "";
 	}
+	//// Gathers else statement contents
+	//if (words[lineNum][0] == "else")
+	//{
+	//	
+	//}
 
 	return "";
 }
@@ -560,7 +593,7 @@ string ExecuteFunction(string functionName, vector<string> inputVarVals)
 	vector<string> variables;
 	vector<string> variableValues;
 	vector<string> functionNameParts = split(replace(functions[functionIndex], functionName + " ", ""), ',');
-	for (int i = 0; i < (int)functionNameParts.size(); i++)
+	for (int i = 0; i < (int)inputVarVals.size(); i++)
 	{
 		variables.push_back(trim(functionNameParts[i]));
 		variableValues.push_back(EvalExpression(inputVarVals[i], variables, variableValues));
@@ -576,7 +609,7 @@ string ExecuteFunction(string functionName, vector<string> inputVarVals)
 		string returnVal = "";
 		try
 		{
-			string returnVal = ProcessLine(words, lineNum, variables, variableValues);
+			returnVal = ProcessLine(words, lineNum, variables, variableValues);
 		}
 		catch (const std::exception&)
 		{
@@ -677,18 +710,5 @@ int main(int argc, char* argv[])
 	}
 	parseSlang(scriptString.str());
 
-	/*if (argc >= 2)
-	{
-		cout << argv[1];
-
-		Parser window1;
-		if (window1.Construct(128, 128, 2, 2))
-			window1.Start();
-		return 0;
-	}
-	else
-	{
-		return 1;
-	}*/
 	return 0;
 }
