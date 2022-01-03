@@ -79,7 +79,7 @@ string RMParenthesis(string str)
 	return withoutParenthesis;
 }
 
-string GetVariableValue(string varName, unordered_map<string, any>& variableVals)
+any GetVariableValue(string varName, unordered_map<string, any>& variableVals)
 {
 	auto iA = variableVals.find(varName);
 	if (iA != variableVals.end())
@@ -110,7 +110,7 @@ bool IsVar(string varName, unordered_map<string, any>& variableVals)
 	return false;
 }
 
-vector<string> VarValues(vector<string> varNames, unordered_map<string, any>& variableVals)
+vector<any> VarValues(vector<string> varNames, unordered_map<string, any>& variableVals)
 {
 	vector<any> realValues;
 
@@ -140,20 +140,20 @@ vector<string> VarValues(vector<string> varNames, unordered_map<string, any>& va
 	return realValues;
 }
 
-string IsFunction(string funcName)
+bool IsFunction(string funcName)
 {
 	auto iA = functionValues.find(funcName);
 	if (iA != functionValues.end())
 	{
-		return iA->first;
+		return true;
 	}
 	else
 	{
-		return "";
+		return false;
 	}
 }
 
-string EvalExpression(string expression, unordered_map<string, any>& variableVals)
+any EvalExpression(string expression, unordered_map<string, any>& variableVals)
 {
 	expression = trim(expression);
 	bool inQuotes = false;
@@ -174,8 +174,7 @@ string EvalExpression(string expression, unordered_map<string, any>& variableVal
 				y++;
 			}
 			//cout << split(expression, '(')[0] << "  " << argContents << endl;
-			string returnVal = ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableVals), funcIndex);
-			return returnVal;
+			return ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableVals), funcIndex);
 		}
 		else if (split(expression, '.')[0] == "CPP" && !inQuotes)
 		{
@@ -188,8 +187,7 @@ string EvalExpression(string expression, unordered_map<string, any>& variableVal
 				y++;
 			}
 			//cout << split(expression, '(')[0] << " " << unWrapVec(VarValues(split(argContents, ','), variables, variableVals)) << endl;
-			string returnVal = CPPFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableVals));
-			return returnVal;
+			return CPPFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableVals));
 		}
 		else
 			return GetVariableValue(expression, variableVals);
@@ -288,7 +286,7 @@ string EvalExpression(string expression, unordered_map<string, any>& variableVal
 		return Quoted(withoutParenthesis);
 	}
 	else
-		return to_string(evaluate(newExpression));
+		return stof(evaluate(newExpression));
 }
 
 bool BooleanLogic(string valA, string determinant, string valB, unordered_map<string, any>& variableVals)
@@ -319,13 +317,13 @@ int evalEqu(vector<string> str, unordered_map<string, any>& variableValues)
 		if (str[1] == "=")
 			variableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
 		else if (str[1] == "+=")
-			variableValues[str[0]] = EvalExpression(variableValues[str[0]] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			variableValues[str[0]] += EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
 		else if (str[1] == "-=")
-			variableValues[str[0]] = EvalExpression(variableValues[str[0]] + "-(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			variableValues[str[0]] -= EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
 		else if (str[1] == "*=")
-			variableValues[str[0]] = EvalExpression(variableValues[str[0]] + "*(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			variableValues[str[0]] *= EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
 		else if (str[1] == "/=")
-			variableValues[str[0]] = EvalExpression(variableValues[str[0]] + "/(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			variableValues[str[0]] /= EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
 
 		//cout << variables[v] << " is " << variableValues[v] << endl;
 		return 0;
@@ -335,13 +333,13 @@ int evalEqu(vector<string> str, unordered_map<string, any>& variableValues)
 		if (str[1] == "=")
 			globalVariableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
 		else if (str[1] == "+=")
-			globalVariableValues[str[0]] = EvalExpression(variableValues[str[0]] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			globalVariableValues[str[0]] += EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
 		else if (str[1] == "-=")
-			globalVariableValues[str[0]] = EvalExpression(variableValues[str[0]] + "-(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			globalVariableValues[str[0]] -= EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
 		else if (str[1] == "*=")
-			globalVariableValues[str[0]] = EvalExpression(variableValues[str[0]] + "*(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			globalVariableValues[str[0]] *= EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
 		else if (str[1] == "/=")
-			globalVariableValues[str[0]] = EvalExpression(variableValues[str[0]] + "/(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			globalVariableValues[str[0]] /= EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
 
 		//cout << variables[v] << " is " << variableValues[v] << endl;
 		return 0;
@@ -349,72 +347,54 @@ int evalEqu(vector<string> str, unordered_map<string, any>& variableValues)
 	return 1;
 }
 
-string ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string, any>& variableValues)
+any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string, any>& variableValues)
 {
 	if (words[lineNum][0][0] == '/' && words[lineNum][0][1] == '/')
-		return "";
+		return 0;
 
+	// If print statement (deprecated, now use CPP.System.Print() function)
 	if (words[lineNum][0] == "print")
 	{
-		cout << StringRaw(EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variables, variableValues)) << endl;
-		return "";
+		cout << StringRaw(EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variableValues)) << endl;
+		return 0;
 	}
 
-	if (words[lineNum][0] == "return") {
-		//cout << StringRaw(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end()))) << endl;
-		return EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variables, variableValues);
-	}
+	// Check if function return
+	if (words[lineNum][0] == "return")
+		return EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variableValues);
 
-	if (split(words[lineNum][0], '.')[0] == "CPP")
+	// Check if it is CPP Builtin function
+	if (words[lineNum][0][0] == 'C' && words[lineNum][0][1] == 'P' && words[lineNum][0][2] == 'P' && words[lineNum][0][3] == '.')
+		return EvalExpression(unWrapVec(words[lineNum]), variableValues);
+
+	// Check if it is function
+	auto iA = functionValues.find(split(functions[t], ' ')[0]);
+	if (iA != functionValues.end())
 	{
-		string output = EvalExpression(unWrapVec(words[lineNum]), variables, variableValues);
-		return output;
+		ExecuteFunction(split(functions[t], ' ')[0], VarValues(split(RMParenthesis(replace(unWrapVec(words[lineNum]), split(functions[t], ' ')[0], "")), ','), variableValues), t);
+		return 0;
 	}
-
-	// Iterate through all functions
-	for (int t = 0; t < (int)functions.size(); t++)
-	{
-		if (split(words[lineNum][0], '(')[0] == split(functions[t], ' ')[0])
-		{
-			ExecuteFunction(split(functions[t], ' ')[0], VarValues(split(RMParenthesis(replace(unWrapVec(words[lineNum]), split(functions[t], ' ')[0], "")), ','), variables, variableValues), t);
-			return "";
-		}
-	}
-
-	// First iterate through all types to see if line
-	// inits a variable then store it with it's value
+	
+	// Iterate through all types to see if line inits or
+	// re-inits a variable then store it with it's value
 	for (int t = 0; t < (int)types.size(); t++)
 	{
 		if (words[lineNum][0] == types[t])
 		{
-			//Checks if it is a re-init of an existing variable
-			for (int v = 0; v < (int)variables.size(); v++)
-			{
-				if (words[lineNum][1] == split(variables[v], ' ')[1])
-				{
-					evalEqu(vector<string>(words[lineNum].begin() + 1, words[lineNum].end()), variables, variableValues);
-
-					return "";
-				}
-			}
-
-			//Checks if it is variable
-			variables.push_back(words[lineNum][0] + " " + words[lineNum][1]);
-			variableValues.push_back(EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 3, words[lineNum].end())), variables, variableValues));
-			//cout << variables[(int)variables.size() - 1] << " is " << variableValues[(int)variableValues.size() - 1] << endl;
-			return "";
+			variableValues[words[lineNum][1]] = EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 3, words[lineNum].end())), variableValues);
+			return 0;
 		}
 	}
-	// Second, iterate all existing variable names
-	for (int v = 0; v < (int)variables.size(); v++)
+	
+	// Check existing variables
+	auto iB = variableValues.find(words[lineNum][0]);
+	if (iB != functionValues.end())
 	{
-		if (words[lineNum][0] == split(variables[v], ' ')[1])
-		{
-			evalEqu(vector<string>(words[lineNum].begin(), words[lineNum].end()), variables, variableValues);
-
-			return "";
-		}
+		// Evaluates what the sign (ex. '=', '+=') does to the value on the left by the value on the right
+		evalEqu(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
+		return 0;
 	}
+	
 	// Gathers while loop contents
 	if (words[lineNum][0] == "while")
 	{
@@ -442,17 +422,17 @@ string ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<stri
 		for (int i = 0; i < (int)whileContents.size(); i++)
 			innerWords.push_back(split(whileContents[i], ' '));
 
-		while (BooleanLogic(whileParameters[0], whileParameters[1], whileParameters[2], variables, variableValues))
+		while (BooleanLogic(whileParameters[0], whileParameters[1], whileParameters[2], variableValues))
 		{
 			//Iterate through all lines in while loop
 			for (int lineNum = 0; lineNum < (int)whileContents.size(); lineNum++)
 			{
-				string returnVal = ProcessLine(innerWords, lineNum, variables, variableValues);
-				if (returnVal != "")
+				string returnVal = ProcessLine(innerWords, lineNum, variableValues);
+				if (returnVal != 0)
 					return returnVal;
 			}
 		}
-		return "";
+		return 0;
 	}
 	// Gathers if statement contents
 	if (words[lineNum][0] == "if")
@@ -483,13 +463,13 @@ string ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<stri
 		for (int i = 0; i < (int)ifContents.size(); i++)
 			innerWords.push_back(split(ifContents[i], ' '));
 
-		if (BooleanLogic(ifParameters[0], ifParameters[1], ifParameters[2], variables, variableValues))
+		if (BooleanLogic(ifParameters[0], ifParameters[1], ifParameters[2], variableValues))
 		{
 			//Iterate through all lines in if statement
 			for (int l = 0; l < (int)ifContents.size(); l++)
 			{
-				string returnVal = ProcessLine(innerWords, l, variables, variableValues);
-				if (returnVal != "")
+				string returnVal = ProcessLine(innerWords, l, variableValues);
+				if (returnVal != 0)
 					return returnVal;
 			}
 		}
@@ -522,11 +502,11 @@ string ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<stri
 				//Iterate through all lines in else statement
 				for (int lineNum = 0; lineNum < (int)elseContents.size(); lineNum++)
 				{
-					ProcessLine(innerWords, lineNum, variables, variableValues);
+					ProcessLine(innerWords, lineNum, variableValues);
 				}
-				return "";
+				return 0;
 			}
-		return "";
+		return 0;
 	}
 	//// Gathers else statement contents
 	//if (words[lineNum][0] == "else")
@@ -534,7 +514,7 @@ string ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<stri
 	//	
 	//}
 
-	return "";
+	return 0;
 }
 
 string ExecuteFunction(string functionName, vector<string> inputVarVals, int functionIndex)
