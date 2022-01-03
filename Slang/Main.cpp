@@ -6,6 +6,7 @@
 #include <regex>
 #include <limits>
 #include <algorithm>
+#include <cstdlib>
 #include "eval.h"
 #include "strops.h"
 #include "builtin.h"
@@ -24,6 +25,14 @@ bool isNumber(const string& str)
 		if (isdigit(c) == 0 && c != '.') return false;
 	}
 	return true;
+}
+
+bool stob(string str) {
+    transform(str.begin(), str.end(), str.begin(), ::tolower);
+    istringstream is(str);
+    bool b;
+    is >> boolalpha >> b;
+    return b;
 }
 
 string StringRaw(string str)
@@ -174,7 +183,7 @@ any EvalExpression(string expression, unordered_map<string, any>& variableVals)
 				y++;
 			}
 			//cout << split(expression, '(')[0] << "  " << argContents << endl;
-			return ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableVals), funcIndex);
+			return ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableVals));
 		}
 		else if (split(expression, '.')[0] == "CPP" && !inQuotes)
 		{
@@ -223,7 +232,7 @@ any EvalExpression(string expression, unordered_map<string, any>& variableVals)
 
 					i++;
 				}
-				string returnVal = ExecuteFunction(name, VarValues(split(argContents, ','), variableVals), funcIndex);
+				string returnVal = ExecuteFunction(name, VarValues(split(argContents, ','), variableVals));
 				newExpression += returnVal;
 				//cout << newExpression << endl;
 			}
@@ -371,7 +380,7 @@ any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string,
 	auto iA = functionValues.find(split(functions[t], ' ')[0]);
 	if (iA != functionValues.end())
 	{
-		ExecuteFunction(split(functions[t], ' ')[0], VarValues(split(RMParenthesis(replace(unWrapVec(words[lineNum]), split(functions[t], ' ')[0], "")), ','), variableValues), t);
+		ExecuteFunction(split(functions[t], ' ')[0], VarValues(split(RMParenthesis(replace(unWrapVec(words[lineNum]), split(functions[t], ' ')[0], "")), ','), variableValues));
 		return 0;
 	}
 	
@@ -517,23 +526,13 @@ any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string,
 	return 0;
 }
 
-string ExecuteFunction(string functionName, vector<string> inputVarVals, int functionIndex)
+any ExecuteFunction(string functionName, vector<any> inputVarVals)
 {
 	//vector<string> inputVarVals = split(replace(inVals, " ", ""), ',');
 	vector<string> functionLines;
-	//Get index of function
-	if (functionIndex == -1)
-	{
-		for (int f = 0; f < (int)functions.size(); f++)
-			if (split(functions[f], ' ')[0] == functionName)
-			{
-				functionLines = functionValues[f];
-				functionIndex = f;
-				break;
-			}
-	}
-	else
-		functionLines = functionValues[functionIndex];
+	
+	// Get contents of function
+	functionLines = functionValues[functionName];
 
 	unordered_map<string, any> variableValues;
 	vector<string> functionNameParts = split(replace(functions[functionIndex], functionName + " ", ""), ',');
@@ -573,9 +572,7 @@ int parseSlang(string script)
 	vector<string> lines = split(script, '\n');
 	vector<vector<string>> words;
 	for (int i = 0; i < (int)lines.size(); i++)
-	{
 		words.push_back(split(lines[i], ' '));
-	}
 
 	// First go through entire script and iterate through all types to see if line is a variable
 	// or function declaration, then store it with it's value
@@ -613,37 +610,43 @@ int parseSlang(string script)
 						}
 					}
 					functionContents = removeTabs(functionContents, 1);
-					functions.push_back(functName);
-					functionValues.push_back(functionContents);
+					functionValues[functName] = functionContents;
 					//cout << functName << " is \n" << Vec2Str(functionContents) << endl << endl;
 				}
 				//Checks if it is variable
 				else
 				{
-					globalVariables.push_back(words[lineNum][0] + " " + words[lineNum][1]);
-					globalVariableValues.push_back((string)words[lineNum][3]);
+					if(words[lineNum][0] == "string")
+						globalVariableValues[words[lineNum][1]] = words[lineNum][3];
+					else if(words[lineNum][0] == "int")
+						globalVariableValues[words[lineNum][1]] = stoi(words[lineNum][3]);
+					else if(words[lineNum][0] == "float")
+						globalVariableValues[words[lineNum][1]] = stof(words[lineNum][3]);
+					else if(words[lineNum][0] == "bool")
+						globalVariableValues[words[lineNum][1]] = stob(words[lineNum][3]);
 					//cout << words[lineNum][1] << " is " << words[lineNum][3] << endl;
 				}
 			}
 
 	// Executes main, which is the starting function
-	ExecuteFunction("Main", vector<string> {"\"hi\"", "0"}, -1);
+	ExecuteFunction("Main", vector<any> {"hi", 0});
 
 	return 0;
 }
 
 int main(int argc, char* argv[])
 {
+	// Get builtin script contents
 	ifstream builtin("../Slang/builtin.slg");
 	stringstream builtinString;
 	builtinString << builtin.rdbuf();
 
+	// Gathers builtin functions and variables
 	GetBuiltins(builtinString.str());
-	functions = builtinFunctions;
 	functionValues = builtinFunctionValues;
-	globalVariables = builtinVars;
 	globalVariableValues = builtinVarVals;
 
+	// Get default script contents
 	ifstream script("../Slang/script.slg");
 	stringstream scriptString;
 	scriptString << script.rdbuf();
