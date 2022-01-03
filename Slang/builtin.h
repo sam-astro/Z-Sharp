@@ -10,6 +10,7 @@
 #include <boost/any.hpp>
 #include "strops.h"
 #include "graphics.h"
+#include "anyops.h"
 
 using namespace std;
 
@@ -89,28 +90,28 @@ int GetBuiltins(string script)
 }
 
 // Executes 
-any CPPFunction(string name, vector<string> args)
+any CPPFunction(string name, vector<any> args)
 {
 	if (name == "CPP.Math.Sin")
-		return sin(stof(args[0]));
+		return sin(AnyAsFloat(args[0]));
 	else if (name == "CPP.Math.Cos")
-		return cos(stof(args[0]));
+		return cos(AnyAsFloat(args[0]));
 	else if (name == "CPP.Math.Tan")
-		return tan(stof(args[0]));
+		return tan(AnyAsFloat(args[0]));
 	else if (name == "CPP.Math.Round")
-		return round(stof(args[0]));
+		return AnyAsInt(args[0]);
 	else if (name == "CPP.Graphics.Init")
 	{
 		cout << "\x1B[32mInit graphics\033[0m\t\t" << endl;
-		if (mainWindow.Construct(stoi(args[0]), stoi(args[1]), stoi(args[2]), stoi(args[2])))
+		if (mainWindow.Construct(AnyAsInt(args[0]), AnyAsInt(args[1]), AnyAsInt(args[2]), AnyAsInt(args[2])))
 			mainWindow.Start();
 	}
 	else if (name == "CPP.Graphics.SetPixel")
-		mainWindow.Draw(stoi(args[0]), stoi(args[1]), olc::Pixel(stoi(args[2]), stoi(args[3]), stoi(args[4])));
+		mainWindow.Draw(AnyAsInt(args[0]), AnyAsInt(args[1]), olc::Pixel(AnyAsInt(args[2]), AnyAsInt(args[3]), AnyAsInt(args[4])));
 	else if (name == "CPP.System.Print")
-		cout << stoi(args[0]);
+		cout << AnyAsString(args[0]);
 	else if (name == "CPP.System.PrintLine")
-		cout << stoi(args[0]) << endl;
+		cout << AnyAsString(args[0]) << endl;
 
 	return 0;
 }

@@ -7,17 +7,21 @@
 #include <limits>
 #include <algorithm>
 #include <cstdlib>
+#include <any>
+#include <unordered_map>
+
 #include "eval.h"
 #include "strops.h"
 #include "builtin.h"
 #include "main.h"
-#include <boost/any.hpp>
+#include "anyops.h"
 
 using namespace std;
 using namespace boost;
 
 unordered_map<string, any> globalVariableValues;
 unordered_map<string, vector<string>> functionValues;
+
 
 bool isNumber(const string& str)
 {
@@ -221,8 +225,8 @@ any EvalExpression(string expression, unordered_map<string, any>& variableVals)
 			}
 
 			//string varVal = GetVariableValue(name, variables, variableVals);
-			any funcPointer = IsFunction(name);
-			if (funcIndex != -1 && !inQuotes)
+			bool isFunc = IsFunction(name);
+			if (isFunc && !inQuotes)
 			{
 				string argContents = "";
 				i++;
@@ -232,7 +236,7 @@ any EvalExpression(string expression, unordered_map<string, any>& variableVals)
 
 					i++;
 				}
-				string returnVal = ExecuteFunction(name, VarValues(split(argContents, ','), variableVals));
+				string returnVal = AnyAsString(ExecuteFunction(name, VarValues(split(argContents, ','), variableVals)));
 				newExpression += returnVal;
 				//cout << newExpression << endl;
 			}
@@ -247,7 +251,7 @@ any EvalExpression(string expression, unordered_map<string, any>& variableVals)
 					y++;
 				}
 				//cout << split(expression, '(')[0] << " " << argContents << endl;
-				string returnVal = CPPFunction(split(name, '(')[0], VarValues(split(argContents, ',') variableVals));
+				string returnVal = AnyAsString(CPPFunction(split(name, '(')[0], VarValues(split(argContents, ','), variableVals)));
 				newExpression += returnVal;
 			}
 			else
@@ -255,7 +259,7 @@ any EvalExpression(string expression, unordered_map<string, any>& variableVals)
 				if (inQuotes)
 					newExpression += name;
 				else
-					newExpression += GetVariableValue(name, variableVals);
+					newExpression += AnyAsString(GetVariableValue(name, variableVals));
 			}
 
 			i--;
@@ -295,26 +299,26 @@ any EvalExpression(string expression, unordered_map<string, any>& variableVals)
 		return Quoted(withoutParenthesis);
 	}
 	else
-		return stof(evaluate(newExpression));
+		return evaluate(newExpression);
 }
 
 bool BooleanLogic(string valA, string determinant, string valB, unordered_map<string, any>& variableVals)
 {
-	string valARealValue = EvalExpression(valA, variableVals);
-	string valBRealValue = EvalExpression(valB, variableVals);
+	any valARealValue = EvalExpression(valA, variableVals);
+	any valBRealValue = EvalExpression(valB, variableVals);
 
 	if (determinant == "==")
-		return valARealValue == valBRealValue;
+		return AnyAsString(valARealValue) == AnyAsString(valBRealValue);
 	if (determinant == "!=")
-		return valARealValue != valBRealValue;
+		return AnyAsString(valARealValue) != AnyAsString(valBRealValue);
 	if (determinant == ">=")
-		return floatval(valARealValue) >= floatval(valBRealValue);
+		return AnyAsFloat(valARealValue) >= AnyAsFloat(valBRealValue);
 	if (determinant == "<=")
-		return floatval(valARealValue) <= floatval(valBRealValue);
+		return AnyAsFloat(valARealValue) <= AnyAsFloat(valBRealValue);
 	if (determinant == ">")
-		return floatval(valARealValue) > floatval(valBRealValue);
+		return AnyAsFloat(valARealValue) > AnyAsFloat(valBRealValue);
 	if (determinant == "<")
-		return floatval(valARealValue) < floatval(valBRealValue);
+		return AnyAsFloat(valARealValue) < AnyAsFloat(valBRealValue);
 
 	return false;
 }
@@ -326,13 +330,13 @@ int evalEqu(vector<string> str, unordered_map<string, any>& variableValues)
 		if (str[1] == "=")
 			variableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
 		else if (str[1] == "+=")
-			variableValues[str[0]] += EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			variableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
 		else if (str[1] == "-=")
-			variableValues[str[0]] -= EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
 		else if (str[1] == "*=")
-			variableValues[str[0]] *= EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
 		else if (str[1] == "/=")
-			variableValues[str[0]] /= EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
 
 		//cout << variables[v] << " is " << variableValues[v] << endl;
 		return 0;
@@ -342,13 +346,13 @@ int evalEqu(vector<string> str, unordered_map<string, any>& variableValues)
 		if (str[1] == "=")
 			globalVariableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
 		else if (str[1] == "+=")
-			globalVariableValues[str[0]] += EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			globalVariableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
 		else if (str[1] == "-=")
-			globalVariableValues[str[0]] -= EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
 		else if (str[1] == "*=")
-			globalVariableValues[str[0]] *= EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
 		else if (str[1] == "/=")
-			globalVariableValues[str[0]] /= EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
 
 		//cout << variables[v] << " is " << variableValues[v] << endl;
 		return 0;
@@ -359,13 +363,13 @@ int evalEqu(vector<string> str, unordered_map<string, any>& variableValues)
 any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string, any>& variableValues)
 {
 	if (words[lineNum][0][0] == '/' && words[lineNum][0][1] == '/')
-		return 0;
+		return "";
 
 	// If print statement (deprecated, now use CPP.System.Print() function)
 	if (words[lineNum][0] == "print")
 	{
-		cout << StringRaw(EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variableValues)) << endl;
-		return 0;
+		cout << AnyAsString(EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variableValues)) << endl;
+		return "";
 	}
 
 	// Check if function return
@@ -377,11 +381,11 @@ any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string,
 		return EvalExpression(unWrapVec(words[lineNum]), variableValues);
 
 	// Check if it is function
-	auto iA = functionValues.find(split(functions[t], ' ')[0]);
+	auto iA = functionValues.find(trim(split(words[lineNum][0], '(')[0]));
 	if (iA != functionValues.end())
 	{
-		ExecuteFunction(split(functions[t], ' ')[0], VarValues(split(RMParenthesis(replace(unWrapVec(words[lineNum]), split(functions[t], ' ')[0], "")), ','), variableValues));
-		return 0;
+		ExecuteFunction(trim(split(words[lineNum][0], '(')[0]), VarValues(split(RMParenthesis(replace(unWrapVec(words[lineNum]), trim(split(words[lineNum][0], '(')[0]), "")), ','), variableValues));
+		return "";
 	}
 	
 	// Iterate through all types to see if line inits or
@@ -391,17 +395,17 @@ any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string,
 		if (words[lineNum][0] == types[t])
 		{
 			variableValues[words[lineNum][1]] = EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 3, words[lineNum].end())), variableValues);
-			return 0;
+			return "";
 		}
 	}
 	
 	// Check existing variables
 	auto iB = variableValues.find(words[lineNum][0]);
-	if (iB != functionValues.end())
+	if (iB != variableValues.end())
 	{
 		// Evaluates what the sign (ex. '=', '+=') does to the value on the left by the value on the right
 		evalEqu(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
-		return 0;
+		return "";
 	}
 	
 	// Gathers while loop contents
@@ -436,12 +440,12 @@ any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string,
 			//Iterate through all lines in while loop
 			for (int lineNum = 0; lineNum < (int)whileContents.size(); lineNum++)
 			{
-				string returnVal = ProcessLine(innerWords, lineNum, variableValues);
-				if (returnVal != 0)
+				any returnVal = ProcessLine(innerWords, lineNum, variableValues);
+				if (AnyAsString(returnVal) != "")
 					return returnVal;
 			}
 		}
-		return 0;
+		return "";
 	}
 	// Gathers if statement contents
 	if (words[lineNum][0] == "if")
@@ -513,9 +517,9 @@ any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string,
 				{
 					ProcessLine(innerWords, lineNum, variableValues);
 				}
-				return 0;
+				return "";
 			}
-		return 0;
+		return "";
 	}
 	//// Gathers else statement contents
 	//if (words[lineNum][0] == "else")
@@ -523,7 +527,7 @@ any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string,
 	//	
 	//}
 
-	return 0;
+	return "";
 }
 
 any ExecuteFunction(string functionName, vector<any> inputVarVals)
@@ -535,11 +539,10 @@ any ExecuteFunction(string functionName, vector<any> inputVarVals)
 	functionLines = functionValues[functionName];
 
 	unordered_map<string, any> variableValues;
-	vector<string> functionNameParts = split(replace(functions[functionIndex], functionName + " ", ""), ',');
+	vector<string> functionNameParts = split(replace(functionValues[functionName], functionName + " ", ""), ',');
 	for (int i = 0; i < (int)inputVarVals.size(); i++)
 	{
-		variables.push_back(trim(functionNameParts[i]));
-		variableValues.push_back(EvalExpression(inputVarVals[i], variables, variableValues));
+		variableValues[trim(functionNameParts[i])] = EvalExpression(inputVarVals[i], variables, variableValues);
 		//cout << variables[(int)variables.size() - 1] << " is " << variableValues[(int)variableValues.size() - 1] << endl;
 	}
 	vector<vector<string>> words;
