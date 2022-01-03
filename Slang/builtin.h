@@ -15,10 +15,8 @@ using namespace std;
 
 vector<string> types = { "int", "float", "string", "bool", "void", "null" };
 
-vector<string> builtinFunctions;
-vector<vector<string>> builtinFunctionValues;
-vector<string> builtinVars;
-vector<string> builtinVarVals;
+unordered_map<string, vector<string>> builtinFunctionValues;
+unordered_map<string, any>& builtinVarVals;
 
 Parser mainWindow;
 
@@ -70,14 +68,19 @@ int GetBuiltins(string script)
 						}
 					}
 					functionContents = removeTabs(functionContents, 1);
-					builtinFunctions.push_back(functName);
-					builtinFunctionValues.push_back(functionContents);
+					builtinFunctionValues[functName] = functionContents;
 				}
 				//Checks if it is variable
 				else
 				{
-					builtinVars.push_back(words[lineNum][0] + " " + words[lineNum][1]);
-					builtinVarVals.push_back((string)words[lineNum][3]);
+					if(words[lineNum][0] == "string")
+						builtinVarVals[words[lineNum][1]] = words[lineNum][3];
+					else if(words[lineNum][0] == "int")
+						builtinVarVals[words[lineNum][1]] = stoi(words[lineNum][3]);
+					else if(words[lineNum][0] == "float")
+						builtinVarVals[words[lineNum][1]] = stof(words[lineNum][3]);
+					else if(words[lineNum][0] == "bool")
+						builtinVarVals[words[lineNum][1]] = stob(words[lineNum][3]);
 					//cout << words[lineNum][1] << " is " << words[lineNum][3] << endl;
 				}
 			}
