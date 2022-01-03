@@ -7,6 +7,7 @@
 #include <regex>
 #include <limits>
 #include <algorithm>
+#include <boost/any.hpp>
 #include "strops.h"
 #include "graphics.h"
 
@@ -21,6 +22,7 @@ vector<string> builtinVarVals;
 
 Parser mainWindow;
 
+// Initial script processing, which loads variables and functions from builtin
 int GetBuiltins(string script)
 {
 	script = replace(script, "    ", "\t");
@@ -83,16 +85,17 @@ int GetBuiltins(string script)
 	return 0;
 }
 
-string CPPFunction(string name, vector<string> args)
+// Executes 
+any CPPFunction(string name, vector<string> args)
 {
 	if (name == "CPP.Math.Sin")
-		return to_string(sin(stof(args[0])));
+		return sin(stof(args[0]));
 	else if (name == "CPP.Math.Cos")
-		return to_string(cos(stof(args[0])));
+		return cos(stof(args[0]));
 	else if (name == "CPP.Math.Tan")
-		return to_string(tan(stof(args[0])));
+		return tan(stof(args[0]));
 	else if (name == "CPP.Math.Round")
-		return to_string(round(stof(args[0])));
+		return round(stof(args[0]));
 	else if (name == "CPP.Graphics.Init")
 	{
 		cout << "\x1B[32mInit graphics\033[0m\t\t" << endl;
@@ -101,8 +104,12 @@ string CPPFunction(string name, vector<string> args)
 	}
 	else if (name == "CPP.Graphics.SetPixel")
 		mainWindow.Draw(stoi(args[0]), stoi(args[1]), olc::Pixel(stoi(args[2]), stoi(args[3]), stoi(args[4])));
+	else if (name == "CPP.System.Print")
+		cout << stoi(args[0]);
+	else if (name == "CPP.System.PrintLine")
+		cout << stoi(args[0]) << endl;
 
-	return "";
+	return 0;
 }
 
 #endif
