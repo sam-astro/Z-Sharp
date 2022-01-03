@@ -38,8 +38,7 @@ string StringRaw(string str)
 	if (str[0] != '\"')
 		withoutQuotes += str[0];
 
-	for (int ch = 1; ch < (int)str.size() - 1; ch++)
-		withoutQuotes += str[ch];
+	withoutQuotes += str.substr(1, str.size()-2);
 
 	if (str[str.size() - 1] != '\"')
 		withoutQuotes += str[str.size() - 1];
@@ -72,8 +71,7 @@ string RMParenthesis(string str)
 	if (str[0] != '(')
 		withoutParenthesis += str[0];
 
-	for (int ch = 1; ch < (int)str.size() - 1; ch++)
-		withoutParenthesis += str[ch];
+	withoutParenthesis += str.substr(1, str.size()-2);
 
 	if (str[str.size() - 1] != ')')
 		withoutParenthesis += str[str.size() - 1];
