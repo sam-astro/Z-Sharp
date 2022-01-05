@@ -115,12 +115,10 @@ any GetVariableValue(const string varName, const unordered_map<string, any>& var
 
 bool IsVar(const string varName, const unordered_map<string, any>& variableVals)
 {
-	auto iA = variableVals.find(varName);
-	if (iA != variableVals.end())
-	{
+	if (variableVals.find(varName) != variableVals.end())
 		return true;
-	}
-	return false;
+	else
+		return false;
 }
 
 vector<any> VarValues(const vector<string> varNames, const unordered_map<string, any>& variableVals)
@@ -155,15 +153,10 @@ vector<any> VarValues(const vector<string> varNames, const unordered_map<string,
 
 bool IsFunction(const string funcName)
 {
-	auto iA = functionValues.find(funcName);
-	if (iA != functionValues.end())
-	{
+	if (functionValues.find(funcName) != functionValues.end())
 		return true;
-	}
 	else
-	{
 		return false;
-	}
 }
 
 any EvalExpression(const string ex, const unordered_map<string, any>& variableVals)
@@ -366,23 +359,22 @@ any ProcessLine(const vector<vector<string>>& words, const int lineNum, unordere
 		return;
 
 	// If print statement (deprecated, now use CPP.System.Print() function)
-	if (words[lineNum][0] == "print")
+	else if (words[lineNum][0] == "print")
 	{
 		cout << AnyAsString(EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variableValues)) << endl;
 		return;
 	}
 
 	// Check if function return
-	if (words[lineNum][0] == "return")
+	else if (words[lineNum][0] == "return")
 		return EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variableValues);
 
 	// Check if it is CPP Builtin function
-	if (words[lineNum][0][0] == 'C' && words[lineNum][0][1] == 'P' && words[lineNum][0][2] == 'P' && words[lineNum][0][3] == '.')
+	else if (words[lineNum][0][0] == 'C' && words[lineNum][0][1] == 'P' && words[lineNum][0][2] == 'P' && words[lineNum][0][3] == '.')
 		return EvalExpression(unWrapVec(words[lineNum]), variableValues);
 
 	// Check if it is function
-	auto iA = functionValues.find(trim(split(words[lineNum][0], '(')[0]));
-	if (iA != functionValues.end())
+	else if (IsFunction(trim(split(words[lineNum][0], '(')[0])))
 	{
 		ExecuteFunction(trim(split(words[lineNum][0], '(')[0]), VarValues(split(RMParenthesis(replace(unWrapVec(words[lineNum]), trim(split(words[lineNum][0], '(')[0]), "")), ','), variableValues));
 		return;
@@ -390,26 +382,23 @@ any ProcessLine(const vector<vector<string>>& words, const int lineNum, unordere
 	
 	// Iterate through all types to see if line inits or
 	// re-inits a variable then store it with it's value
-	for (int t = 0; t < (int)types.size(); t++)
+	else if (countInVector(types, words[lineNum][0]) > 0)
 	{
-		if (words[lineNum][0] == types[t])
-		{
-			variableValues[words[lineNum][1]] = EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 3, words[lineNum].end())), variableValues);
-			return;
-		}
+		variableValues[words[lineNum][1]] = EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 3, words[lineNum].end())), variableValues);
+		return;
 	}
 	
-	// Check existing variables
-	auto iB = variableValues.find(words[lineNum][0]);
-	if (iB != variableValues.end())
+	// Check existing variables: If matches, then it means
+	// the variables value is getting changed with an operator
+	else if (IsVar(words[lineNum][0], variableValues))
 	{
-		// Evaluates what the sign (ex. '=', '+=') does to the value on the left by the value on the right
+		// Evaluates what the operator (ex. '=', '+=') does to the value on the left by the value on the right
 		evalEqu(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
 		return;
 	}
 	
 	// Gathers while loop contents
-	if (words[lineNum][0] == "while")
+	else if (words[lineNum][0] == "while")
 	{
 		vector<string> whileContents;
 		vector<string> whileParameters;
@@ -447,8 +436,9 @@ any ProcessLine(const vector<vector<string>>& words, const int lineNum, unordere
 		}
 		return;
 	}
+	
 	// Gathers if statement contents
-	if (words[lineNum][0] == "if")
+	else if (words[lineNum][0] == "if")
 	{
 		vector<string> ifContents;
 		vector<string> ifParameters;
