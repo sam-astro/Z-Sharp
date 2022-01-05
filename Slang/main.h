@@ -4,6 +4,6 @@
 
 using namespace std;
 
-any ExecuteFunction(string functionName, vector<string> inputVarVals, int functionIndex);
+any ExecuteFunction(const string functionName, const vector<any> inputVarVals)
 
 #endif
