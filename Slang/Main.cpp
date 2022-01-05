@@ -20,7 +20,7 @@ using namespace std;
 using namespace boost;
 
 unordered_map<string, any> globalVariableValues;
-unordered_map<string, vector<string>> functionValues;
+unordered_map<string, vector<vector<string>>> functionValues;
 
 
 bool isNumber(const string& str)
@@ -31,7 +31,7 @@ bool isNumber(const string& str)
 	return true;
 }
 
-bool stob(string str) {
+bool stob(const string str) {
     transform(str.begin(), str.end(), str.begin(), ::tolower);
     istringstream is(str);
     bool b;
@@ -39,9 +39,9 @@ bool stob(string str) {
     return b;
 }
 
-string StringRaw(string str)
+string StringRaw(const string s)
 {
-	str = trim(str);
+	string str = trim(s);
 
 	if (str.size() < 3)
 		return str;
@@ -59,9 +59,9 @@ string StringRaw(string str)
 	return withoutQuotes;
 }
 
-string Quoted(string str)
+string Quoted(const string s)
 {
-	str = trim(str);
+	string str = trim(s);
 
 	string withQuotes;
 
@@ -76,9 +76,9 @@ string Quoted(string str)
 	return withQuotes;
 }
 
-string RMParenthesis(string str)
+string RMParenthesis(const string s)
 {
-	str = trim(str);
+	string str = trim(s);
 	string withoutParenthesis;
 
 	if (str[0] != '(')
@@ -92,7 +92,7 @@ string RMParenthesis(string str)
 	return withoutParenthesis;
 }
 
-any GetVariableValue(string varName, unordered_map<string, any>& variableVals)
+any GetVariableValue(const string varName, const unordered_map<string, any>& variableVals)
 {
 	auto iA = variableVals.find(varName);
 	if (iA != variableVals.end())
@@ -113,7 +113,7 @@ any GetVariableValue(string varName, unordered_map<string, any>& variableVals)
 	}
 }
 
-bool IsVar(string varName, unordered_map<string, any>& variableVals)
+bool IsVar(const string varName, const unordered_map<string, any>& variableVals)
 {
 	auto iA = variableVals.find(varName);
 	if (iA != variableVals.end())
@@ -123,7 +123,7 @@ bool IsVar(string varName, unordered_map<string, any>& variableVals)
 	return false;
 }
 
-vector<any> VarValues(vector<string> varNames, unordered_map<string, any>& variableVals)
+vector<any> VarValues(const vector<string> varNames, const unordered_map<string, any>& variableVals)
 {
 	vector<any> realValues;
 
@@ -153,7 +153,7 @@ vector<any> VarValues(vector<string> varNames, unordered_map<string, any>& varia
 	return realValues;
 }
 
-bool IsFunction(string funcName)
+bool IsFunction(const string funcName)
 {
 	auto iA = functionValues.find(funcName);
 	if (iA != functionValues.end())
@@ -166,9 +166,9 @@ bool IsFunction(string funcName)
 	}
 }
 
-any EvalExpression(string expression, unordered_map<string, any>& variableVals)
+any EvalExpression(const string ex, const unordered_map<string, any>& variableVals)
 {
-	expression = trim(expression);
+	string expression = trim(ex);
 	bool inQuotes = false;
 
 	// If no operations are applied, then return self
@@ -302,7 +302,7 @@ any EvalExpression(string expression, unordered_map<string, any>& variableVals)
 		return evaluate(newExpression);
 }
 
-bool BooleanLogic(string valA, string determinant, string valB, unordered_map<string, any>& variableVals)
+bool BooleanLogic(const string valA, const string determinant, const string valB, const unordered_map<string, any>& variableVals)
 {
 	any valARealValue = EvalExpression(valA, variableVals);
 	any valBRealValue = EvalExpression(valB, variableVals);
@@ -323,7 +323,7 @@ bool BooleanLogic(string valA, string determinant, string valB, unordered_map<st
 	return false;
 }
 
-int evalEqu(vector<string> str, unordered_map<string, any>& variableValues)
+int evalEqu(const vector<string> str, unordered_map<string, any>& variableValues)
 {
 	if (IsVar(str[0], variableValues))
 	{
@@ -360,16 +360,16 @@ int evalEqu(vector<string> str, unordered_map<string, any>& variableValues)
 	return 1;
 }
 
-any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string, any>& variableValues)
+any ProcessLine(const vector<vector<string>>& words, const int lineNum, unordered_map<string, any>& variableValues)
 {
 	if (words[lineNum][0][0] == '/' && words[lineNum][0][1] == '/')
-		return "";
+		return;
 
 	// If print statement (deprecated, now use CPP.System.Print() function)
 	if (words[lineNum][0] == "print")
 	{
 		cout << AnyAsString(EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variableValues)) << endl;
-		return "";
+		return;
 	}
 
 	// Check if function return
@@ -385,7 +385,7 @@ any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string,
 	if (iA != functionValues.end())
 	{
 		ExecuteFunction(trim(split(words[lineNum][0], '(')[0]), VarValues(split(RMParenthesis(replace(unWrapVec(words[lineNum]), trim(split(words[lineNum][0], '(')[0]), "")), ','), variableValues));
-		return "";
+		return;
 	}
 	
 	// Iterate through all types to see if line inits or
@@ -395,7 +395,7 @@ any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string,
 		if (words[lineNum][0] == types[t])
 		{
 			variableValues[words[lineNum][1]] = EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 3, words[lineNum].end())), variableValues);
-			return "";
+			return;
 		}
 	}
 	
@@ -405,7 +405,7 @@ any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string,
 	{
 		// Evaluates what the sign (ex. '=', '+=') does to the value on the left by the value on the right
 		evalEqu(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
-		return "";
+		return;
 	}
 	
 	// Gathers while loop contents
@@ -445,7 +445,7 @@ any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string,
 					return returnVal;
 			}
 		}
-		return "";
+		return;
 	}
 	// Gathers if statement contents
 	if (words[lineNum][0] == "if")
@@ -517,9 +517,9 @@ any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string,
 				{
 					ProcessLine(innerWords, lineNum, variableValues);
 				}
-				return "";
+				return;
 			}
-		return "";
+		return;
 	}
 	//// Gathers else statement contents
 	//if (words[lineNum][0] == "else")
@@ -527,32 +527,25 @@ any ProcessLine(vector<vector<string>> words, int lineNum, unordered_map<string,
 	//	
 	//}
 
-	return "";
+	return;
 }
 
-any ExecuteFunction(string functionName, vector<any> inputVarVals)
+any ExecuteFunction(const string functionName, const vector<any> inputVarVals)
 {
-	//vector<string> inputVarVals = split(replace(inVals, " ", ""), ',');
-	vector<string> functionLines;
-	
 	// Get contents of function
-	functionLines = functionValues[functionName];
+	vector<vector<string>> words = functionValues[functionName];
 
 	unordered_map<string, any> variableValues;
-	vector<string> functionNameParts = split(replace(functionValues[functionName], functionName + " ", ""), ',');
+	vector<string> args = split(replace(functionValues[functionName][0][0], ',');
 	for (int i = 0; i < (int)inputVarVals.size(); i++)
 	{
-		variableValues[trim(functionNameParts[i])] = EvalExpression(inputVarVals[i], variables, variableValues);
-		//cout << variables[(int)variables.size() - 1] << " is " << variableValues[(int)variableValues.size() - 1] << endl;
+		variableValues[trim(args[i])] = EvalExpression(inputVarVals[i], variables, variableValues);
 	}
-	vector<vector<string>> words;
-	for (int i = 0; i < (int)functionLines.size(); i++)
-		words.push_back(split(functionLines[i], ' '));
 
 	//Iterate through all lines in function
-	for (int lineNum = 0; lineNum < (int)functionLines.size(); lineNum++)
+	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
 	{
-		string returnVal = "";
+		any returnVal = 0;
 		try
 		{
 			returnVal = ProcessLine(words, lineNum, variables, variableValues);
@@ -562,10 +555,10 @@ any ExecuteFunction(string functionName, vector<any> inputVarVals)
 			cout << "\x1B[31mERROR: \'" << unWrapVec(words[lineNum]) << "\'\nIn function: " << functionName << "\nLine: " << lineNum << "\033[0m\t\t" << endl;
 			exit(1);
 		}
-		if (returnVal != "")
+		if (!returnVal.empty())
 			return returnVal;
 	}
-	return "";
+	return;
 }
 
 int parseSlang(string script)
@@ -586,33 +579,33 @@ int parseSlang(string script)
 				//Checks if it is function
 				if (words[lineNum][(int)words[lineNum].size() - 1][(int)words[lineNum][(int)words[lineNum].size() - 1].size() - 1] == ')')
 				{
-					vector<string> functionContents;
+					vector<vector<string>> functionContents;
 
-					string functName;
+					string functName = split(words[lineNum][1], "(")[0];
+					
+					string args = "";
 					for (int w = 1; w < (int)words[lineNum].size(); w++) {
 						if (w < (int)words[lineNum].size() - 1)
 						{
-							functName += replace(replace(words[lineNum][w], "(", " "), ")", "") + " ";
+							args += replace(replace(words[lineNum][w], "(", " "), ")", "") + ",";
 						}
 						else
 						{
-							functName += replace(replace(words[lineNum][w], "(", " "), ")", "");
+							args += replace(replace(words[lineNum][w], "(", " "), ")", "");
 						}
 					}
+					
+					args = replace(args, functName + ",", "");
+					functionContents.push_back(vector<string>{args});
 
 					int numOfBrackets = 1;
-					for (int p = lineNum + 2; p < (int)words.size(); p++)
+					for (int p = lineNum + 3; p < (int)words.size(); p++)
 					{
 						numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
 						if (numOfBrackets == 0)
 							break;
-						functionContents.push_back("");
-						for (int w = 0; w < (int)words[p].size(); w++)
-						{
-							functionContents[(int)functionContents.size() - 1] += words[p][w] + " ";
-						}
+						functionContents.push_back(removeTabs(words[p], 1));
 					}
-					functionContents = removeTabs(functionContents, 1);
 					functionValues[functName] = functionContents;
 					//cout << functName << " is \n" << Vec2Str(functionContents) << endl << endl;
 				}
