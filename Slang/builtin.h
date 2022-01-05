@@ -112,6 +112,8 @@ any CPPFunction(string name, vector<any> args)
 		cout << AnyAsString(args[0]);
 	else if (name == "CPP.System.PrintLine")
 		cout << AnyAsString(args[0]) << endl;
+	else
+		LogWarning("CPP function \'" + name + "\' does not exist.")
 
 	return 0;
 }
