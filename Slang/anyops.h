@@ -11,25 +11,25 @@ bool AnyAsBool(any val)
 	{
 		return any_cast<bool>(val);
 	}
-	catch (const std::exception&)
+	catch (boost::bad_any_cast &e)
 	{
 		try // Try converting to string
 		{
 			return any_cast<string>(val) == "true";
 		}
-		catch (const std::exception&)
+		catch (boost::bad_any_cast &e)
 		{
 			try // Try converting to float
 			{
 				return any_cast<float>(val) == 1.0f;
 			}
-			catch (const std::exception&) // Try converting to int
+			catch (boost::bad_any_cast &e) // Try converting to int
 			{
 				try
 				{
 					return any_cast<int>(val) == 1;
 				}
-				catch (const std::exception&) // Does not convert, return
+				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
 					return false;
 				}
@@ -46,19 +46,19 @@ string AnyAsString(any val)
 	{
 		return any_cast<string>(val);
 	}
-	catch (const std::exception&)
+	catch (boost::bad_any_cast &e)
 	{
 		try // Try converting to int
 		{
 			return to_string(any_cast<int>(val));
 		}
-		catch (const std::exception&)
+		catch (boost::bad_any_cast &e)
 		{
 			try // Try converting to float
 			{
 				return to_string(any_cast<float>(val));
 			}
-			catch (const std::exception&) // Try converting to bool
+			catch (boost::bad_any_cast &e) // Try converting to bool
 			{
 				try
 				{
@@ -66,7 +66,7 @@ string AnyAsString(any val)
 					if (any_cast<bool>(val) == true) i = "true";
 					return i;
 				}
-				catch (const std::exception&) // Does not convert, return
+				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
 					return "";
 				}
@@ -83,19 +83,19 @@ float AnyAsFloat(any val)
 	{
 		return any_cast<float>(val);
 	}
-	catch (const std::exception&)
+	catch (boost::bad_any_cast &e)
 	{
 		try // Try converting to int
 		{
 			return (float)any_cast<int>(val);
 		}
-		catch (const std::exception&)
+		catch (boost::bad_any_cast &e)
 		{
 			try // Try converting to string, then converting it to float
 			{
 				return stof(any_cast<string>(val));
 			}
-			catch (const std::exception&) // Try converting to bool
+			catch (boost::bad_any_cast &e) // Try converting to bool
 			{
 				try
 				{
@@ -103,7 +103,7 @@ float AnyAsFloat(any val)
 					if (any_cast<bool>(val) == true) i = 1;
 					return i;
 				}
-				catch (const std::exception&) // Does not convert, return
+				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
 					return 0;
 				}
@@ -120,19 +120,19 @@ int AnyAsInt(any val)
 	{
 		return any_cast<int>(val);
 	}
-	catch (const std::exception&)
+	catch (boost::bad_any_cast &e)
 	{
 		try // Try converting to float
 		{
 			return (int)any_cast<float>(val);
 		}
-		catch (const std::exception&)
+		catch (boost::bad_any_cast &e)
 		{
 			try // Try converting to string, then converting it to int
 			{
 				return stoi(any_cast<string>(val));
 			}
-			catch (const std::exception&) // Try converting to bool
+			catch (boost::bad_any_cast &e) // Try converting to bool
 			{
 				try
 				{
@@ -140,7 +140,7 @@ int AnyAsInt(any val)
 					if (any_cast<bool>(val) == true) i = 1;
 					return i;
 				}
-				catch (const std::exception&) // Does not convert, return
+				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
 					return 0;
 				}
@@ -159,28 +159,28 @@ int any_type(any val)
 		int i = any_cast<int>(val);
 		return 0;
 	}
-	catch (const std::exception&)
+	catch (boost::bad_any_cast &e)
 	{
 		try // Try converting to float
 		{
 			float f = any_cast<float>(val);
 			return 1;
 		}
-		catch (const std::exception&)
+		catch (boost::bad_any_cast &e)
 		{
 			try // Try converting to bool
 			{
 				bool b = any_cast<bool>(val);
 				return 2;
 			}
-			catch (const std::exception&) // Try converting to string
+			catch (boost::bad_any_cast &e) // Try converting to string
 			{
 				try
 				{
 					string s = any_cast<string>(val);
 					return 3;
 				}
-				catch (const std::exception&) // Does not convert, return
+				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
 					return -1;
 				}
