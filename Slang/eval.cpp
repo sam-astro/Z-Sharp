@@ -9,7 +9,7 @@
 #include "strops.h"
 using namespace std;
 
-float precedence(char op) {
+float precedence(const char& op) {
 	if (op == '+' || op == '-')
 		return 1;
 	if (op == '*' || op == '/')
@@ -19,20 +19,22 @@ float precedence(char op) {
 	return 0;
 }
 
-float applyOp(float a, float b, char op) {
+float applyOp(const float& a, const float& b, const char& op) {
 	switch (op) {
 	case '+': return a + b;
 	case '-': return a - b;
 	case '*': return a * b;
 	case '/': return a / b;
 	case '^': return pow(a, b);
+	default: LogWarning("operator \'" << op << "\' does not exist");
 	}
+	return 0;
 }
 
 // Function that returns value of
 // expression after evaluation.
-float evaluate(string tokens) {
-	tokens = replace(tokens, " ", "");
+float evaluate(const string& t) {
+	tokens = replace(t, " ", "");
 
 	float i;
 
