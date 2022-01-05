@@ -5,7 +5,7 @@
 using namespace boost;
 
 // Will convert type 'any' val to a bool
-bool AnyAsBool(any val)
+bool AnyAsBool(const any& val)
 {
 	try // Try converting to bool
 	{
@@ -40,7 +40,7 @@ bool AnyAsBool(any val)
 }
 
 // Will convert type 'any' val to a string
-string AnyAsString(any val)
+string AnyAsString(const any& val)
 {
 	try // Try converting to string
 	{
@@ -77,7 +77,7 @@ string AnyAsString(any val)
 }
 
 // Will convert type 'any' val to a float
-float AnyAsFloat(any val)
+float AnyAsFloat(const any& val)
 {
 	try // Try converting to float
 	{
@@ -114,7 +114,7 @@ float AnyAsFloat(any val)
 }
 
 // Will convert type 'any' val to an integer
-int AnyAsInt(any val)
+int AnyAsInt(const any& val)
 {
 	try // Try converting to int
 	{
@@ -152,7 +152,7 @@ int AnyAsInt(any val)
 
 // Gets type of 'any' val
 // 0 -> int;  1 -> float;  2 -> bool;  3 -> string;
-int any_type(any val)
+int any_type(const any& val)
 {
 	try // Try converting to int
 	{
