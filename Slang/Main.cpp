@@ -573,56 +573,60 @@ int parseSlang(string script)
 	// First go through entire script and iterate through all types to see if line is a variable
 	// or function declaration, then store it with it's value
 	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
-		for (int t = 0; t < (int)types.size(); t++)
-			if (words[lineNum][0] == types[t])
-			{
-				//Checks if it is function
-				if (words[lineNum][(int)words[lineNum].size() - 1][(int)words[lineNum][(int)words[lineNum].size() - 1].size() - 1] == ')')
+	{
+		//Checks if it is function
+		if (words[lineNum][0] == "func")
+		{
+			vector<vector<string>> functionContents;
+
+			string functName = split(words[lineNum][1], "(")[0];
+			
+			string args = "";
+			for (int w = 1; w < (int)words[lineNum].size(); w++) {
+				if (w < (int)words[lineNum].size() - 1)
 				{
-					vector<vector<string>> functionContents;
-
-					string functName = split(words[lineNum][1], "(")[0];
-					
-					string args = "";
-					for (int w = 1; w < (int)words[lineNum].size(); w++) {
-						if (w < (int)words[lineNum].size() - 1)
-						{
-							args += replace(replace(words[lineNum][w], "(", " "), ")", "") + ",";
-						}
-						else
-						{
-							args += replace(replace(words[lineNum][w], "(", " "), ")", "");
-						}
-					}
-					
-					args = replace(args, functName + ",", "");
-					functionContents.push_back(vector<string>{args});
-
-					int numOfBrackets = 1;
-					for (int p = lineNum + 3; p < (int)words.size(); p++)
-					{
-						numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
-						if (numOfBrackets == 0)
-							break;
-						functionContents.push_back(removeTabs(words[p], 1));
-					}
-					functionValues[functName] = functionContents;
-					//cout << functName << " is \n" << Vec2Str(functionContents) << endl << endl;
+					args += replace(replace(words[lineNum][w], "(", " "), ")", "") + ",";
 				}
-				//Checks if it is variable
 				else
 				{
-					if(words[lineNum][0] == "string")
-						globalVariableValues[words[lineNum][1]] = words[lineNum][3];
-					else if(words[lineNum][0] == "int")
-						globalVariableValues[words[lineNum][1]] = stoi(words[lineNum][3]);
-					else if(words[lineNum][0] == "float")
-						globalVariableValues[words[lineNum][1]] = stof(words[lineNum][3]);
-					else if(words[lineNum][0] == "bool")
-						globalVariableValues[words[lineNum][1]] = stob(words[lineNum][3]);
-					//cout << words[lineNum][1] << " is " << words[lineNum][3] << endl;
+					args += replace(replace(words[lineNum][w], "(", " "), ")", "");
 				}
 			}
+			
+			args = replace(args, functName + ",", "");
+			functionContents.push_back(vector<string>{args});
+
+			int numOfBrackets = 1;
+			for (int p = lineNum + 3; p < (int)words.size(); p++)
+			{
+				numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
+				if (numOfBrackets == 0)
+					break;
+				functionContents.push_back(removeTabs(words[p], 1));
+			}
+			functionValues[functName] = functionContents;
+			//cout << functName << " is \n" << Vec2Str(functionContents) << endl << endl;
+		}
+		else
+			for (int t = 0; t < (int)types.size(); t++)
+				if (words[lineNum][0] == types[t])
+				{
+					
+					//Checks if it is variable
+					else
+					{
+						if(words[lineNum][0] == "string")
+							globalVariableValues[words[lineNum][1]] = words[lineNum][3];
+						else if(words[lineNum][0] == "int")
+							globalVariableValues[words[lineNum][1]] = stoi(words[lineNum][3]);
+						else if(words[lineNum][0] == "float")
+							globalVariableValues[words[lineNum][1]] = stof(words[lineNum][3]);
+						else if(words[lineNum][0] == "bool")
+							globalVariableValues[words[lineNum][1]] = stob(words[lineNum][3]);
+						//cout << words[lineNum][1] << " is " << words[lineNum][3] << endl;
+					}
+				}
+	}
 
 	// Executes main, which is the starting function
 	ExecuteFunction("Main", vector<any> {"hi", 0});
