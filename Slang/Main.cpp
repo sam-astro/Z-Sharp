@@ -331,7 +331,7 @@ bool BooleanLogic(const string& valA, const string& determinant, const string& v
 	return false;
 }
 
-int evalEqu(const vector<string>& str, unordered_map<string, any>& variableValues)
+int varOperation(const vector<string>& str, unordered_map<string, any>& variableValues)
 {
 	if (IsVar(str[0], variableValues))
 	{
@@ -418,7 +418,7 @@ any ProcessLine(const vector<vector<string>>& words, const int lineNum, unordere
 	else if (IsVar(words[lineNum][0], variableValues))
 	{
 		// Evaluates what the operator (ex. '=', '+=') does to the value on the left by the value on the right
-		evalEqu(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
+		varOperation(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
 		return;
 	}
 	
