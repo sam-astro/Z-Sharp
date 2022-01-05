@@ -309,19 +309,25 @@ bool BooleanLogic(const string& valA, const string& determinant, const string& v
 	any valARealValue = EvalExpression(valA, variableVals);
 	any valBRealValue = EvalExpression(valB, variableVals);
 
-	if (determinant == "==")
-		return AnyAsString(valARealValue) == AnyAsString(valBRealValue);
-	if (determinant == "!=")
-		return AnyAsString(valARealValue) != AnyAsString(valBRealValue);
-	if (determinant == ">=")
-		return AnyAsFloat(valARealValue) >= AnyAsFloat(valBRealValue);
-	if (determinant == "<=")
-		return AnyAsFloat(valARealValue) <= AnyAsFloat(valBRealValue);
-	if (determinant == ">")
-		return AnyAsFloat(valARealValue) > AnyAsFloat(valBRealValue);
-	if (determinant == "<")
-		return AnyAsFloat(valARealValue) < AnyAsFloat(valBRealValue);
-
+	switch(determinant)
+	{
+		case "==":
+			return AnyAsString(valARealValue) == AnyAsString(valBRealValue);
+		case "!=":
+			return AnyAsString(valARealValue) != AnyAsString(valBRealValue);
+		case ">=":
+			return AnyAsFloat(valARealValue) >= AnyAsFloat(valBRealValue);
+		case "<=":
+			return AnyAsFloat(valARealValue) <= AnyAsFloat(valBRealValue);
+		case ">":
+			return AnyAsFloat(valARealValue) > AnyAsFloat(valBRealValue);
+		case "<":
+			return AnyAsFloat(valARealValue) < AnyAsFloat(valBRealValue);
+		default:
+			LogWarning("invalid determinant \'" + determinant + "\'");
+			return false;
+	}
+	
 	return false;
 }
 
@@ -329,34 +335,43 @@ int evalEqu(const vector<string>& str, unordered_map<string, any>& variableValue
 {
 	if (IsVar(str[0], variableValues))
 	{
-		if (str[1] == "=")
-			variableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-		else if (str[1] == "+=")
-			variableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
-		else if (str[1] == "-=")
-			variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-		else if (str[1] == "*=")
-			variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-		else if (str[1] == "/=")
-			variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+		switch(str[1])
+		{
+			case "=":
+				variableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			case "+=":
+				variableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			case "-=":
+				variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			case "*=":
+				variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			case "/=":
+				variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			default:
+				LogWarning("invalid operator \'" + str[1] + "\'");
+				return 1;
+		}
 
-		//cout << variables[v] << " is " << variableValues[v] << endl;
 		return 0;
 	}
 	else if (IsVar(str[0], globalVariableValues))
 	{
-		if (str[1] == "=")
-			globalVariableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-		else if (str[1] == "+=")
-			globalVariableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
-		else if (str[1] == "-=")
-			globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-		else if (str[1] == "*=")
-			globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-		else if (str[1] == "/=")
-			globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-
-		//cout << variables[v] << " is " << variableValues[v] << endl;
+		switch(str[1])
+		{
+			case "=":
+				globalVariableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			case "+=":
+				globalVariableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			case "-=":
+				globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			case "*=":
+				globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			case "/=":
+				globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			default:
+				LogWarning("invalid operator \'" + str[1] + "\'");
+				return 1;
+		}
 		return 0;
 	}
 	LogWarning("uninitialized variable or typo in \'" << str[0] << "\'");
