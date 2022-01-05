@@ -3,6 +3,16 @@
 
 using namespace std;
 
+bool isNumber(const string& str);
+
+bool stob(string str);
+
+string StringRaw(const string& s);
+
+string Quoted(const string& s);
+
+string RMParenthesis(const string& s);
+
 string ltrim(const string& s);
 
 string rtrim(const string& s);

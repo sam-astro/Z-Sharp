@@ -22,76 +22,6 @@ using namespace boost;
 unordered_map<string, any> globalVariableValues;
 unordered_map<string, vector<vector<string>>> functionValues;
 
-
-bool isNumber(const string& str)
-{
-	for (char const& c : str) {
-		if (isdigit(c) == 0 && c != '.') return false;
-	}
-	return true;
-}
-
-bool stob(string str) {
-    transform(str.begin(), str.end(), str.begin(), ::tolower);
-    istringstream is(str);
-    bool b;
-    is >> boolalpha >> b;
-    return b;
-}
-
-string StringRaw(const string& s)
-{
-	string str = trim(s);
-
-	if (str.size() < 3)
-		return str;
-
-	string withoutQuotes;
-
-	if (str[0] != '\"')
-		withoutQuotes += str[0];
-
-	withoutQuotes += str.substr(1, str.size()-2);
-
-	if (str[str.size() - 1] != '\"')
-		withoutQuotes += str[str.size() - 1];
-
-	return withoutQuotes;
-}
-
-string Quoted(const string& s)
-{
-	string str = trim(s);
-
-	string withQuotes;
-
-	if (str[0] != '\"')
-		withQuotes += '\"';
-
-	withQuotes += str;
-
-	if (str[str.size() - 1] != '\"')
-		withQuotes += '\"';
-
-	return withQuotes;
-}
-
-string RMParenthesis(const string& s)
-{
-	string str = trim(s);
-	string withoutParenthesis;
-
-	if (str[0] != '(')
-		withoutParenthesis += str[0];
-
-	withoutParenthesis += str.substr(1, str.size()-2);
-
-	if (str[str.size() - 1] != ')')
-		withoutParenthesis += str[str.size() - 1];
-
-	return withoutParenthesis;
-}
-
 any GetVariableValue(const string& varName, const unordered_map<string, any>& variableVals)
 {
 	auto iA = variableVals.find(varName);
@@ -153,19 +83,6 @@ bool IsFunction(const string& funcName)
 		return true;
 	else
 		return false;
-}
-
-int LogWarning(const string& warningText)
-{
-	cerr << "\x1B[33mWARNING: " << warningText << "\033[0m\t\t" << endl;
-	return 1;
-}
-
-int CriticalError(const string& errorText)
-{
-	cerr << "\x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
-	exit(EXIT_FAILURE);
-	return 2;
 }
 
 any EvalExpression(const string& ex, const unordered_map<string, any>& variableVals)
@@ -311,17 +228,19 @@ bool BooleanLogic(const string& valA, const string& determinant, const string& v
 
 	if (determinant == "==")
 		return AnyAsString(valARealValue) == AnyAsString(valBRealValue);
-	if (determinant == "!=")
+	else if (determinant == "!=")
 		return AnyAsString(valARealValue) != AnyAsString(valBRealValue);
-	if (determinant == ">=")
+	else if (determinant == ">=")
 		return AnyAsFloat(valARealValue) >= AnyAsFloat(valBRealValue);
-	if (determinant == "<=")
+	else if (determinant == "<=")
 		return AnyAsFloat(valARealValue) <= AnyAsFloat(valBRealValue);
-	if (determinant == ">")
+	else if (determinant == ">")
 		return AnyAsFloat(valARealValue) > AnyAsFloat(valBRealValue);
-	if (determinant == "<")
+	else if (determinant == "<")
 		return AnyAsFloat(valARealValue) < AnyAsFloat(valBRealValue);
-
+	else
+		LogWarning("unrecognized determinant \'" + determinant + "\'");
+	
 	return false;
 }
 
@@ -339,7 +258,8 @@ int varOperation(const vector<string>& str, unordered_map<string, any>& variable
 			variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
 		else if (str[1] == "/=")
 			variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-
+		else
+			LogWarning("unrecognized operator \'" + str[1] + "\'");
 		//cout << variables[v] << " is " << variableValues[v] << endl;
 		return 0;
 	}
@@ -355,24 +275,25 @@ int varOperation(const vector<string>& str, unordered_map<string, any>& variable
 			globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
 		else if (str[1] == "/=")
 			globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-
+		else
+			LogWarning("unrecognized operator \'" + str[1] + "\'");
 		//cout << variables[v] << " is " << variableValues[v] << endl;
 		return 0;
 	}
-	LogWarning("uninitialized variable or typo in \'" << str[0] << "\'");
+	LogWarning("uninitialized variable or typo in \'" + str[0] + "\'");
 	return 1;
 }
 
-any ProcessLine(const vector<vector<string>>& words, const int lineNum, unordered_map<string, any>& variableValues)
+any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<string, any>& variableValues)
 {
 	if (words[lineNum][0][0] == '/' && words[lineNum][0][1] == '/')
-		return;
+		return any{};
 
 	// If print statement (deprecated, now use CPP.System.Print() function)
 	else if (words[lineNum][0] == "print")
 	{
 		cout << AnyAsString(EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variableValues)) << endl;
-		return;
+		return any{};
 	}
 
 	// Check if function return
@@ -387,26 +308,26 @@ any ProcessLine(const vector<vector<string>>& words, const int lineNum, unordere
 	else if (IsFunction(trim(split(words[lineNum][0], '(')[0])))
 	{
 		ExecuteFunction(trim(split(words[lineNum][0], '(')[0]), VarValues(split(RMParenthesis(replace(unWrapVec(words[lineNum]), trim(split(words[lineNum][0], '(')[0]), "")), ','), variableValues));
-		return;
+		return any{};
 	}
-	
+
 	// Iterate through all types to see if line inits or
 	// re-inits a variable then store it with it's value
 	else if (countInVector(types, words[lineNum][0]) > 0)
 	{
 		variableValues[words[lineNum][1]] = EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 3, words[lineNum].end())), variableValues);
-		return;
+		return any{};
 	}
-	
+
 	// Check existing variables: If matches, then it means
 	// the variables value is getting changed with an operator
 	else if (IsVar(words[lineNum][0], variableValues))
 	{
 		// Evaluates what the operator (ex. '=', '+=') does to the value on the left by the value on the right
 		varOperation(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
-		return;
+		return any{};
 	}
-	
+
 	// Gathers while loop contents
 	else if (words[lineNum][0] == "while")
 	{
@@ -444,9 +365,9 @@ any ProcessLine(const vector<vector<string>>& words, const int lineNum, unordere
 					return returnVal;
 			}
 		}
-		return;
+		return any{};
 	}
-	
+
 	// Gathers if statement contents
 	else if (words[lineNum][0] == "if")
 	{
@@ -481,8 +402,8 @@ any ProcessLine(const vector<vector<string>>& words, const int lineNum, unordere
 			//Iterate through all lines in if statement
 			for (int l = 0; l < (int)ifContents.size(); l++)
 			{
-				string returnVal = ProcessLine(innerWords, l, variableValues);
-				if (returnVal != 0)
+				any returnVal = ProcessLine(innerWords, l, variableValues);
+				if (!returnVal.empty())
 					return returnVal;
 			}
 		}
@@ -510,16 +431,16 @@ any ProcessLine(const vector<vector<string>>& words, const int lineNum, unordere
 
 				vector<vector<string>> innerWords;
 				for (int i = 0; i < (int)elseContents.size(); i++)
-					words.push_back(split(elseContents[i], ' '));
+					innerWords.push_back(split(elseContents[i], ' '));
 
 				//Iterate through all lines in else statement
 				for (int lineNum = 0; lineNum < (int)elseContents.size(); lineNum++)
 				{
 					ProcessLine(innerWords, lineNum, variableValues);
 				}
-				return;
+				return any{};
 			}
-		return;
+		return any{};
 	}
 	//// Gathers else statement contents
 	//if (words[lineNum][0] == "else")
@@ -527,7 +448,7 @@ any ProcessLine(const vector<vector<string>>& words, const int lineNum, unordere
 	//	
 	//}
 
-	return;
+	return any{};
 }
 
 any ExecuteFunction(const string functionName, const vector<any> inputVarVals)
@@ -536,10 +457,10 @@ any ExecuteFunction(const string functionName, const vector<any> inputVarVals)
 	vector<vector<string>> words = functionValues[functionName];
 
 	unordered_map<string, any> variableValues;
-	vector<string> args = split(replace(functionValues[functionName][0][0], ',');
+	vector<string> args = split(functionValues[functionName][0][0], ',');
 	for (int i = 0; i < (int)inputVarVals.size(); i++)
 	{
-		variableValues[trim(args[i])] = EvalExpression(inputVarVals[i], variables, variableValues);
+		variableValues[trim(args[i])] = EvalExpression(AnyAsString(inputVarVals[i]), variableValues);
 	}
 
 	//Iterate through all lines in function
@@ -548,16 +469,16 @@ any ExecuteFunction(const string functionName, const vector<any> inputVarVals)
 		any returnVal = 0;
 		try
 		{
-			returnVal = ProcessLine(words, lineNum, variables, variableValues);
+			returnVal = ProcessLine(words, lineNum, variableValues);
 		}
 		catch (const std::exception&)
 		{
-			CriticalError("\'" << unWrapVec(words[lineNum]) << "\'\nIn function: " << functionName << "\nLine: " << lineNum);
+			LogCriticalError("\'" + unWrapVec(words[lineNum]) + "\'\nIn function: " + functionName + "\nLine: " + to_string(lineNum));
 		}
 		if (!returnVal.empty())
 			return returnVal;
 	}
-	return;
+	return any{};
 }
 
 int parseSlang(string script)
@@ -578,8 +499,8 @@ int parseSlang(string script)
 		{
 			vector<vector<string>> functionContents;
 
-			string functName = split(words[lineNum][1], "(")[0];
-			
+			string functName = split(words[lineNum][1], '(')[0];
+
 			string args = "";
 			for (int w = 1; w < (int)words[lineNum].size(); w++) {
 				if (w < (int)words[lineNum].size() - 1)
@@ -591,7 +512,7 @@ int parseSlang(string script)
 					args += replace(replace(words[lineNum][w], "(", " "), ")", "");
 				}
 			}
-			
+
 			args = replace(args, functName + ",", "");
 			functionContents.push_back(vector<string>{args});
 
@@ -608,15 +529,16 @@ int parseSlang(string script)
 		}
 		else
 		{
-			if(words[lineNum][0] == "string")
+			if (words[lineNum][0] == "string")
 				globalVariableValues[words[lineNum][1]] = StringRaw(words[lineNum][3]);
-			else if(words[lineNum][0] == "int")
+			else if (words[lineNum][0] == "int")
 				globalVariableValues[words[lineNum][1]] = stoi(words[lineNum][3]);
-			else if(words[lineNum][0] == "float")
+			else if (words[lineNum][0] == "float")
 				globalVariableValues[words[lineNum][1]] = stof(words[lineNum][3]);
-			else if(words[lineNum][0] == "bool")
+			else if (words[lineNum][0] == "bool")
 				globalVariableValues[words[lineNum][1]] = stob(words[lineNum][3]);
-			LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + lineNum);
+			else
+				LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
 		}
 	}
 

@@ -4,9 +4,81 @@
 #include <regex>
 #include <limits>
 #include "strops.h"
+#include "builtin.h"
 using namespace std;
 
 const string WHITESPACE = " \n\r\t\f\v";
+
+
+bool isNumber(const string& str)
+{
+	for (char const& c : str) {
+		if (isdigit(c) == 0 && c != '.') return false;
+	}
+	return true;
+}
+
+bool stob(string str)
+{
+	transform(str.begin(), str.end(), str.begin(), ::tolower);
+	istringstream is(str);
+	bool b;
+	is >> boolalpha >> b;
+	return b;
+}
+
+string StringRaw(const string& s)
+{
+	string str = trim(s);
+
+	if (str.size() < 3)
+		return str;
+
+	string withoutQuotes;
+
+	if (str[0] != '\"')
+		withoutQuotes += str[0];
+
+	withoutQuotes += str.substr(1, str.size() - 2);
+
+	if (str[str.size() - 1] != '\"')
+		withoutQuotes += str[str.size() - 1];
+
+	return withoutQuotes;
+}
+
+string Quoted(const string& s)
+{
+	string str = trim(s);
+
+	string withQuotes;
+
+	if (str[0] != '\"')
+		withQuotes += '\"';
+
+	withQuotes += str;
+
+	if (str[str.size() - 1] != '\"')
+		withQuotes += '\"';
+
+	return withQuotes;
+}
+
+string RMParenthesis(const string& s)
+{
+	string str = trim(s);
+	string withoutParenthesis;
+
+	if (str[0] != '(')
+		withoutParenthesis += str[0];
+
+	withoutParenthesis += str.substr(1, str.size() - 2);
+
+	if (str[str.size() - 1] != ')')
+		withoutParenthesis += str[str.size() - 1];
+
+	return withoutParenthesis;
+}
 
 string ltrim(const string& s)
 {
@@ -24,7 +96,7 @@ string trim(const string& s) {
 	return rtrim(ltrim(s));
 }
 
-vector<string> split(string str, char del) {
+vector<string> split(const string& str, const char& del) {
 	if (count(str, del) == 0)
 		return vector<string>{str};
 
@@ -51,7 +123,7 @@ vector<string> split(string str, char del) {
 	return splitWords;
 }
 
-int count(string str, char ch) {
+int count(const string& str, const char& ch) {
 	int cnt = 0;
 
 	for (int i = 0; i < (int)str.size(); i++)
@@ -61,7 +133,7 @@ int count(string str, char ch) {
 	return cnt;
 }
 
-int countNoOverlap(string str, char ch1, char ch2) {
+int countNoOverlap(const string& str, const char& ch1, const char& ch2) {
 	int cnt = 0;
 
 	bool waitingForClose = false;
@@ -80,7 +152,7 @@ int countNoOverlap(string str, char ch1, char ch2) {
 	return cnt;
 }
 
-int indexInStr(string str, char ch) {
+int indexInStr(const string& str, const char& ch) {
 
 	for (int i = 0; i < (int)str.size(); i++)
 		if (str[i] == ch)
@@ -89,7 +161,7 @@ int indexInStr(string str, char ch) {
 	return -1;
 }
 
-int charIndexInVec(vector<string> str, char ch) {
+int charIndexInVec(const vector<string>& str, const char& ch) {
 
 	for (int i = 0; i < (int)str.size(); i++)
 		for (int w = 0; w < (int)str[i].size(); w++)
@@ -99,7 +171,7 @@ int charIndexInVec(vector<string> str, char ch) {
 	return -1;
 }
 
-int countInVector(vector<string> str, string ch) {
+int countInVector(const vector<string>& str, const string& ch) {
 	int cnt = 0;
 
 	for (int i = 0; i < (int)str.size(); i++)
@@ -109,7 +181,7 @@ int countInVector(vector<string> str, string ch) {
 	return cnt;
 }
 
-string Vec2Str(vector<string> str) {
+string Vec2Str(const vector<string>& str) {
 	string outStr;
 
 	for (int i = 0; i < (int)str.size(); i++)
@@ -118,7 +190,7 @@ string Vec2Str(vector<string> str) {
 	return outStr;
 }
 
-vector<string> removeTabs(vector<string> str, int amnt) {
+vector<string> removeTabs(const vector<string>& str, const int& amnt) {
 	vector<string> newStr;
 
 	for (int i = 0; i < (int)str.size(); i++)
@@ -135,7 +207,7 @@ vector<string> removeTabs(vector<string> str, int amnt) {
 	return newStr;
 }
 
-vector<string> rangeInVec(vector<string> str, int min, int max) {
+vector<string> rangeInVec(const vector<string>& str, const int& min, int max) {
 	if (max == -1)
 		max = (int)str.size();
 
@@ -147,7 +219,7 @@ vector<string> rangeInVec(vector<string> str, int min, int max) {
 	return newStr;
 }
 
-string rangeInStr(string str, int min, int max) {
+string rangeInStr(const string& str, const int& min, int max) {
 	if (max == -1)
 		max = (int)str.size();
 
@@ -159,7 +231,7 @@ string rangeInStr(string str, int min, int max) {
 	return newStr;
 }
 
-string unWrapVec(vector<string> vec) {
+string unWrapVec(const vector<string>& vec) {
 	string newStr;
 
 	for (int i = 0; i < (int)vec.size(); i++)
@@ -172,7 +244,7 @@ string unWrapVec(vector<string> vec) {
 	return newStr;
 }
 
-float floatval(string s)
+float floatval(const string& s)
 {
 	float outfloat;
 
@@ -188,7 +260,7 @@ float floatval(string s)
 	return outfloat;
 }
 
-string replace(string str, string strToReplace, string replaceWith) {
+string replace(const string& str, const string& strToReplace, const string& replaceWith) {
 	string newStr;
 	string savedLetters;
 

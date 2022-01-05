@@ -2,7 +2,11 @@
 #ifndef ANYOPS_H
 #define ANYOPS_H
 
+#include "builtin.h"
+#include <any>
+
 using namespace boost;
+using namespace std;
 
 // Will convert type 'any' val to a bool
 bool AnyAsBool(const any& val)
@@ -31,7 +35,7 @@ bool AnyAsBool(const any& val)
 				}
 				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
-					LogWarning("invalid conversion to type \'bool\'")
+					LogWarning("invalid conversion to type \'bool\'");
 					return false;
 				}
 			}
@@ -68,7 +72,7 @@ string AnyAsString(const any& val)
 				}
 				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
-					LogWarning("invalid conversion to type \'string\'")
+					LogWarning("invalid conversion to type \'string\'");
 					return "";
 				}
 			}
@@ -105,7 +109,7 @@ float AnyAsFloat(const any& val)
 				}
 				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
-					LogWarning("invalid conversion to type \'float\'")
+					LogWarning("invalid conversion to type \'float\'");
 					return 0;
 				}
 			}
@@ -142,7 +146,7 @@ int AnyAsInt(const any& val)
 				}
 				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
-					LogWarning("invalid conversion to type \'int\'")
+					LogWarning("invalid conversion to type \'int\'");
 					return 0;
 				}
 			}
@@ -182,7 +186,7 @@ int any_type(const any& val)
 				}
 				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
-					LogWarning("variable has no type")
+					LogWarning("variable has no type");
 					return -1;
 				}
 			}
