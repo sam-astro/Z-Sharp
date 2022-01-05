@@ -22,9 +22,9 @@ unordered_map<string, any>& builtinVarVals;
 Parser mainWindow;
 
 // Initial script processing, which loads variables and functions from builtin
-int GetBuiltins(string script)
+int GetBuiltins(const string& s)
 {
-	script = replace(script, "    ", "\t");
+	script = replace(s, "    ", "\t");
 
 	vector<string> lines = split(script, '\n');
 	vector<vector<string>> words;
@@ -90,7 +90,7 @@ int GetBuiltins(string script)
 }
 
 // Executes 
-any CPPFunction(string name, vector<any> args)
+any CPPFunction(const string& name, const vector<any>& args)
 {
 	if (name == "CPP.Math.Sin")
 		return sin(AnyAsFloat(args[0]));
