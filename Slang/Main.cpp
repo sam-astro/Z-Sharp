@@ -31,7 +31,7 @@ bool isNumber(const string& str)
 	return true;
 }
 
-bool stob(const string str) {
+bool stob(string str) {
     transform(str.begin(), str.end(), str.begin(), ::tolower);
     istringstream is(str);
     bool b;
@@ -39,7 +39,7 @@ bool stob(const string str) {
     return b;
 }
 
-string StringRaw(const string s)
+string StringRaw(const string& s)
 {
 	string str = trim(s);
 
@@ -59,7 +59,7 @@ string StringRaw(const string s)
 	return withoutQuotes;
 }
 
-string Quoted(const string s)
+string Quoted(const string& s)
 {
 	string str = trim(s);
 
@@ -76,7 +76,7 @@ string Quoted(const string s)
 	return withQuotes;
 }
 
-string RMParenthesis(const string s)
+string RMParenthesis(const string& s)
 {
 	string str = trim(s);
 	string withoutParenthesis;
@@ -92,7 +92,7 @@ string RMParenthesis(const string s)
 	return withoutParenthesis;
 }
 
-any GetVariableValue(const string varName, const unordered_map<string, any>& variableVals)
+any GetVariableValue(const string& varName, const unordered_map<string, any>& variableVals)
 {
 	auto iA = variableVals.find(varName);
 	if (iA != variableVals.end())
@@ -113,7 +113,7 @@ any GetVariableValue(const string varName, const unordered_map<string, any>& var
 	}
 }
 
-bool IsVar(const string varName, const unordered_map<string, any>& variableVals)
+bool IsVar(const string& varName, const unordered_map<string, any>& variableVals)
 {
 	if (variableVals.find(varName) != variableVals.end())
 		return true;
@@ -121,37 +121,33 @@ bool IsVar(const string varName, const unordered_map<string, any>& variableVals)
 		return false;
 }
 
-vector<any> VarValues(const vector<string> varNames, const unordered_map<string, any>& variableVals)
+vector<any> VarValues(const vector<string>& varNames, const unordered_map<string, any>& variableVals)
 {
 	vector<any> realValues;
 
 	for (int varIndex = 0; varIndex < varNames.size(); varIndex++)
 	{
-		varNames[varIndex] = trim(varNames[varIndex]);
+		string varName = trim(varNames[varIndex]);
 
-		auto iA = variableVals.find(varNames[varIndex]);
+		auto iA = variableVals.find(varName);
 		if (iA != variableVals.end())
 		{
 			realValues.push_back(iA->second);
 		}
 		else
 		{
-			auto iB = globalVariableValues.find(varNames[varIndex]);
+			auto iB = globalVariableValues.find(varName);
 			if (iB != globalVariableValues.end())
-			{
 				realValues.push_back(iB->second);
-			}
 			else
-			{
-				realValues.push_back(varNames[varIndex]);
-			}
+				realValues.push_back(varName);
 		}
 	}
 
 	return realValues;
 }
 
-bool IsFunction(const string funcName)
+bool IsFunction(const string& funcName)
 {
 	if (functionValues.find(funcName) != functionValues.end())
 		return true;
@@ -159,7 +155,20 @@ bool IsFunction(const string funcName)
 		return false;
 }
 
-any EvalExpression(const string ex, const unordered_map<string, any>& variableVals)
+int LogWarning(const string& warningText)
+{
+	cerr << "\x1B[33mWARNING: " << warningText << "\033[0m\t\t" << endl;
+	return 1;
+}
+
+int CriticalError(const string& errorText)
+{
+	cerr << "\x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
+	exit(EXIT_FAILURE);
+	return 2;
+}
+
+any EvalExpression(const string& ex, const unordered_map<string, any>& variableVals)
 {
 	string expression = trim(ex);
 	bool inQuotes = false;
@@ -295,7 +304,7 @@ any EvalExpression(const string ex, const unordered_map<string, any>& variableVa
 		return evaluate(newExpression);
 }
 
-bool BooleanLogic(const string valA, const string determinant, const string valB, const unordered_map<string, any>& variableVals)
+bool BooleanLogic(const string& valA, const string& determinant, const string& valB, const unordered_map<string, any>& variableVals)
 {
 	any valARealValue = EvalExpression(valA, variableVals);
 	any valBRealValue = EvalExpression(valB, variableVals);
@@ -316,7 +325,7 @@ bool BooleanLogic(const string valA, const string determinant, const string valB
 	return false;
 }
 
-int evalEqu(const vector<string> str, unordered_map<string, any>& variableValues)
+int evalEqu(const vector<string>& str, unordered_map<string, any>& variableValues)
 {
 	if (IsVar(str[0], variableValues))
 	{
@@ -350,6 +359,7 @@ int evalEqu(const vector<string> str, unordered_map<string, any>& variableValues
 		//cout << variables[v] << " is " << variableValues[v] << endl;
 		return 0;
 	}
+	LogWarning("uninitialized variable or typo in \'" << str[0] << "\'");
 	return 1;
 }
 
@@ -542,8 +552,7 @@ any ExecuteFunction(const string functionName, const vector<any> inputVarVals)
 		}
 		catch (const std::exception&)
 		{
-			cout << "\x1B[31mERROR: \'" << unWrapVec(words[lineNum]) << "\'\nIn function: " << functionName << "\nLine: " << lineNum << "\033[0m\t\t" << endl;
-			exit(1);
+			CriticalError("\'" << unWrapVec(words[lineNum]) << "\'\nIn function: " << functionName << "\nLine: " << lineNum);
 		}
 		if (!returnVal.empty())
 			return returnVal;
@@ -598,24 +607,17 @@ int parseSlang(string script)
 			//cout << functName << " is \n" << Vec2Str(functionContents) << endl << endl;
 		}
 		else
-			for (int t = 0; t < (int)types.size(); t++)
-				if (words[lineNum][0] == types[t])
-				{
-					
-					//Checks if it is variable
-					else
-					{
-						if(words[lineNum][0] == "string")
-							globalVariableValues[words[lineNum][1]] = words[lineNum][3];
-						else if(words[lineNum][0] == "int")
-							globalVariableValues[words[lineNum][1]] = stoi(words[lineNum][3]);
-						else if(words[lineNum][0] == "float")
-							globalVariableValues[words[lineNum][1]] = stof(words[lineNum][3]);
-						else if(words[lineNum][0] == "bool")
-							globalVariableValues[words[lineNum][1]] = stob(words[lineNum][3]);
-						//cout << words[lineNum][1] << " is " << words[lineNum][3] << endl;
-					}
-				}
+		{
+			if(words[lineNum][0] == "string")
+				globalVariableValues[words[lineNum][1]] = StringRaw(words[lineNum][3]);
+			else if(words[lineNum][0] == "int")
+				globalVariableValues[words[lineNum][1]] = stoi(words[lineNum][3]);
+			else if(words[lineNum][0] == "float")
+				globalVariableValues[words[lineNum][1]] = stof(words[lineNum][3]);
+			else if(words[lineNum][0] == "bool")
+				globalVariableValues[words[lineNum][1]] = stob(words[lineNum][3]);
+			LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + lineNum);
+		}
 	}
 
 	// Executes main, which is the starting function
