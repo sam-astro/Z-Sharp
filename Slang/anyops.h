@@ -31,12 +31,12 @@ bool AnyAsBool(any val)
 				}
 				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
+					LogWarning("invalid conversion to type \'bool\'")
 					return false;
 				}
 			}
 		}
 	}
-	return false;
 }
 
 // Will convert type 'any' val to a string
@@ -68,12 +68,12 @@ string AnyAsString(any val)
 				}
 				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
+					LogWarning("invalid conversion to type \'string\'")
 					return "";
 				}
 			}
 		}
 	}
-	return "";
 }
 
 // Will convert type 'any' val to a float
@@ -105,12 +105,12 @@ float AnyAsFloat(any val)
 				}
 				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
+					LogWarning("invalid conversion to type \'float\'")
 					return 0;
 				}
 			}
 		}
 	}
-	return 0;
 }
 
 // Will convert type 'any' val to an integer
@@ -142,12 +142,12 @@ int AnyAsInt(any val)
 				}
 				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
+					LogWarning("invalid conversion to type \'int\'")
 					return 0;
 				}
 			}
 		}
 	}
-	return 0;
 }
 
 // Gets type of 'any' val
@@ -182,12 +182,12 @@ int any_type(any val)
 				}
 				catch (boost::bad_any_cast &e) // Does not convert, return
 				{
+					LogWarning("variable has no type")
 					return -1;
 				}
 			}
 		}
 	}
-	return -1;
 }
 
 #endif
