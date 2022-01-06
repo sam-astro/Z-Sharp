@@ -7,7 +7,7 @@
 #include <stack>
 #include "eval.h"
 #include "strops.h"
-#include "builtin.h"
+// #include "builtin.h"
 using namespace std;
 
 float precedence(const char& op) {
@@ -29,7 +29,7 @@ float applyOp(const float& a, const float& b, const char& op) {
 	case '^': return pow(a, b);
 	}
 	string s(1, op);
-	LogWarning("operator \'" + s + "\' does not exist");
+	//LogWarning("operator \'" + s + "\' does not exist");
 	return 0;
 }
 

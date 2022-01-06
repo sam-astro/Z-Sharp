@@ -49,4 +49,7 @@
     <None Include="script.slg" />
     <None Include="builtin.slg" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="CMakeLists.txt" />
+  </ItemGroup>
 </Project>

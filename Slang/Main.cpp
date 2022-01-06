@@ -7,7 +7,7 @@
 #include <limits>
 #include <algorithm>
 #include <cstdlib>
-#include <any>
+#include <boost/any.hpp>
 #include <unordered_map>
 
 #include "eval.h"
@@ -19,10 +19,10 @@
 using namespace std;
 using namespace boost;
 
-unordered_map<string, any> globalVariableValues;
+unordered_map<string, boost::any> globalVariableValues;
 unordered_map<string, vector<vector<string>>> functionValues;
 
-any GetVariableValue(const string& varName, const unordered_map<string, any>& variableVals)
+boost::any GetVariableValue(const string& varName, const unordered_map<string, boost::any>& variableVals)
 {
 	auto iA = variableVals.find(varName);
 	if (iA != variableVals.end())
@@ -43,7 +43,7 @@ any GetVariableValue(const string& varName, const unordered_map<string, any>& va
 	}
 }
 
-bool IsVar(const string& varName, const unordered_map<string, any>& variableVals)
+bool IsVar(const string& varName, const unordered_map<string, boost::any>& variableVals)
 {
 	if (variableVals.find(varName) != variableVals.end())
 		return true;
@@ -51,9 +51,9 @@ bool IsVar(const string& varName, const unordered_map<string, any>& variableVals
 		return false;
 }
 
-vector<any> VarValues(const vector<string>& varNames, const unordered_map<string, any>& variableVals)
+vector<boost::any> VarValues(const vector<string>& varNames, const unordered_map<string, boost::any>& variableVals)
 {
-	vector<any> realValues;
+	vector<boost::any> realValues;
 
 	for (int varIndex = 0; varIndex < varNames.size(); varIndex++)
 	{
@@ -85,7 +85,7 @@ bool IsFunction(const string& funcName)
 		return false;
 }
 
-any EvalExpression(const string& ex, const unordered_map<string, any>& variableVals)
+boost::any EvalExpression(const string& ex, const unordered_map<string, boost::any>& variableVals)
 {
 	string expression = trim(ex);
 	bool inQuotes = false;
@@ -221,10 +221,10 @@ any EvalExpression(const string& ex, const unordered_map<string, any>& variableV
 		return evaluate(newExpression);
 }
 
-bool BooleanLogic(const string& valA, const string& determinant, const string& valB, const unordered_map<string, any>& variableVals)
+bool BooleanLogic(const string& valA, const string& determinant, const string& valB, const unordered_map<string, boost::any>& variableVals)
 {
-	any valARealValue = EvalExpression(valA, variableVals);
-	any valBRealValue = EvalExpression(valB, variableVals);
+	boost::any valARealValue = EvalExpression(valA, variableVals);
+	boost::any valBRealValue = EvalExpression(valB, variableVals);
 
 	if (determinant == "==")
 		return AnyAsString(valARealValue) == AnyAsString(valBRealValue);
@@ -244,7 +244,7 @@ bool BooleanLogic(const string& valA, const string& determinant, const string& v
 	return false;
 }
 
-int varOperation(const vector<string>& str, unordered_map<string, any>& variableValues)
+int varOperation(const vector<string>& str, unordered_map<string, boost::any>& variableValues)
 {
 	if (IsVar(str[0], variableValues))
 	{
@@ -284,16 +284,16 @@ int varOperation(const vector<string>& str, unordered_map<string, any>& variable
 	return 1;
 }
 
-any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<string, any>& variableValues)
+boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<string, boost::any>& variableValues)
 {
 	if (words[lineNum][0][0] == '/' && words[lineNum][0][1] == '/')
-		return any{};
+		return boost::any{};
 
 	// If print statement (deprecated, now use CPP.System.Print() function)
 	else if (words[lineNum][0] == "print")
 	{
 		cout << AnyAsString(EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variableValues)) << endl;
-		return any{};
+		return boost::any{};
 	}
 
 	// Check if function return
@@ -308,7 +308,7 @@ any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<
 	else if (IsFunction(trim(split(words[lineNum][0], '(')[0])))
 	{
 		ExecuteFunction(trim(split(words[lineNum][0], '(')[0]), VarValues(split(RMParenthesis(replace(unWrapVec(words[lineNum]), trim(split(words[lineNum][0], '(')[0]), "")), ','), variableValues));
-		return any{};
+		return boost::any{};
 	}
 
 	// Iterate through all types to see if line inits or
@@ -316,7 +316,7 @@ any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<
 	else if (countInVector(types, words[lineNum][0]) > 0)
 	{
 		variableValues[words[lineNum][1]] = EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 3, words[lineNum].end())), variableValues);
-		return any{};
+		return boost::any{};
 	}
 
 	// Check existing variables: If matches, then it means
@@ -325,7 +325,7 @@ any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<
 	{
 		// Evaluates what the operator (ex. '=', '+=') does to the value on the left by the value on the right
 		varOperation(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
-		return any{};
+		return boost::any{};
 	}
 
 	// Gathers while loop contents
@@ -360,12 +360,12 @@ any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<
 			//Iterate through all lines in while loop
 			for (int lineNum = 0; lineNum < (int)whileContents.size(); lineNum++)
 			{
-				any returnVal = ProcessLine(innerWords, lineNum, variableValues);
+				boost::any returnVal = ProcessLine(innerWords, lineNum, variableValues);
 				if (AnyAsString(returnVal) != "")
 					return returnVal;
 			}
 		}
-		return any{};
+		return boost::any{};
 	}
 
 	// Gathers if statement contents
@@ -402,7 +402,7 @@ any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<
 			//Iterate through all lines in if statement
 			for (int l = 0; l < (int)ifContents.size(); l++)
 			{
-				any returnVal = ProcessLine(innerWords, l, variableValues);
+				boost::any returnVal = ProcessLine(innerWords, l, variableValues);
 				if (!returnVal.empty())
 					return returnVal;
 			}
@@ -438,9 +438,9 @@ any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<
 				{
 					ProcessLine(innerWords, lineNum, variableValues);
 				}
-				return any{};
+				return boost::any{};
 			}
-		return any{};
+		return boost::any{};
 	}
 	//// Gathers else statement contents
 	//if (words[lineNum][0] == "else")
@@ -448,15 +448,15 @@ any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<
 	//	
 	//}
 
-	return any{};
+	return boost::any{};
 }
 
-any ExecuteFunction(const string functionName, const vector<any> inputVarVals)
+boost::any ExecuteFunction(const string& functionName, const vector<boost::any>& inputVarVals)
 {
 	// Get contents of function
 	vector<vector<string>> words = functionValues[functionName];
 
-	unordered_map<string, any> variableValues;
+	unordered_map<string, boost::any> variableValues;
 	vector<string> args = split(functionValues[functionName][0][0], ',');
 	for (int i = 0; i < (int)inputVarVals.size(); i++)
 	{
@@ -466,7 +466,7 @@ any ExecuteFunction(const string functionName, const vector<any> inputVarVals)
 	//Iterate through all lines in function
 	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
 	{
-		any returnVal = 0;
+		boost::any returnVal = 0;
 		try
 		{
 			returnVal = ProcessLine(words, lineNum, variableValues);
@@ -478,7 +478,7 @@ any ExecuteFunction(const string functionName, const vector<any> inputVarVals)
 		if (!returnVal.empty())
 			return returnVal;
 	}
-	return any{};
+	return boost::any{};
 }
 
 int parseSlang(string script)
@@ -543,7 +543,7 @@ int parseSlang(string script)
 	}
 
 	// Executes main, which is the starting function
-	ExecuteFunction("Main", vector<any> {"hi", 0});
+	ExecuteFunction("Main", vector<boost::any> {"hi", 0});
 
 	return 0;
 }

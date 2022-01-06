@@ -7,11 +7,11 @@
 #include <regex>
 #include <limits>
 #include <algorithm>
-#include <any>
 #include <unordered_map>
 #include "strops.h"
 #include "graphics.h"
 #include "anyops.h"
+#include <boost/any.hpp>
 
 using namespace std;
 using namespace boost;
@@ -19,7 +19,7 @@ using namespace boost;
 vector<string> types = { "int", "float", "string", "bool", "void", "null" };
 
 unordered_map<string, vector<vector<string>>> builtinFunctionValues;
-unordered_map<string, any> builtinVarVals;
+unordered_map<string, boost::any> builtinVarVals;
 
 Parser mainWindow;
 
@@ -105,7 +105,7 @@ int GetBuiltins(const string& s)
 }
 
 // Executes 
-any CPPFunction(const string& name, const vector<any>& args)
+boost::any CPPFunction(const string& name, const vector<boost::any>& args)
 {
 	if (name == "CPP.Math.Sin")
 		return sin(AnyAsFloat(args[0]));

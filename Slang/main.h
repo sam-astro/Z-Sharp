@@ -3,8 +3,7 @@
 #define MAIN_H
 
 using namespace std;
-using namespace boost;
 
-any ExecuteFunction(const string functionName, const vector<any> inputVarVals);
+boost::any ExecuteFunction(const string& functionName, const vector<boost::any>& inputVarVals);
 
 #endif

@@ -3,8 +3,9 @@
 #include <string>
 #include <regex>
 #include <limits>
+#include <boost/any.hpp>
 #include "strops.h"
-#include "builtin.h"
+//#include "builtin.h"
 using namespace std;
 
 const string WHITESPACE = " \n\r\t\f\v";
@@ -20,11 +21,12 @@ bool isNumber(const string& str)
 
 bool stob(string str)
 {
-	transform(str.begin(), str.end(), str.begin(), ::tolower);
-	istringstream is(str);
-	bool b;
-	is >> boolalpha >> b;
-	return b;
+	//transform(str.begin(), str.end(), str.begin(), ::tolower);
+	//istringstream is(str);
+	//bool b;
+	//is >> boolalpha >> b;
+	//return b;
+	return false;
 }
 
 string StringRaw(const string& s)

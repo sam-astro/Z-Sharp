@@ -11,6 +11,7 @@
 #include <regex>
 #include <limits>
 #include <algorithm>
+#include <boost/any.hpp>
 #include "strops.h"
 #include "builtin.h"
 #include "main.h"
@@ -34,7 +35,7 @@ public:
 
 	bool OnUserUpdate(float fElapsedTime) override
 	{
-		ExecuteFunction("Update", vector<any> {});
+		ExecuteFunction("Update", vector<boost::any> {});
 		 
 		// Called once per frame
 		//for (int x = 0; x < ScreenWidth(); x++)
