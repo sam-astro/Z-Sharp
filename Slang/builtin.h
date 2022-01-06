@@ -7,7 +7,7 @@
 #include <regex>
 #include <limits>
 #include <algorithm>
-#include <boost/any.hpp>
+#include <any>
 #include <unordered_map>
 #include "strops.h"
 #include "graphics.h"
