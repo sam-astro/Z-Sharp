@@ -286,14 +286,17 @@ int varOperation(const vector<string>& str, unordered_map<string, boost::any>& v
 
 boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<string, boost::any>& variableValues)
 {
+	if (words[lineNum].size() == 0)
+		return nullType;
+
 	if (words[lineNum][0][0] == '/' && words[lineNum][0][1] == '/')
-		return boost::any{};
+		return nullType;
 
 	// If print statement (deprecated, now use CPP.System.Print() function)
 	else if (words[lineNum][0] == "print")
 	{
 		cout << AnyAsString(EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variableValues)) << endl;
-		return boost::any{};
+		return nullType;
 	}
 
 	// Check if function return
@@ -308,7 +311,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	else if (IsFunction(trim(split(words[lineNum][0], '(')[0])))
 	{
 		ExecuteFunction(trim(split(words[lineNum][0], '(')[0]), VarValues(split(RMParenthesis(replace(unWrapVec(words[lineNum]), trim(split(words[lineNum][0], '(')[0]), "")), ','), variableValues));
-		return boost::any{};
+		return nullType;
 	}
 
 	// Iterate through all types to see if line inits or
@@ -316,7 +319,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	else if (countInVector(types, words[lineNum][0]) > 0)
 	{
 		variableValues[words[lineNum][1]] = EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 3, words[lineNum].end())), variableValues);
-		return boost::any{};
+		return nullType;
 	}
 
 	// Check existing variables: If matches, then it means
@@ -325,7 +328,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	{
 		// Evaluates what the operator (ex. '=', '+=') does to the value on the left by the value on the right
 		varOperation(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
-		return boost::any{};
+		return nullType;
 	}
 
 	// Gathers while loop contents
@@ -361,11 +364,11 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 			for (int lineNum = 0; lineNum < (int)whileContents.size(); lineNum++)
 			{
 				boost::any returnVal = ProcessLine(innerWords, lineNum, variableValues);
-				if (AnyAsString(returnVal) != "")
+				if (!returnVal.empty() && returnVal.empty() == false)
 					return returnVal;
 			}
 		}
-		return boost::any{};
+		return nullType;
 	}
 
 	// Gathers if statement contents
@@ -403,7 +406,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 			for (int l = 0; l < (int)ifContents.size(); l++)
 			{
 				boost::any returnVal = ProcessLine(innerWords, l, variableValues);
-				if (!returnVal.empty())
+				if (!returnVal.empty() && returnVal.empty() == false)
 					return returnVal;
 			}
 		}
@@ -438,9 +441,9 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 				{
 					ProcessLine(innerWords, lineNum, variableValues);
 				}
-				return boost::any{};
+				return nullType;
 			}
-		return boost::any{};
+		return nullType;
 	}
 	//// Gathers else statement contents
 	//if (words[lineNum][0] == "else")
@@ -448,7 +451,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	//	
 	//}
 
-	return boost::any{};
+	return nullType;
 }
 
 boost::any ExecuteFunction(const string& functionName, const vector<boost::any>& inputVarVals)
@@ -457,11 +460,9 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 	vector<vector<string>> words = functionValues[functionName];
 
 	unordered_map<string, boost::any> variableValues;
-	vector<string> args = split(functionValues[functionName][0][0], ',');
+	vector<string> args = split(words[0][0], ',');
 	for (int i = 0; i < (int)inputVarVals.size(); i++)
-	{
-		variableValues[trim(args[i])] = EvalExpression(AnyAsString(inputVarVals[i]), variableValues);
-	}
+		variableValues[args[i]] = inputVarVals[i];
 
 	//Iterate through all lines in function
 	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
@@ -475,10 +476,10 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 		{
 			LogCriticalError("\'" + unWrapVec(words[lineNum]) + "\'\nIn function: " + functionName + "\nLine: " + to_string(lineNum));
 		}
-		if (!returnVal.empty())
+		if (!returnVal.empty() && returnVal.empty() == false)
 			return returnVal;
 	}
-	return boost::any{};
+	return nullType;
 }
 
 int parseSlang(string script)
@@ -537,8 +538,8 @@ int parseSlang(string script)
 				globalVariableValues[words[lineNum][1]] = stof(words[lineNum][3]);
 			else if (words[lineNum][0] == "bool")
 				globalVariableValues[words[lineNum][1]] = stob(words[lineNum][3]);
-			else
-				LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
+			//else
+			//	LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
 		}
 	}
 

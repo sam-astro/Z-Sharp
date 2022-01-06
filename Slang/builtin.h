@@ -23,6 +23,12 @@ unordered_map<string, boost::any> builtinVarVals;
 
 Parser mainWindow;
 
+class NullType {
+public:
+    string type = "NULL";
+};
+
+boost::any nullType;
 
 int LogWarning(const string& warningText)
 {
@@ -96,8 +102,8 @@ int GetBuiltins(const string& s)
 				builtinVarVals[words[lineNum][1]] = stof(words[lineNum][3]);
 			else if (words[lineNum][0] == "bool")
 				builtinVarVals[words[lineNum][1]] = stob(words[lineNum][3]);
-			else
-				LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
+			//else
+			//	LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
 		}
 	}
 

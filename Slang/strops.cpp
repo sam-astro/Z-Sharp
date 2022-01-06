@@ -19,14 +19,10 @@ bool isNumber(const string& str)
 	return true;
 }
 
-bool stob(string str)
+bool stob(const string& str)
 {
-	//transform(str.begin(), str.end(), str.begin(), ::tolower);
-	//istringstream is(str);
-	//bool b;
-	//is >> boolalpha >> b;
-	//return b;
-	return false;
+	bool b = trim(str) == "true";
+	return b;
 }
 
 string StringRaw(const string& s)

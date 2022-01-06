@@ -75,7 +75,7 @@ string AnyAsString(const boost::any& val)
 				catch (boost::bad_any_cast) // Does not convert, return
 				{
 					LogWarning("invalid conversion to type \'string\'");
-					return "";
+					return "ERR";
 				}
 			}
 		}
@@ -194,6 +194,23 @@ int any_type(const boost::any& val)
 			}
 		}
 	}
+}
+
+// Gets if any is NullType
+bool any_null(const boost::any& val)
+{
+	/*if (val.type() == typeid(NullType))
+		return true;*/
+	return false;
+	//try // Try converting to Null
+	//{
+	//	NullType n = any_cast<NullType>(val);
+	//	return true;
+	//}
+	//catch (boost::bad_any_cast)
+	//{
+	//	return false;
+	//}
 }
 
 #endif

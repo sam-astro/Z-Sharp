@@ -7,7 +7,7 @@ using namespace std;
 
 bool isNumber(const string& str);
 
-bool stob(string str);
+bool stob(const string& str);
 
 string StringRaw(const string& s);
 
