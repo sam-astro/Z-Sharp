@@ -14,6 +14,7 @@
 #include "anyops.h"
 
 using namespace std;
+using namespace boost;
 
 vector<string> types = { "int", "float", "string", "bool", "void", "null" };
 
