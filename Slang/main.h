@@ -4,6 +4,6 @@
 
 using namespace std;
 
-string ExecuteFunction(string functionName, vector<string> inputVarVals, int functionIndex);
+boost::any ExecuteFunction(const string& functionName, const vector<boost::any>& inputVarVals);
 
 #endif

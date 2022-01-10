@@ -1,6 +1,6 @@
 #ifndef EVAL_H
 #define EVAL_H
 
-float evaluate(std::string tokens);
+float evaluate(const std::string& t);
 
 #endif

@@ -1,44 +1,52 @@
-float PI = 3.14159265358979
+// Default variables, can be overwritten
+// if re-initialized or changed
+float PI = 3.14159265358979323846264338
 float EulersNumber = 2.71828183
 
-float Sin(float input)
+// Trigonometric function Sin
+func Sin(input)
 {
-	print input
 	float out = CPP.Math.Sin(input)
 	return out
 }
 
-float Cos(float input)
+// Trigonometric function Cos
+func Cos(input)
 {
 	float out = CPP.Math.Cos(input)
 	return out
 }
 
-float Tan(float input)
+// Trigonometric function Tan
+func Tan(input)
 {
 	float out = CPP.Math.Tan(input)
 	return out
 }
 
-float Sigmoid(float input)
+// Sigmoid activation function
+func Sigmoid(input)
 {
 	float out = 1 / (1+EulersNumber^-input)
 	return out
 }
 
-float Tanh(float input)
+// Hyperbolic tangent activation function
+func Tanh(input)
 {
 	float out = ((EulersNumber^input)-(EulersNumber^-input))/((EulersNumber^input)+(EulersNumber^-input))
 	return out
 }
 
-float Round(float input)
+// Rounds input to nearest integer value
+func Round(input)
 {
 	float out = CPP.Math.Round(input)
 	return out
 }
 
-float Clamp(float input, float min, float max)
+// Clamps input between min and max
+func Clamp(input, min, max)
 {
 	if input < min
 	{
@@ -52,8 +60,20 @@ float Clamp(float input, float min, float max)
 }
 
 // Sets color of pixel to RGB value
-float SetPixel(int x, int y, int r, int g, int b)
+func SetPixel(x, y, r, g, b)
 {
 	string out = CPP.Graphics.SetPixel(x, y, r, g, b)
 	return out
+}
+
+// Prints input value to console
+func Print(in)
+{
+	CPP.System.Print(in)
+}
+
+// Prints input value to console with appended newline '\n'
+func Printl(in)
+{
+	CPP.System.PrintLine(in)
 }

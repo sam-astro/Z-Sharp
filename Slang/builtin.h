@@ -7,23 +7,52 @@
 #include <regex>
 #include <limits>
 #include <algorithm>
+#include <unordered_map>
 #include "strops.h"
 #include "graphics.h"
+#include "anyops.h"
+#include <boost/any.hpp>
 
 using namespace std;
+using namespace boost;
 
 vector<string> types = { "int", "float", "string", "bool", "void", "null" };
 
-vector<string> builtinFunctions;
-vector<vector<string>> builtinFunctionValues;
-vector<string> builtinVars;
-vector<string> builtinVarVals;
+unordered_map<string, vector<vector<string>>> builtinFunctionValues;
+unordered_map<string, boost::any> builtinVarVals;
 
 Parser mainWindow;
 
-int GetBuiltins(string script)
+class NullType {
+public:
+    string type = "NULL";
+};
+
+boost::any nullType;
+
+int LogWarning(const string& warningText)
 {
-	script = replace(script, "    ", "\t");
+	cerr << "\x1B[33mWARNING: " << warningText << "\033[0m\t\t" << endl;
+	return 1;
+}
+
+int CompilerLog(const string& logText)
+{
+	cerr << "\x1B[32mclog: " << logText << "\033[0m\t\t" << endl;
+	return 1;
+}
+
+int LogCriticalError(const string& errorText)
+{
+	cerr << "\x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
+	exit(EXIT_FAILURE);
+	return 2;
+}
+
+// Initial script processing, which loads variables and functions from builtin
+int GetBuiltins(const string& s)
+{
+	string script = replace(s, "    ", "\t");
 
 	vector<string> lines = split(script, '\n');
 	vector<vector<string>> words;
@@ -35,74 +64,80 @@ int GetBuiltins(string script)
 	// Go through entire script and iterate through all types to see if line is a
 	// function declaration, then store it with it's value
 	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
-		for (int t = 0; t < (int)types.size(); t++)
-			if (words[lineNum][0] == types[t])
+	{
+		//Checks if it is function
+		if (words[lineNum][0] == "func")
+		{
+			vector<vector<string>> functionContents;
+
+			string functName = split(words[lineNum][1], '(')[0];
+
+			string args = "";
+			for (int w = 1; w < (int)words[lineNum].size(); w++) // Get all words from the instantiation line: these are the args
 			{
-				//Checks if it is function
-				if (words[lineNum][(int)words[lineNum].size() - 1][(int)words[lineNum][(int)words[lineNum].size() - 1].size() - 1] == ')')
-				{
-					vector<string> functionContents;
-
-					string functName;
-					for (int w = 1; w < (int)words[lineNum].size(); w++) {
-						if (w < (int)words[lineNum].size() - 1)
-						{
-							functName += replace(replace(words[lineNum][w], "(", " "), ")", "") + " ";
-						}
-						else
-						{
-							functName += replace(replace(words[lineNum][w], "(", " "), ")", "");
-						}
-					}
-
-					int numOfBrackets = 1;
-					for (int p = lineNum + 2; p < (int)words.size(); p++)
-					{
-						numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
-						if (numOfBrackets == 0)
-							break;
-						functionContents.push_back("");
-						for (int w = 0; w < (int)words[p].size(); w++)
-						{
-							functionContents[(int)functionContents.size() - 1] += words[p][w] + " ";
-						}
-					}
-					functionContents = removeTabs(functionContents, 1);
-					builtinFunctions.push_back(functName);
-					builtinFunctionValues.push_back(functionContents);
-				}
-				//Checks if it is variable
-				else
-				{
-					builtinVars.push_back(words[lineNum][0] + " " + words[lineNum][1]);
-					builtinVarVals.push_back((string)words[lineNum][3]);
-					//cout << words[lineNum][1] << " is " << words[lineNum][3] << endl;
-				}
+				args += replace(replace(words[lineNum][w], "(", " "), ")", "");
 			}
+
+			args = replace(args, functName + " ", "");
+			CompilerLog(args);
+			functionContents.push_back(split(args, ','));
+
+			int numOfBrackets = 1;
+			for (int p = lineNum + 2; p < (int)words.size(); p++)
+			{
+				numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
+				if (numOfBrackets == 0)
+					break;
+				functionContents.push_back(removeTabs(words[p], 1));
+			}
+			builtinFunctionValues[functName] = functionContents;
+			//cout << functName << " is \n" << Vec2Str(functionContents) << endl << endl;
+		}
+		else
+		{
+			if (words[lineNum][0] == "string")
+				builtinVarVals[words[lineNum][1]] = StringRaw(words[lineNum][3]);
+			else if (words[lineNum][0] == "int")
+				builtinVarVals[words[lineNum][1]] = stoi(words[lineNum][3]);
+			else if (words[lineNum][0] == "float")
+				builtinVarVals[words[lineNum][1]] = stof(words[lineNum][3]);
+			else if (words[lineNum][0] == "bool")
+				builtinVarVals[words[lineNum][1]] = stob(words[lineNum][3]);
+			//else
+			//	LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
+		}
+	}
 
 	return 0;
 }
 
-string CPPFunction(string name, vector<string> args)
+// Executes 
+boost::any CPPFunction(const string& name, const vector<boost::any>& args)
 {
 	if (name == "CPP.Math.Sin")
-		return to_string(sin(stof(args[0])));
+		return sin(AnyAsFloat(args[0]));
 	else if (name == "CPP.Math.Cos")
-		return to_string(cos(stof(args[0])));
+		return cos(AnyAsFloat(args[0]));
 	else if (name == "CPP.Math.Tan")
-		return to_string(tan(stof(args[0])));
+		return tan(AnyAsFloat(args[0]));
 	else if (name == "CPP.Math.Round")
-		return to_string(round(stof(args[0])));
+		return AnyAsInt(args[0]);
 	else if (name == "CPP.Graphics.Init")
 	{
 		cout << "\x1B[32mInit graphics\033[0m\t\t" << endl;
-		if (mainWindow.Construct(stoi(args[0]), stoi(args[1]), stoi(args[2]), stoi(args[2])))
+		if (mainWindow.Construct(AnyAsInt(args[0]), AnyAsInt(args[1]), AnyAsInt(args[2]), AnyAsInt(args[2])))
 			mainWindow.Start();
 	}
 	else if (name == "CPP.Graphics.SetPixel")
-		mainWindow.Draw(stoi(args[0]), stoi(args[1]), olc::Pixel(stoi(args[2]), stoi(args[3]), stoi(args[4])));
+		mainWindow.Draw(AnyAsInt(args[0]), AnyAsInt(args[1]), olc::Pixel(AnyAsInt(args[2]), AnyAsInt(args[3]), AnyAsInt(args[4])));
+	else if (name == "CPP.System.Print")
+		cout << AnyAsString(args[0]);
+	else if (name == "CPP.System.PrintLine")
+		cout << AnyAsString(args[0]) << endl;
+	else
+		LogWarning("CPP function \'" + name + "\' does not exist.");
 
-	return "";
+	return 0;
 }
 
 #endif
