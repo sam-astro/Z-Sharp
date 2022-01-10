@@ -36,6 +36,12 @@ int LogWarning(const string& warningText)
 	return 1;
 }
 
+int CompilerLog(const string& logText)
+{
+	cerr << "\x1B[32mclog: " << logText << "\033[0m\t\t" << endl;
+	return 1;
+}
+
 int LogCriticalError(const string& errorText)
 {
 	cerr << "\x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
@@ -67,22 +73,17 @@ int GetBuiltins(const string& s)
 			string functName = split(words[lineNum][1], '(')[0];
 
 			string args = "";
-			for (int w = 1; w < (int)words[lineNum].size(); w++) {
-				if (w < (int)words[lineNum].size() - 1)
-				{
-					args += replace(replace(words[lineNum][w], "(", " "), ")", "") + ",";
-				}
-				else
-				{
-					args += replace(replace(words[lineNum][w], "(", " "), ")", "");
-				}
+			for (int w = 1; w < (int)words[lineNum].size(); w++) // Get all words from the instantiation line: these are the args
+			{
+				args += replace(replace(words[lineNum][w], "(", " "), ")", "");
 			}
 
 			args = replace(args, functName + " ", "");
+			CompilerLog(args);
 			functionContents.push_back(split(args, ','));
 
 			int numOfBrackets = 1;
-			for (int p = lineNum + 3; p < (int)words.size(); p++)
+			for (int p = lineNum + 2; p < (int)words.size(); p++)
 			{
 				numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
 				if (numOfBrackets == 0)

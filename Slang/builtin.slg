@@ -1,12 +1,11 @@
 // Default variables, can be overwritten
 // if re-initialized or changed
-float PI = 3.14159265358979
+float PI = 3.14159265358979323846264338
 float EulersNumber = 2.71828183
 
 // Trigonometric function Sin
 func Sin(input)
 {
-	//Print(input)
 	float out = CPP.Math.Sin(input)
 	return out
 }

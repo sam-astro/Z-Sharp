@@ -58,7 +58,7 @@ vector<boost::any> VarValues(const vector<string>& varNames, const unordered_map
 	for (int varIndex = 0; varIndex < varNames.size(); varIndex++)
 	{
 		string varName = trim(varNames[varIndex]);
-		cout << varName << endl;
+		//cout << varName << endl;
 
 		auto iA = variableValues.find(varName);
 		if (iA != variableValues.end())
@@ -98,6 +98,8 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 	string expression = trim(ex);
 	bool inQuotes = false;
 
+	CompilerLog("OLDEXPRESSION: |" + expression + "|");
+
 	// If no operations are applied, then return self
 	if ((count(expression, '+') == 0 && count(expression, '-') == 0 && count(expression, '*') == 0 && count(expression, '/') == 0 && count(expression, '(') == 0 && count(expression, '^') == 0) || split(expression, '.')[0] == "CPP")
 	{
@@ -113,7 +115,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 
 				y++;
 			}
-			//cout << split(expression, '(')[0] << "  " << argContents << endl;
+			CompilerLog(split(expression, '(')[0] + " " + AnyAsString(GetVariableValue(split(argContents, ',')[0], variableValues)));
 			return ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
 		}
 		else if (split(expression, '.')[0] == "CPP" && !inQuotes)
@@ -126,7 +128,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 
 				y++;
 			}
-			//cout << split(expression, '(')[0] << " " << unWrapVec(VarValues(split(argContents, ','), variables, variableValues)) << endl;
+			CompilerLog(split(expression, '(')[0] + " " + argContents);
 			return CPPFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
 		}
 		else
@@ -163,6 +165,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 
 					i++;
 				}
+				CompilerLog(split(expression, '(')[0] + " " + AnyAsString(GetVariableValue(split(argContents, ',')[0], variableValues)));
 				string returnVal = AnyAsString(ExecuteFunction(name, VarValues(split(argContents, ','), variableValues)));
 				newExpression += returnVal;
 				//cout << newExpression << endl;
@@ -196,7 +199,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 			newExpression += expression[i];
 		}
 	}
-	//cout << "NEW EXPRESSION: " << newExpression << endl;
+	CompilerLog("NEW EXPRESSION: |" + newExpression + "|");
 
 	bool addStrings = false;
 	for (int i = 0; i < (int)newExpression.size(); i++)
@@ -223,7 +226,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 		}
 
 		//cout << "NewSTRING = " << Quoted(withoutParenthesis) << endl;
-		return Quoted(withoutParenthesis);
+		return withoutParenthesis;
 	}
 	else
 		return evaluate(newExpression);
@@ -248,7 +251,7 @@ bool BooleanLogic(const string& valA, const string& determinant, const string& v
 		return AnyAsFloat(valARealValue) < AnyAsFloat(valBRealValue);
 	else
 		LogWarning("unrecognized determinant \'" + determinant + "\'");
-	
+
 	return false;
 }
 
@@ -294,6 +297,9 @@ int varOperation(const vector<string>& str, unordered_map<string, boost::any>& v
 
 boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<string, boost::any>& variableValues)
 {
+	CompilerLog(unWrapVec(words[lineNum]));
+	CompilerLog(AnyAsString(GetVariableValue("out", variableValues)));
+
 	if (words[lineNum][0][0] == '/' && words[lineNum][0][1] == '/')
 		return nullType;
 
@@ -321,10 +327,10 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 
 	// Iterate through all types to see if line inits or
 	// re-inits a variable then store it with it's value
-	else if (countInVector(types, words[lineNum][0]) > 0)
+	else if (countInVector(types, trim(words[lineNum][0])) > 0)
 	{
-		//cout << unWrapVec(words[lineNum]) << endl;
 		variableValues[words[lineNum][1]] = EvalExpression(unWrapVec(slice(words[lineNum], 3, -1)), variableValues);
+		CompilerLog("new var :: " + words[lineNum][1] + " = " + AnyAsString(variableValues[words[lineNum][1]]));
 		return nullType;
 	}
 
@@ -370,7 +376,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 			for (int lineNum = 0; lineNum < (int)whileContents.size(); lineNum++)
 			{
 				boost::any returnVal = ProcessLine(innerWords, lineNum, variableValues);
-				if (!returnVal.empty() && returnVal.empty() == false)
+				if (!returnVal.empty())
 					return returnVal;
 			}
 		}
@@ -412,7 +418,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 			for (int l = 0; l < (int)ifContents.size(); l++)
 			{
 				boost::any returnVal = ProcessLine(innerWords, l, variableValues);
-				if (!returnVal.empty() && returnVal.empty() == false)
+				if (!returnVal.empty())
 					return returnVal;
 			}
 		}
@@ -470,7 +476,7 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 	for (int i = 0; i < (int)inputVarVals.size(); i++) {
 
 		variableValues[args[i]] = inputVarVals[i];
-		cout << "\x1B[33m" << args[i] << " == " << AnyAsString(inputVarVals[i]) << "\033[0m\t\t" << endl;
+		//cout << "\x1B[33m" << args[i] << " == " << AnyAsString(inputVarVals[i]) << "\033[0m\t\t" << endl;
 	}
 
 	//Iterate through all lines in function
@@ -485,7 +491,7 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 		{
 			LogCriticalError("\'" + unWrapVec(words[lineNum]) + "\'\nIn function: " + functionName + "\nLine: " + to_string(lineNum));
 		}
-		if (!returnVal.empty() && returnVal.empty() == false)
+		if (!returnVal.empty())
 			return returnVal;
 	}
 	return nullType;
@@ -512,22 +518,17 @@ int parseSlang(string script)
 			string functName = split(words[lineNum][1], '(')[0];
 
 			string args = "";
-			for (int w = 1; w < (int)words[lineNum].size(); w++) {
-				if (w < (int)words[lineNum].size() - 1)
-				{
-					args += replace(replace(words[lineNum][w], "(", " "), ")", "") + ",";
-				}
-				else
-				{
-					args += replace(replace(words[lineNum][w], "(", " "), ")", "");
-				}
+			for (int w = 1; w < (int)words[lineNum].size(); w++) // Get all words from the instantiation line: these are the args
+			{
+				args += replace(replace(words[lineNum][w], "(", " "), ")", "");
 			}
 
 			args = replace(args, functName + " ", "");
+			CompilerLog(args);
 			functionContents.push_back(split(args, ','));
 
 			int numOfBrackets = 1;
-			for (int p = lineNum + 3; p < (int)words.size(); p++)
+			for (int p = lineNum + 2; p < (int)words.size(); p++)
 			{
 				numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
 				if (numOfBrackets == 0)

@@ -2,6 +2,7 @@
 
 func Main(input, in)
 {
+
 	print "PI is: " + PI
 	int x = 1
 	print x
@@ -12,13 +13,14 @@ func Main(input, in)
 		print x
 		float s = Sin(x)
 		print s
-		int k = Sigmoid(s)
+		k = Sigmoid(s)
 		print k
 		
 		x += 1
 	}
 	
-	CPP.Graphics.Init(64, 64, 4)
+	//CPP.Graphics.Init(64, 64, 4)
+	return 0
 }
 
 func Update(input)
