@@ -78,8 +78,8 @@ int GetBuiltins(const string& s)
 				}
 			}
 
-			args = replace(args, functName + ",", "");
-			functionContents.push_back(vector<string>{args});
+			args = replace(args, functName + " ", "");
+			functionContents.push_back(split(args, ','));
 
 			int numOfBrackets = 1;
 			for (int p = lineNum + 3; p < (int)words.size(); p++)

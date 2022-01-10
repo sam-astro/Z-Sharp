@@ -22,10 +22,10 @@ using namespace boost;
 unordered_map<string, boost::any> globalVariableValues;
 unordered_map<string, vector<vector<string>>> functionValues;
 
-boost::any GetVariableValue(const string& varName, const unordered_map<string, boost::any>& variableVals)
+boost::any GetVariableValue(const string& varName, const unordered_map<string, boost::any>& variableValues)
 {
-	auto iA = variableVals.find(varName);
-	if (iA != variableVals.end())
+	auto iA = variableValues.find(varName);
+	if (iA != variableValues.end())
 	{
 		return iA->second;
 	}
@@ -43,24 +43,25 @@ boost::any GetVariableValue(const string& varName, const unordered_map<string, b
 	}
 }
 
-bool IsVar(const string& varName, const unordered_map<string, boost::any>& variableVals)
+bool IsVar(const string& varName, const unordered_map<string, boost::any>& variableValues)
 {
-	if (variableVals.find(varName) != variableVals.end())
+	if (variableValues.find(varName) != variableValues.end())
 		return true;
 	else
 		return false;
 }
 
-vector<boost::any> VarValues(const vector<string>& varNames, const unordered_map<string, boost::any>& variableVals)
+vector<boost::any> VarValues(const vector<string>& varNames, const unordered_map<string, boost::any>& variableValues)
 {
 	vector<boost::any> realValues;
 
 	for (int varIndex = 0; varIndex < varNames.size(); varIndex++)
 	{
 		string varName = trim(varNames[varIndex]);
+		cout << varName << endl;
 
-		auto iA = variableVals.find(varName);
-		if (iA != variableVals.end())
+		auto iA = variableValues.find(varName);
+		if (iA != variableValues.end())
 		{
 			realValues.push_back(iA->second);
 		}
@@ -84,8 +85,15 @@ bool IsFunction(const string& funcName)
 	else
 		return false;
 }
+bool IsCPPFunction(const string& funcName)
+{
+	if (funcName[0] == 'C' && funcName[1] == 'P' && funcName[2] == 'P' && funcName[2] == '.')
+		return true;
+	else
+		return false;
+}
 
-boost::any EvalExpression(const string& ex, const unordered_map<string, boost::any>& variableVals)
+boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& variableValues)
 {
 	string expression = trim(ex);
 	bool inQuotes = false;
@@ -93,8 +101,8 @@ boost::any EvalExpression(const string& ex, const unordered_map<string, boost::a
 	// If no operations are applied, then return self
 	if ((count(expression, '+') == 0 && count(expression, '-') == 0 && count(expression, '*') == 0 && count(expression, '/') == 0 && count(expression, '(') == 0 && count(expression, '^') == 0) || split(expression, '.')[0] == "CPP")
 	{
-		int funcIndex = IsFunction(split(expression, '(')[0]);
-		if (funcIndex != -1 && !inQuotes)
+		bool isFunc = IsFunction(split(expression, '(')[0]);
+		if (isFunc && !inQuotes)
 		{
 			//cout << split(expression, '(')[0] << endl;
 			string argContents = "";
@@ -106,7 +114,7 @@ boost::any EvalExpression(const string& ex, const unordered_map<string, boost::a
 				y++;
 			}
 			//cout << split(expression, '(')[0] << "  " << argContents << endl;
-			return ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableVals));
+			return ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
 		}
 		else if (split(expression, '.')[0] == "CPP" && !inQuotes)
 		{
@@ -118,11 +126,11 @@ boost::any EvalExpression(const string& ex, const unordered_map<string, boost::a
 
 				y++;
 			}
-			//cout << split(expression, '(')[0] << " " << unWrapVec(VarValues(split(argContents, ','), variables, variableVals)) << endl;
-			return CPPFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableVals));
+			//cout << split(expression, '(')[0] << " " << unWrapVec(VarValues(split(argContents, ','), variables, variableValues)) << endl;
+			return CPPFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
 		}
 		else
-			return GetVariableValue(expression, variableVals);
+			return GetVariableValue(expression, variableValues);
 	}
 
 	string newExpression = "";
@@ -143,7 +151,7 @@ boost::any EvalExpression(const string& ex, const unordered_map<string, boost::a
 				i++;
 			}
 
-			//string varVal = GetVariableValue(name, variables, variableVals);
+			//string varVal = GetVariableValue(name, variables, variableValues);
 			bool isFunc = IsFunction(name);
 			if (isFunc && !inQuotes)
 			{
@@ -155,7 +163,7 @@ boost::any EvalExpression(const string& ex, const unordered_map<string, boost::a
 
 					i++;
 				}
-				string returnVal = AnyAsString(ExecuteFunction(name, VarValues(split(argContents, ','), variableVals)));
+				string returnVal = AnyAsString(ExecuteFunction(name, VarValues(split(argContents, ','), variableValues)));
 				newExpression += returnVal;
 				//cout << newExpression << endl;
 			}
@@ -170,7 +178,7 @@ boost::any EvalExpression(const string& ex, const unordered_map<string, boost::a
 					y++;
 				}
 				//cout << split(expression, '(')[0] << " " << argContents << endl;
-				string returnVal = AnyAsString(CPPFunction(split(name, '(')[0], VarValues(split(argContents, ','), variableVals)));
+				string returnVal = AnyAsString(CPPFunction(split(name, '(')[0], VarValues(split(argContents, ','), variableValues)));
 				newExpression += returnVal;
 			}
 			else
@@ -178,7 +186,7 @@ boost::any EvalExpression(const string& ex, const unordered_map<string, boost::a
 				if (inQuotes)
 					newExpression += name;
 				else
-					newExpression += AnyAsString(GetVariableValue(name, variableVals));
+					newExpression += AnyAsString(GetVariableValue(name, variableValues));
 			}
 
 			i--;
@@ -221,10 +229,10 @@ boost::any EvalExpression(const string& ex, const unordered_map<string, boost::a
 		return evaluate(newExpression);
 }
 
-bool BooleanLogic(const string& valA, const string& determinant, const string& valB, const unordered_map<string, boost::any>& variableVals)
+bool BooleanLogic(const string& valA, const string& determinant, const string& valB, unordered_map<string, boost::any>& variableValues)
 {
-	boost::any valARealValue = EvalExpression(valA, variableVals);
-	boost::any valBRealValue = EvalExpression(valB, variableVals);
+	boost::any valARealValue = EvalExpression(valA, variableValues);
+	boost::any valBRealValue = EvalExpression(valB, variableValues);
 
 	if (determinant == "==")
 		return AnyAsString(valARealValue) == AnyAsString(valBRealValue);
@@ -286,9 +294,6 @@ int varOperation(const vector<string>& str, unordered_map<string, boost::any>& v
 
 boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<string, boost::any>& variableValues)
 {
-	if (words[lineNum].size() == 0)
-		return nullType;
-
 	if (words[lineNum][0][0] == '/' && words[lineNum][0][1] == '/')
 		return nullType;
 
@@ -318,13 +323,14 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	// re-inits a variable then store it with it's value
 	else if (countInVector(types, words[lineNum][0]) > 0)
 	{
-		variableValues[words[lineNum][1]] = EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 3, words[lineNum].end())), variableValues);
+		//cout << unWrapVec(words[lineNum]) << endl;
+		variableValues[words[lineNum][1]] = EvalExpression(unWrapVec(slice(words[lineNum], 3, -1)), variableValues);
 		return nullType;
 	}
 
 	// Check existing variables: If matches, then it means
 	// the variables value is getting changed with an operator
-	else if (IsVar(words[lineNum][0], variableValues))
+	else if (IsVar(words[lineNum][0], variableValues) || IsVar(words[lineNum][0], globalVariableValues))
 	{
 		// Evaluates what the operator (ex. '=', '+=') does to the value on the left by the value on the right
 		varOperation(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
@@ -459,13 +465,16 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 	// Get contents of function
 	vector<vector<string>> words = functionValues[functionName];
 
-	unordered_map<string, boost::any> variableValues;
-	vector<string> args = split(words[0][0], ',');
-	for (int i = 0; i < (int)inputVarVals.size(); i++)
+	unordered_map<string, boost::any> variableValues = {};
+	vector<string> args = words[0];
+	for (int i = 0; i < (int)inputVarVals.size(); i++) {
+
 		variableValues[args[i]] = inputVarVals[i];
+		cout << "\x1B[33m" << args[i] << " == " << AnyAsString(inputVarVals[i]) << "\033[0m\t\t" << endl;
+	}
 
 	//Iterate through all lines in function
-	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
+	for (int lineNum = 1; lineNum < (int)words.size(); lineNum++)
 	{
 		boost::any returnVal = 0;
 		try
@@ -514,8 +523,8 @@ int parseSlang(string script)
 				}
 			}
 
-			args = replace(args, functName + ",", "");
-			functionContents.push_back(vector<string>{args});
+			args = replace(args, functName + " ", "");
+			functionContents.push_back(split(args, ','));
 
 			int numOfBrackets = 1;
 			for (int p = lineNum + 3; p < (int)words.size(); p++)

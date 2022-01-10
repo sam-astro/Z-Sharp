@@ -39,6 +39,8 @@ vector<string> removeTabs(const vector<string>& str, const int& amnt);
 
 vector<string> rangeInVec(const vector<string>& str, const int& min, const int& max);
 
+vector<string> slice(vector<string> const& v, int min, int max);
+
 string rangeInStr(const string& str, const int& min, const int& max);
 
 string unWrapVec(const vector<string>& vec);

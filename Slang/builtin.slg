@@ -6,7 +6,7 @@ float EulersNumber = 2.71828183
 // Trigonometric function Sin
 func Sin(input)
 {
-	print input
+	//Print(input)
 	float out = CPP.Math.Sin(input)
 	return out
 }
@@ -70,13 +70,11 @@ func SetPixel(x, y, r, g, b)
 // Prints input value to console
 func Print(in)
 {
-	string out = CPP.System.Print(in)
-	return out
+	CPP.System.Print(in)
 }
 
 // Prints input value to console with appended newline '\n'
 func Printl(in)
 {
-	string out = CPP.System.PrintLine(in)
-	return out
+	CPP.System.PrintLine(in)
 }

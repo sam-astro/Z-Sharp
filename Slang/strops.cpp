@@ -217,6 +217,18 @@ vector<string> rangeInVec(const vector<string>& str, const int& min, int max) {
 	return newStr;
 }
 
+vector<string> slice(vector<string> const& v, int min, int max)
+{
+	if (max == -1)
+		max = (int)v.size() - 1;
+
+	auto first = v.cbegin() + min;
+	auto last = v.cbegin() + max + 1;
+
+	vector<string> vec(first, last);
+	return vec;
+}
+
 string rangeInStr(const string& str, const int& min, int max) {
 	if (max == -1)
 		max = (int)str.size();

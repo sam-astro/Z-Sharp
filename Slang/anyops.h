@@ -75,7 +75,7 @@ string AnyAsString(const boost::any& val)
 				catch (boost::bad_any_cast) // Does not convert, return
 				{
 					LogWarning("invalid conversion to type \'string\'");
-					return "ERR";
+					return "";
 				}
 			}
 		}
