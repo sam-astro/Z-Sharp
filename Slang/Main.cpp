@@ -1,5 +1,4 @@
 
-#include "olcPixelGameEngine.h"
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -7,6 +6,7 @@
 #include <limits>
 #include <algorithm>
 #include <cstdlib>
+#include <sstream>
 #include <boost/any.hpp>
 #include <unordered_map>
 
@@ -98,7 +98,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 	string expression = trim(ex);
 	bool inQuotes = false;
 
-	CompilerLog("OLDEXPRESSION: |" + expression + "|");
+	//CompilerLog("OLDEXPRESSION: |" + expression + "|");
 
 	// If no operations are applied, then return self
 	if ((count(expression, '+') == 0 && count(expression, '-') == 0 && count(expression, '*') == 0 && count(expression, '/') == 0 && count(expression, '(') == 0 && count(expression, '^') == 0) || split(expression, '.')[0] == "CPP")
@@ -115,7 +115,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 
 				y++;
 			}
-			CompilerLog(split(expression, '(')[0] + " " + AnyAsString(GetVariableValue(split(argContents, ',')[0], variableValues)));
+			//CompilerLog(split(expression, '(')[0] + " " + AnyAsString(GetVariableValue(split(argContents, ',')[0], variableValues)));
 			return ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
 		}
 		else if (split(expression, '.')[0] == "CPP" && !inQuotes)
@@ -128,7 +128,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 
 				y++;
 			}
-			CompilerLog(split(expression, '(')[0] + " " + argContents);
+			//CompilerLog(split(expression, '(')[0] + " " + argContents);
 			return CPPFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
 		}
 		else
@@ -165,7 +165,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 
 					i++;
 				}
-				CompilerLog(split(expression, '(')[0] + " " + AnyAsString(GetVariableValue(split(argContents, ',')[0], variableValues)));
+				//CompilerLog(split(expression, '(')[0] + " " + AnyAsString(GetVariableValue(split(argContents, ',')[0], variableValues)));
 				string returnVal = AnyAsString(ExecuteFunction(name, VarValues(split(argContents, ','), variableValues)));
 				newExpression += returnVal;
 				//cout << newExpression << endl;
@@ -199,7 +199,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 			newExpression += expression[i];
 		}
 	}
-	CompilerLog("NEW EXPRESSION: |" + newExpression + "|");
+	//CompilerLog("NEW EXPRESSION: |" + newExpression + "|");
 
 	bool addStrings = false;
 	for (int i = 0; i < (int)newExpression.size(); i++)
@@ -297,8 +297,8 @@ int varOperation(const vector<string>& str, unordered_map<string, boost::any>& v
 
 boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<string, boost::any>& variableValues)
 {
-	CompilerLog(unWrapVec(words[lineNum]));
-	CompilerLog(AnyAsString(GetVariableValue("out", variableValues)));
+	//CompilerLog(unWrapVec(words[lineNum]));
+	//CompilerLog(AnyAsString(GetVariableValue("out", variableValues)));
 
 	if (words[lineNum][0][0] == '/' && words[lineNum][0][1] == '/')
 		return nullType;
@@ -330,7 +330,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	else if (countInVector(types, trim(words[lineNum][0])) > 0)
 	{
 		variableValues[words[lineNum][1]] = EvalExpression(unWrapVec(slice(words[lineNum], 3, -1)), variableValues);
-		CompilerLog("new var :: " + words[lineNum][1] + " = " + AnyAsString(variableValues[words[lineNum][1]]));
+		//CompilerLog("new var :: " + words[lineNum][1] + " = " + AnyAsString(variableValues[words[lineNum][1]]));
 		return nullType;
 	}
 
@@ -524,7 +524,7 @@ int parseSlang(string script)
 			}
 
 			args = replace(args, functName + " ", "");
-			CompilerLog(args);
+			//CompilerLog(args);
 			functionContents.push_back(split(args, ','));
 
 			int numOfBrackets = 1;

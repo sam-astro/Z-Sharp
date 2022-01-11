@@ -77,3 +77,10 @@ func Printl(in)
 {
 	CPP.System.PrintLine(in)
 }
+
+// Creates new circle class
+func NewCircle(x, y, r)
+{
+	Circle c = CPP.Graphics.Circle(x, y, r)
+	return c
+}

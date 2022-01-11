@@ -24,6 +24,9 @@
     <ClCompile Include="strops.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="tut\02_getting_an_image_on_the_screen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="olcPixelGameEngine.h">
@@ -51,5 +54,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="tut\hello_world.bmp">
+      <Filter>Source Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>
