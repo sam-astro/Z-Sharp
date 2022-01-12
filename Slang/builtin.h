@@ -137,6 +137,11 @@ boost::any CPPFunction(const string& name, const vector<boost::any>& args)
 		cout << AnyAsString(args[0]);
 	else if (name == "CPP.System.PrintLine")
 		cout << AnyAsString(args[0]) << endl;
+	else if (name == "CPP.System.Vec2")
+	{
+		Vec2 v(AnyAsFloat(args[0]), AnyAsFloat(args[1]));
+		return v;
+	}
 	else
 		LogWarning("CPP function \'" + name + "\' does not exist.");
 
