@@ -86,7 +86,7 @@ func NSprite(path, x, y, r)
 }
 
 // Creates new Vector2 class
-func Vec2(x, y)
+func NVec2(x, y)
 {
 	Vec2 v = CPP.System.Vec2(x, y)
 	return v

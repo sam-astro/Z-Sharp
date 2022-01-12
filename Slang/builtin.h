@@ -13,6 +13,7 @@
 #include "anyops.h"
 #include <boost/any.hpp>
 #include <SDL.h>
+#include <ctime>
 
 using namespace std;
 using namespace boost;
@@ -35,17 +36,61 @@ int LogWarning(const string& warningText)
 	return 1;
 }
 
-int CompilerLog(const string& logText)
+int InterpreterLog(const string& logText)
 {
-	cerr << "\x1B[32mclog: " << logText << "\033[0m\t\t" << endl;
+	time_t timer = time(0);
+
+	tm bt{};
+#if defined(__unix__)
+	localtime_r(&timer, &bt);
+#elif defined(_MSC_VER)
+	localtime_s(&bt, &timer);
+#else
+	static mutex mtx;
+	std::lock_guard<std::mutex> lock(mtx);
+	bt = *localtime(&timer);
+#endif
+
+	int Hour = bt.tm_hour;
+	int Min = bt.tm_min;
+	int Sec = bt.tm_sec;
+
+	cout << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mSlang: \x1B[32m" << logText << "\033[0m\t\t" << endl;
 	return 1;
 }
 
 int LogCriticalError(const string& errorText)
 {
-	cerr << "\x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
+	time_t timer = time(0);
+
+	tm bt{};
+#if defined(__unix__)
+	localtime_r(&timer, &bt);
+#elif defined(_MSC_VER)
+	localtime_s(&bt, &timer);
+#else
+	static mutex mtx;
+	std::lock_guard<std::mutex> lock(mtx);
+	bt = *localtime(&timer);
+#endif
+
+	int Hour = bt.tm_hour;
+	int Min = bt.tm_min;
+	int Sec = bt.tm_sec;
+
+	cerr << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mSlang: \x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
 	exit(EXIT_FAILURE);
 	return 2;
+}
+
+boost::any GetClassSubComponent(boost::any value, string subComponentName)
+{
+	// If a Vec2 Class
+	if (any_type(value) == 5)
+	{
+		return any_cast<Vec2>(value).SubComponent(subComponentName);
+	}
+	return nullType;
 }
 
 // Initial script processing, which loads variables and functions from builtin
@@ -71,6 +116,8 @@ int GetBuiltins(const string& s)
 
 			string functName = split(words[lineNum][1], '(')[0];
 
+			InterpreterLog("Load builtin function " + functName);
+
 			string args = "";
 			for (int w = 1; w < (int)words[lineNum].size(); w++) // Get all words from the instantiation line: these are the args
 			{
@@ -78,7 +125,6 @@ int GetBuiltins(const string& s)
 			}
 
 			args = replace(args, functName + " ", "");
-			CompilerLog(args);
 			functionContents.push_back(split(args, ','));
 
 			int numOfBrackets = 1;
@@ -95,13 +141,25 @@ int GetBuiltins(const string& s)
 		else
 		{
 			if (words[lineNum][0] == "string")
+			{
 				builtinVarVals[words[lineNum][1]] = StringRaw(words[lineNum][3]);
+				InterpreterLog("Load builtin variable " + words[lineNum][1]);
+			}
 			else if (words[lineNum][0] == "int")
+			{
 				builtinVarVals[words[lineNum][1]] = stoi(words[lineNum][3]);
+				InterpreterLog("Load builtin variable " + words[lineNum][1]);
+			}
 			else if (words[lineNum][0] == "float")
+			{
 				builtinVarVals[words[lineNum][1]] = stof(words[lineNum][3]);
+				InterpreterLog("Load builtin variable " + words[lineNum][1]);
+			}
 			else if (words[lineNum][0] == "bool")
+			{
 				builtinVarVals[words[lineNum][1]] = stob(words[lineNum][3]);
+				InterpreterLog("Load builtin variable " + words[lineNum][1]);
+			}
 			//else
 			//	LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
 		}
@@ -123,13 +181,13 @@ boost::any CPPFunction(const string& name, const vector<boost::any>& args)
 		return AnyAsInt(args[0]);
 	else if (name == "CPP.Graphics.Init")
 	{
-		cout << "\x1B[32mInit graphics\033[0m\t\t" << endl;
-		initGraphics(AnyAsString(args[0]), AnyAsInt(args[1]), AnyAsInt(args[2]));
+		InterpreterLog("Init graphics");
+		initGraphics(StringRaw(AnyAsString(args[0])), AnyAsInt(args[1]), AnyAsInt(args[2]));
 	}
 	else if (name == "CPP.Graphics.Sprite")
 	{
-		Sprite s(AnyAsString(args[0]), any_cast<Vec2>(args[1]), any_cast<Vec2>(args[2]), AnyAsFloat(args[3]));
-		Sprite d = any_cast<Sprite>(a);
+		Sprite s(StringRaw(AnyAsString(args[0])), any_cast<Vec2>(args[1]), any_cast<Vec2>(args[2]), AnyAsFloat(args[3]));
+		return s;
 	}
 	else if (name == "CPP.Graphics.Draw")
 	{

@@ -10,9 +10,17 @@ using namespace std;
 
 int LogWarning(const string& warningText);
 
+// Gets if any is NullType
+bool any_null(const boost::any& val)
+{
+	return val.empty();
+}
+
 // Will convert type 'any' val to a bool
 bool AnyAsBool(const boost::any& val)
 {
+	if (any_null(val))
+		return false;
 	try // Try converting to bool
 	{
 		return any_cast<bool>(val);
@@ -48,6 +56,8 @@ bool AnyAsBool(const boost::any& val)
 // Will convert type 'any' val to a string
 string AnyAsString(const boost::any& val)
 {
+	if (any_null(val))
+		return "";
 	try // Try converting to string
 	{
 		return any_cast<string>(val);
@@ -85,6 +95,8 @@ string AnyAsString(const boost::any& val)
 // Will convert type 'any' val to a float
 float AnyAsFloat(const boost::any& val)
 {
+	if (any_null(val))
+		return 0.0f;
 	try // Try converting to float
 	{
 		return any_cast<float>(val);
@@ -105,11 +117,11 @@ float AnyAsFloat(const boost::any& val)
 			{
 				try
 				{
-					float i = 0;
-					if (any_cast<bool>(val) == true) i = 1;
+					float i = 0.0f;
+					if (any_cast<bool>(val) == true) i = 1.0f;
 					return i;
 				}
-				catch (boost::bad_any_cast) // Does not convert, return
+				catch (boost::bad_any_cast e) // Does not convert, return
 				{
 					LogWarning("invalid conversion to type \'float\'");
 					return 0;
@@ -122,6 +134,8 @@ float AnyAsFloat(const boost::any& val)
 // Will convert type 'any' val to an integer
 int AnyAsInt(const boost::any& val)
 {
+	if (any_null(val))
+		return 0;
 	try // Try converting to int
 	{
 		return any_cast<int>(val);
@@ -157,7 +171,7 @@ int AnyAsInt(const boost::any& val)
 }
 
 // Gets type of 'any' val
-// 0 -> int;  1 -> float;  2 -> bool;  3 -> string;
+// 0 -> int;  1 -> float;  2 -> bool;  3 -> string;  4 -> Sprite; 5 -> Vec2;
 int any_type(const boost::any& val)
 {
 	try // Try converting to int
@@ -186,31 +200,30 @@ int any_type(const boost::any& val)
 					string s = any_cast<string>(val);
 					return 3;
 				}
-				catch (boost::bad_any_cast) // Does not convert, return
+				catch (boost::bad_any_cast) // Try converting to sprite
 				{
-					LogWarning("variable has no type");
-					return -1;
+					try
+					{
+						Sprite s = any_cast<Sprite>(val);
+						return 4;
+					}
+					catch (boost::bad_any_cast) // Try converting to Vec2
+					{
+						try
+						{
+							Vec2 v = any_cast<Vec2>(val);
+							return 5;
+						}
+						catch (boost::bad_any_cast) // Does not convert, return
+						{
+							LogWarning("variable has no type");
+							return -1;
+						}
+					}
 				}
 			}
 		}
 	}
-}
-
-// Gets if any is NullType
-bool any_null(const boost::any& val)
-{
-	/*if (val.type() == typeid(NullType))
-		return true;*/
-	return false;
-	//try // Try converting to Null
-	//{
-	//	NullType n = any_cast<NullType>(val);
-	//	return true;
-	//}
-	//catch (boost::bad_any_cast)
-	//{
-	//	return false;
-	//}
 }
 
 #endif
