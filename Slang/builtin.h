@@ -129,10 +129,15 @@ boost::any CPPFunction(const string& name, const vector<boost::any>& args)
 	else if (name == "CPP.Graphics.Sprite")
 	{
 		Sprite s(AnyAsString(args[0]), any_cast<Vec2>(args[1]), any_cast<Vec2>(args[2]), AnyAsFloat(args[3]));
-		boost::any a = s;
 		Sprite d = any_cast<Sprite>(a);
-		return d;
 	}
+	else if (name == "CPP.Graphics.Draw")
+	{
+		Sprite d = any_cast<Sprite>(args[0]);
+		d.Draw();
+	}
+	else if (name == "CPP.Input.GetKey")
+		return KEYS[any_cast<string>(args[0])] == 1;
 	else if (name == "CPP.System.Print")
 		cout << AnyAsString(args[0]);
 	else if (name == "CPP.System.PrintLine")
