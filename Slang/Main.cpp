@@ -558,29 +558,29 @@ int parseSlang(string script)
 
 	return 0;
 }
-
-int main(int argc, char* argv[])
-{
-	// Get builtin script contents
-	ifstream builtin("../Slang/builtin.slg");
-	stringstream builtinString;
-	builtinString << builtin.rdbuf();
-
-	// Gathers builtin functions and variables
-	GetBuiltins(builtinString.str());
-	functionValues = builtinFunctionValues;
-	globalVariableValues = builtinVarVals;
-
-	// Get default script contents
-	ifstream script("../Slang/script.slg");
-	stringstream scriptString;
-	scriptString << script.rdbuf();
-
-	while (true) {
-		system("pause");
-		break;
-	}
-	parseSlang(scriptString.str());
-
-	return 0;
-}
+//
+//int main(int argc, char* argv[])
+//{
+//	// Get builtin script contents
+//	ifstream builtin("../Slang/builtin.slg");
+//	stringstream builtinString;
+//	builtinString << builtin.rdbuf();
+//
+//	// Gathers builtin functions and variables
+//	GetBuiltins(builtinString.str());
+//	functionValues = builtinFunctionValues;
+//	globalVariableValues = builtinVarVals;
+//
+//	// Get default script contents
+//	ifstream script("../Slang/script.slg");
+//	stringstream scriptString;
+//	scriptString << script.rdbuf();
+//
+//	while (true) {
+//		system("pause");
+//		break;
+//	}
+//	parseSlang(scriptString.str());
+//
+//	return 0;
+//}

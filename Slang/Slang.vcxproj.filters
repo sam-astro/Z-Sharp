@@ -24,7 +24,7 @@
     <ClCompile Include="strops.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="tut\02_getting_an_image_on_the_screen.cpp">
+    <ClCompile Include="graphics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

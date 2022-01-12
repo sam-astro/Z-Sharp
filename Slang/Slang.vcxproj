@@ -80,8 +80,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Code\SDL2-2.0.18\include;D:\Code\SDL2_image-2.0.5\include;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\Code\SDL2-2.0.18\lib\x64;D:\Code\SDL2_image-2.0.5\lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\Code\SDL2-2.0.18\include;D:\Code\SDL2_image-2.0.5\include;D:\Code\SDL2_ttf-2.0.15\include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\Code\SDL2_ttf-2.0.15\lib\x64;D:\Code\SDL2-2.0.18\lib\x64;D:\Code\SDL2_image-2.0.5\lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -123,13 +123,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>D:\Code\boost;D:\Code\SDL2-2.0.18;D:\Code\SDL2_image-2.0.5;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Code\SDL2_ttf-2.0.15;D:\Code\boost;D:\Code\SDL2-2.0.18;D:\Code\SDL2_image-2.0.5;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>D:\Code\SDL2-2.0.18\lib\x64;D:\Code\boost\libs;D:\Code\SDL2_image-2.0.5\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\Code\SDL2_ttf-2.0.15\lib\x64;D:\Code\SDL2-2.0.18\lib\x64;D:\Code\boost\libs;D:\Code\SDL2_image-2.0.5\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -150,9 +150,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="eval.cpp" />
+    <ClCompile Include="graphics.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="strops.cpp" />
-    <ClCompile Include="tut\02_getting_an_image_on_the_screen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="builtin.h" />

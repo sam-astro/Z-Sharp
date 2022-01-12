@@ -22,36 +22,9 @@ vector<string> types = { "int", "float", "string", "bool", "void", "null", "Circ
 unordered_map<string, vector<vector<string>>> builtinFunctionValues;
 unordered_map<string, boost::any> builtinVarVals;
 
-Parser mainWindow;
-
 class NullType {
 public:
     string type = "NULL";
-};
-
-class Circle
-{
-public:
-	int x;
-	int y;
-	float r;
-};
-
-class Image
-{
-public:
-	int x;
-	int y;
-	float r;
-	SDL_Surface* surface;
-	SDL_Texture* texture;
-
-	/*int LoadImage(string PATH)
-	{
-		surface = IMG_Load("Path/To/Your/Image.png");
-		texture = SDL_CreateTextureFromSurface(renderer, surface);
-		SDL_FreeSurface(surface);
-	}*/
 };
 
 boost::any nullType;
@@ -150,18 +123,18 @@ boost::any CPPFunction(const string& name, const vector<boost::any>& args)
 		return AnyAsInt(args[0]);
 	else if (name == "CPP.Graphics.Init")
 	{
-		cout << "\x1B[32mInit graphics\033[0m\t\t" << endl;
-		mainWindow.Start(AnyAsInt(args[0]), AnyAsInt(args[1]));
+		/*cout << "\x1B[32mInit graphics\033[0m\t\t" << endl;
+		mainWindow.Start(AnyAsInt(args[0]), AnyAsInt(args[1]));*/
 	}
 	else if (name == "CPP.Graphics.Circle")
 	{
-		Circle c;
+		/*Circle c;
 		c.x = AnyAsInt(args[0]);
 		c.y = AnyAsInt(args[1]);
 		c.r = AnyAsInt(args[2]);
 		boost::any a = c;
 		Circle d = any_cast<Circle>(a);
-		return d;
+		return d;*/
 	}
 	else if (name == "CPP.System.Print")
 		cout << AnyAsString(args[0]);
