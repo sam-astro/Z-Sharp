@@ -2,7 +2,6 @@
 
 func Main(input, in)
 {
-
 	print "PI is: " + PI
 	int x = 1
 	print x
@@ -18,9 +17,9 @@ func Main(input, in)
 		
 		x += 1
 	}
-	
-	NewCircle(0, 0, 5)
-	CPP.Graphics.Init(64, 64)
+	Vec2 aa = Vec2(0, 0)
+	Sprite thisisasprite = CPP.Graphics.Sprite("circle.png", aa, aa, 0)
+	//CPP.Graphics.Init("This is a pong game", 64, 64)
 }
 
 func Update(input)

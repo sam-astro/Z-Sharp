@@ -17,7 +17,7 @@
 using namespace std;
 using namespace boost;
 
-vector<string> types = { "int", "float", "string", "bool", "void", "null", "Circle"};
+vector<string> types = { "int", "float", "string", "bool", "void", "null", "Sprite"};
 
 unordered_map<string, vector<vector<string>>> builtinFunctionValues;
 unordered_map<string, boost::any> builtinVarVals;
@@ -123,18 +123,15 @@ boost::any CPPFunction(const string& name, const vector<boost::any>& args)
 		return AnyAsInt(args[0]);
 	else if (name == "CPP.Graphics.Init")
 	{
-		/*cout << "\x1B[32mInit graphics\033[0m\t\t" << endl;
-		mainWindow.Start(AnyAsInt(args[0]), AnyAsInt(args[1]));*/
+		cout << "\x1B[32mInit graphics\033[0m\t\t" << endl;
+		initGraphics(AnyAsString(args[0]), AnyAsInt(args[1]), AnyAsInt(args[2]));
 	}
-	else if (name == "CPP.Graphics.Circle")
+	else if (name == "CPP.Graphics.Sprite")
 	{
-		/*Circle c;
-		c.x = AnyAsInt(args[0]);
-		c.y = AnyAsInt(args[1]);
-		c.r = AnyAsInt(args[2]);
-		boost::any a = c;
-		Circle d = any_cast<Circle>(a);
-		return d;*/
+		Sprite s(AnyAsString(args[0]), any_cast<Vec2>(args[1]), any_cast<Vec2>(args[2]), AnyAsFloat(args[3]));
+		boost::any a = s;
+		Sprite d = any_cast<Sprite>(a);
+		return d;
 	}
 	else if (name == "CPP.System.Print")
 		cout << AnyAsString(args[0]);

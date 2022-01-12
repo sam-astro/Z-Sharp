@@ -15,105 +15,329 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <stdio.h>
+#include <chrono>
+#include <SDL.h>
+#include <SDL_ttf.h>
+#include <SDL_image.h>
+#include <string>
 
-using namespace std;
+int WINDOW_WIDTH = 1280;
+int WINDOW_HEIGHT = 720;
 
-class Parser
+enum Buttons
+{
+	PaddleOneUp = 0,
+	PaddleOneDown,
+	PaddleTwoUp,
+	PaddleTwoDown,
+};
+
+const float PADDLE_SPEED = 1.0f;
+
+
+//The window we'll be rendering to
+SDL_Window* gWindow = NULL;
+
+//The renderer we'll be rendering to
+SDL_Renderer* gRenderer = NULL;
+
+//The surface contained by the window
+SDL_Surface* gScreenSurface = NULL;
+
+bool running = true;
+bool buttons[4] = {};
+float dt = 0.0f;
+
+SDL_Surface* loadSurface(std::string path)
+{
+	//The final optimized image
+	SDL_Surface* optimizedSurface = NULL;
+
+	//Load image at specified path
+	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
+	if (loadedSurface == NULL)
+	{
+		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
+	}
+	else
+	{
+		//Convert surface to screen format
+		optimizedSurface = SDL_ConvertSurface(loadedSurface, gScreenSurface->format, 0);
+		if (optimizedSurface == NULL)
+		{
+			printf("Unable to optimize image %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+		}
+
+		//Get rid of old loaded surface
+		SDL_FreeSurface(loadedSurface);
+	}
+
+	return optimizedSurface;
+}
+
+class Vec2
 {
 public:
-	int Start(int SCREEN_W, int SCREEN_H)
+	Vec2()
+		: x(0.0f), y(0.0f)
+	{}
+
+	Vec2(float x, float y)
+		: x(x), y(y)
+	{}
+
+	Vec2 operator+(Vec2 const& rhs)
 	{
-		//// variable declarations
-		//SDL_Window* win = NULL;
-		//SDL_Renderer* renderer = NULL;
-		//int w, h; // texture width & height
+		return Vec2(x + rhs.x, y + rhs.y);
+	}
 
-		//// Initialize SDL.
-		//if (SDL_Init(SDL_INIT_VIDEO) < 0)
-		//	return 1;
+	Vec2& operator+=(Vec2 const& rhs)
+	{
+		x += rhs.x;
+		y += rhs.y;
 
-		//// create the window and renderer
-		//// note that the renderer is accelerated
-		//win = SDL_CreateWindow("Image Loading", 100, 100, SCREEN_W, SCREEN_H, 0);
-		//renderer = SDL_CreateRenderer(win, -1, SDL_RENDERER_ACCELERATED);
+		return *this;
+	}
 
-		//// load our image
-		//SDL_Surface* imgSurface = IMG_Load("circle.png");
+	Vec2 operator*(float rhs)
+	{
+		return Vec2(x * rhs, y * rhs);
+	}
 
-		//// main loop
-		//while (1) {
+	float x, y;
+};
 
-		//	// event handling
-		//	SDL_Event e;
-		//	if (SDL_PollEvent(&e)) {
-		//		if (e.type == SDL_QUIT)
-		//			break;
-		//		else if (e.type == SDL_KEYUP && e.key.keysym.sym == SDLK_ESCAPE)
-		//			break;
-		//	}
+class Sprite
+{
+public:
+	Sprite(std::string path, Vec2 position, Vec2 scale, double angle)
+		: position(position), angle(angle)
+	{
+		rect.x = static_cast<int>(position.x);
+		rect.y = static_cast<int>(position.y);
+		rect.w = scale.x;
+		rect.h = scale.y;
 
-		//	// clear the screen
-		//	SDL_RenderClear(renderer);
-		//	// copy the texture to the rendering context
-		//	SDL_RenderCopy(renderer, img, NULL, &texr);
-		//	// flip the backbuffer
-		//	// this means that everything that we prepared behind the screens is actually shown
-		//	SDL_RenderPresent(renderer);
+		SDL_Surface* surface = loadSurface(path);
+		texture = SDL_CreateTextureFromSurface(gRenderer, surface);
+		SDL_FreeSurface(surface);
+	}
 
-		//}
+	void Draw()
+	{
+		rect.y = static_cast<int>(position.y);
 
-		//SDL_DestroyTexture(img);
-		//SDL_DestroyRenderer(renderer);
-		//SDL_DestroyWindow(win);
+		SDL_RenderCopy(gRenderer, texture, NULL, &rect);
+	}
 
-		//return 0;
+	Vec2 position;
+	double angle;
+	std::string path;
+	SDL_Rect rect{};
+	SDL_Texture* texture;
+};/*
+
+class PlayerScore
+{
+public:
+	PlayerScore(Vec2 position, SDL_Renderer* renderer, TTF_Font* font, SDL_Color scoreColor)
+		: renderer(renderer), font(font)
+	{
+		surface = TTF_RenderText_Solid(font, "0", scoreColor);
+		texture = SDL_CreateTextureFromSurface(renderer, surface);
+
+		int width, height;
+		SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+
+		rect.x = static_cast<int>(position.x);
+		rect.y = static_cast<int>(position.y);
+		rect.w = width;
+		rect.h = height;
+	}
+
+	~PlayerScore()
+	{
+		SDL_FreeSurface(surface);
+		SDL_DestroyTexture(texture);
+	}
+
+	void Draw()
+	{
+		SDL_RenderCopy(renderer, texture, nullptr, &rect);
+	}
+
+	SDL_Renderer* renderer;
+	TTF_Font* font;
+	SDL_Surface* surface{};
+	SDL_Texture* texture{};
+	SDL_Rect rect{};
+};*/
+
+int cleanupGraphics()
+{
+	// Cleanup
+	SDL_DestroyRenderer(gRenderer);
+	SDL_DestroyWindow(gWindow);
+	SDL_Quit();
+
+	return 0;
+}
 
 
+int updateLoop()
+{
+	// Continue looping and processing events until user exits
+	while (running)
+	{
+		auto startTime = std::chrono::high_resolution_clock::now();
 
-		////Initialize SDL
-		//if (SDL_Init(SDL_INIT_VIDEO) < 0)
+		SDL_Event event;
+		while (SDL_PollEvent(&event))
+		{
+			if (event.type == SDL_QUIT)
+			{
+				running = false;
+			}
+			else if (event.type == SDL_KEYDOWN)
+			{
+				if (event.key.keysym.sym == SDLK_ESCAPE)
+				{
+					running = false;
+				}
+				else if (event.key.keysym.sym == SDLK_w)
+				{
+					buttons[Buttons::PaddleOneUp] = true;
+				}
+				else if (event.key.keysym.sym == SDLK_s)
+				{
+					buttons[Buttons::PaddleOneDown] = true;
+				}
+				else if (event.key.keysym.sym == SDLK_UP)
+				{
+					buttons[Buttons::PaddleTwoUp] = true;
+				}
+				else if (event.key.keysym.sym == SDLK_DOWN)
+				{
+					buttons[Buttons::PaddleTwoDown] = true;
+				}
+			}
+			else if (event.type == SDL_KEYUP)
+			{
+				if (event.key.keysym.sym == SDLK_w)
+				{
+					buttons[Buttons::PaddleOneUp] = false;
+				}
+				else if (event.key.keysym.sym == SDLK_s)
+				{
+					buttons[Buttons::PaddleOneDown] = false;
+				}
+				else if (event.key.keysym.sym == SDLK_UP)
+				{
+					buttons[Buttons::PaddleTwoUp] = false;
+				}
+				else if (event.key.keysym.sym == SDLK_DOWN)
+				{
+					buttons[Buttons::PaddleTwoDown] = false;
+				}
+			}
+		}
+
+		//if (buttons[Buttons::PaddleOneUp])
 		//{
-		//	printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+		//	paddleOne.velocity.y = -PADDLE_SPEED;
+		//}
+		//else if (buttons[Buttons::PaddleOneDown])
+		//{
+		//	paddleOne.velocity.y = PADDLE_SPEED;
 		//}
 		//else
 		//{
-		//	//Create window
-		//	window = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, w, h, SDL_WINDOW_SHOWN);
-		//	if (window == NULL)
-		//	{
-		//		printf("Window could not be created! SDL_Error: %s\n", SDL_GetError());
-		//	}
-		//	else
-		//	{
-		//		//Get window surface
-		//		screenSurface = SDL_GetWindowSurface(window);
-
-		//		while (OnUpdate() == 0)
-		//		{
-		//			//Fill the surface white
-		//			SDL_FillRect(screenSurface, NULL, SDL_MapRGB(screenSurface->format, 0xFF, 0x00, 0x00));
-		//			
-		//			//Update the surface
-		//			SDL_UpdateWindowSurface(window);
-		//		}
-		//	}
+		//	paddleOne.velocity.y = 0.0f;
 		//}
 
-		////Destroy window
-		//SDL_DestroyWindow(window);
+		//if (buttons[Buttons::PaddleTwoUp])
+		//{
+		//	paddleTwo.velocity.y = -PADDLE_SPEED;
+		//}
+		//else if (buttons[Buttons::PaddleTwoDown])
+		//{
+		//	paddleTwo.velocity.y = PADDLE_SPEED;
+		//}
+		//else
+		//{
+		//	paddleTwo.velocity.y = 0.0f;
+		//}
 
-		//Quit SDL subsystems
-		SDL_Quit();
+		//// Update the paddle positions
+		//paddleOne.Update(dt);
+		//paddleTwo.Update(dt);
+
+		// Clear the window to black
+		SDL_SetRenderDrawColor(gRenderer, 0x0, 0x0, 0x0, 0xFF);
+		SDL_RenderClear(gRenderer);
+
+		// Set the draw color to be white
+		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
+
+		// Draw the net
+		for (int y = 0; y < WINDOW_HEIGHT; ++y)
+		{
+			if (y % 5)
+			{
+				SDL_RenderDrawPoint(gRenderer, WINDOW_WIDTH / 2, y);
+			}
+		}
+
+		//// Draw the ball
+		//ball.Draw(gRenderer);
+
+		//// Draw the paddles
+		//paddleOne.Draw(gRenderer);
+		//paddleTwo.Draw(gRenderer);
+
+		//// Display the scores
+		//playerOneScoreText.Draw();
+		//playerTwoScoreText.Draw();
+
+		//randomAssSprite.Draw();
+
+		// Present the backbuffer
+		SDL_RenderPresent(gRenderer);
+
+		// Calculate frame time
+		auto stopTime = std::chrono::high_resolution_clock::now();
+		dt = std::chrono::duration<float, std::chrono::milliseconds::period>(stopTime - startTime).count();
 
 		return 0;
 	}
+}
 
-	int OnUpdate()
-	{
-		ExecuteFunction("Update", vector<boost::any>());
-		//cout  << "update" << endl;
-		return 0;
-	}
-};
+int initGraphics(std::string windowTitle, int width, int height)
+{
+	WINDOW_WIDTH = width;
+	WINDOW_HEIGHT = height;
+
+	// Initialize SDL components
+	SDL_Init(SDL_INIT_VIDEO);
+	TTF_Init();
+
+	gWindow = SDL_CreateWindow(windowTitle.c_str(), 40, 40, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN || SDL_WINDOW_RESIZABLE);
+	gRenderer = SDL_CreateRenderer(gWindow, -1, 0);
+
+	//Get window surface
+	gScreenSurface = SDL_GetWindowSurface(gWindow);
+	
+	//Sprite randomAssSprite(
+	//	Vec2((WINDOW_WIDTH / 2.0f) - (100 / 2.0f), (WINDOW_HEIGHT / 2.0f) - (100 / 2.0f)),
+	//	Vec2(100, 100),
+	//	0,
+	//	"./circle.png");
+
+	updateLoop();
+
+	cleanupGraphics();
+
+	return 0;
+}
 
 #endif

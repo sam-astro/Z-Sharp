@@ -78,9 +78,16 @@ func Printl(in)
 	CPP.System.PrintLine(in)
 }
 
-// Creates new circle class
-func NewCircle(x, y, r)
+// Creates new sprite class
+func NSprite(path, x, y, r)
 {
-	Circle c = CPP.Graphics.Circle(x, y, r)
-	return c
+	Sprite s = CPP.Graphics.Sprite(path, x, y, r)
+	return s
+}
+
+// Creates new Vector2 class
+func Vec2(x, y)
+{
+	Vec2 v = CPP.Graphics.Vec2(x, y)
+	return v
 }

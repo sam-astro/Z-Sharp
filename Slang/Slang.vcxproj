@@ -150,7 +150,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="eval.cpp" />
-    <ClCompile Include="graphics.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="strops.cpp" />
   </ItemGroup>
