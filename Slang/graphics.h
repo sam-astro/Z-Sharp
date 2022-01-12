@@ -76,9 +76,9 @@ unordered_map<string, int> KEYS =
         {"B", 0},
         {"N", 0},
         {"M", 0},
-        {"ANGLEBRACKET_L", 0},
-        {"ANGLEBRACKET_R", 0},
-        {"QUESTIONMARK", 0},
+        {"COMMA", 0},
+        {"PERIOD", 0},
+        {"SLASH", 0},
         {"SHIFT_R", 0},
         {"CTRL_L", 0},
         {"ALT_L", 0},
@@ -429,25 +429,197 @@ int updateLoop()
 					KEYS["BRACKET_L"] = 1;
 				else if (event.key.keysym.sym == SDLK_RIGHTBRACKET)
 					KEYS["BRACKET_R"] = 1;
+				else if (event.key.keysym.sym == SDLK_BACKSLASH)
+					KEYS["BACKSLASH"] = 1;
+				else if (event.key.keysym.sym == SDLK_a)
+					KEYS["A"] = 1;
+				else if (event.key.keysym.sym == SDLK_s)
+					KEYS["S"] = 1;
+				else if (event.key.keysym.sym == SDLK_d)
+					KEYS["D"] = 1;
+				else if (event.key.keysym.sym == SDLK_f)
+					KEYS["F"] = 1;
+				else if (event.key.keysym.sym == SDLK_g)
+					KEYS["G"] = 1;
+				else if (event.key.keysym.sym == SDLK_h)
+					KEYS["H"] = 1;
+				else if (event.key.keysym.sym == SDLK_j)
+					KEYS["J"] = 1;
+				else if (event.key.keysym.sym == SDLK_k)
+					KEYS["K"] = 1;
+				else if (event.key.keysym.sym == SDLK_l)
+					KEYS["L"] = 1;
+				else if (event.key.keysym.sym == SDLK_COLON)
+					KEYS["COLON"] = 1;
+				else if (event.key.keysym.sym == SDLK_QUOTE)
+					KEYS["QUOTE"] = 1;
+				else if (event.key.keysym.sym == SDLK_RETURN)
+					KEYS["ENTER"] = 1;
+				else if (event.key.keysym.sym == SDLK_LSHIFT)
+					KEYS["SHIFT_L"] = 1;
+				else if (event.key.keysym.sym == SDLK_z)
+					KEYS["Z"] = 1;
+				else if (event.key.keysym.sym == SDLK_x)
+					KEYS["X"] = 1;
+				else if (event.key.keysym.sym == SDLK_c)
+					KEYS["C"] = 1;
+				else if (event.key.keysym.sym == SDLK_v)
+					KEYS["V"] = 1;
+				else if (event.key.keysym.sym == SDLK_b)
+					KEYS["B"] = 1;
+				else if (event.key.keysym.sym == SDLK_n)
+					KEYS["N"] = 1;
+				else if (event.key.keysym.sym == SDLK_m)
+					KEYS["M"] = 1;
+				else if (event.key.keysym.sym == SDLK_COMMA)
+					KEYS["COMMA"] = 1;
+				else if (event.key.keysym.sym == SDLK_PERIOD)
+					KEYS["PERIOD"] = 1;
+				else if (event.key.keysym.sym == SDLK_SLASH)
+					KEYS["SLASH"] = 1;
+				else if (event.key.keysym.sym == SDLK_RSHIFT)
+					KEYS["SHIFT_R"] = 1;
+				else if (event.key.keysym.sym == SDLK_LCTRL)
+					KEYS["CTRL_L"] = 1;
+				else if (event.key.keysym.sym == SDLK_LALT)
+					KEYS["ALT_L"] = 1;
+				else if (event.key.keysym.sym == SDLK_SPACE)
+					KEYS["SPACE"] = 1;
+				else if (event.key.keysym.sym == SDLK_RALT)
+					KEYS["ALT_R"] = 1;
+				else if (event.key.keysym.sym == SDLK_RCTRL)
+					KEYS["CTRL_R"] = 1;
+				else if (event.key.keysym.sym == SDLK_LEFT)
+					KEYS["LEFT"] = 1;
+				else if (event.key.keysym.sym == SDLK_UP)
+					KEYS["UP"] = 1;
+				else if (event.key.keysym.sym == SDLK_RIGHT)
+					KEYS["RIGHT"] = 1;
+				else if (event.key.keysym.sym == SDLK_DOWN)
+					KEYS["DOWN"] = 1;
 			}
 			else if (event.type == SDL_KEYUP)
 			{
-				if (event.key.keysym.sym == SDLK_w)
-				{
-					buttons[Buttons::PaddleOneUp] = false;
-				}
+				if (event.key.keysym.sym == SDLK_ESCAPE)
+					KEYS["ESCAPE"] = 0;
+				else if (event.key.keysym.sym == SDLK_0)
+					KEYS["0"] = 0;
+				else if (event.key.keysym.sym == SDLK_1)
+					KEYS["1"] = 0;
+				else if (event.key.keysym.sym == SDLK_2)
+					KEYS["2"] = 0;
+				else if (event.key.keysym.sym == SDLK_3)
+					KEYS["3"] = 0;
+				else if (event.key.keysym.sym == SDLK_4)
+					KEYS["4"] = 0;
+				else if (event.key.keysym.sym == SDLK_5)
+					KEYS["5"] = 0;
+				else if (event.key.keysym.sym == SDLK_6)
+					KEYS["6"] = 0;
+				else if (event.key.keysym.sym == SDLK_7)
+					KEYS["7"] = 0;
+				else if (event.key.keysym.sym == SDLK_8)
+					KEYS["8"] = 0;
+				else if (event.key.keysym.sym == SDLK_MINUS)
+					KEYS["MINUS"] = 0;
+				else if (event.key.keysym.sym == SDLK_EQUALS)
+					KEYS["EQUALS"] = 0;
+				else if (event.key.keysym.sym == SDLK_AC_BACK)
+					KEYS["BACKSPACE"] = 0;
+				else if (event.key.keysym.sym == SDLK_TAB)
+					KEYS["TAB"] = 0;
+				else if (event.key.keysym.sym == SDLK_q)
+					KEYS["q"] = 0;
+				else if (event.key.keysym.sym == SDLK_w)
+					KEYS["w"] = 0;
+				else if (event.key.keysym.sym == SDLK_e)
+					KEYS["e"] = 0;
+				else if (event.key.keysym.sym == SDLK_r)
+					KEYS["r"] = 0;
+				else if (event.key.keysym.sym == SDLK_t)
+					KEYS["t"] = 0;
+				else if (event.key.keysym.sym == SDLK_y)
+					KEYS["y"] = 0;
+				else if (event.key.keysym.sym == SDLK_u)
+					KEYS["u"] = 0;
+				else if (event.key.keysym.sym == SDLK_i)
+					KEYS["i"] = 0;
+				else if (event.key.keysym.sym == SDLK_o)
+					KEYS["o"] = 0;
+				else if (event.key.keysym.sym == SDLK_p)
+					KEYS["p"] = 0;
+				else if (event.key.keysym.sym == SDLK_LEFTBRACKET)
+					KEYS["BRACKET_L"] = 0;
+				else if (event.key.keysym.sym == SDLK_RIGHTBRACKET)
+					KEYS["BRACKET_R"] = 0;
+				else if (event.key.keysym.sym == SDLK_BACKSLASH)
+					KEYS["BACKSLASH"] = 0;
+				else if (event.key.keysym.sym == SDLK_a)
+					KEYS["A"] = 0;
 				else if (event.key.keysym.sym == SDLK_s)
-				{
-					buttons[Buttons::PaddleOneDown] = false;
-				}
+					KEYS["S"] = 0;
+				else if (event.key.keysym.sym == SDLK_d)
+					KEYS["D"] = 0;
+				else if (event.key.keysym.sym == SDLK_f)
+					KEYS["F"] = 0;
+				else if (event.key.keysym.sym == SDLK_g)
+					KEYS["G"] = 0;
+				else if (event.key.keysym.sym == SDLK_h)
+					KEYS["H"] = 0;
+				else if (event.key.keysym.sym == SDLK_j)
+					KEYS["J"] = 0;
+				else if (event.key.keysym.sym == SDLK_k)
+					KEYS["K"] = 0;
+				else if (event.key.keysym.sym == SDLK_l)
+					KEYS["L"] = 0;
+				else if (event.key.keysym.sym == SDLK_COLON)
+					KEYS["COLON"] = 0;
+				else if (event.key.keysym.sym == SDLK_QUOTE)
+					KEYS["QUOTE"] = 0;
+				else if (event.key.keysym.sym == SDLK_RETURN)
+					KEYS["ENTER"] = 0;
+				else if (event.key.keysym.sym == SDLK_LSHIFT)
+					KEYS["SHIFT_L"] = 0;
+				else if (event.key.keysym.sym == SDLK_z)
+					KEYS["Z"] = 0;
+				else if (event.key.keysym.sym == SDLK_x)
+					KEYS["X"] = 0;
+				else if (event.key.keysym.sym == SDLK_c)
+					KEYS["C"] = 0;
+				else if (event.key.keysym.sym == SDLK_v)
+					KEYS["V"] = 0;
+				else if (event.key.keysym.sym == SDLK_b)
+					KEYS["B"] = 0;
+				else if (event.key.keysym.sym == SDLK_n)
+					KEYS["N"] = 0;
+				else if (event.key.keysym.sym == SDLK_m)
+					KEYS["M"] = 0;
+				else if (event.key.keysym.sym == SDLK_COMMA)
+					KEYS["COMMA"] = 0;
+				else if (event.key.keysym.sym == SDLK_PERIOD)
+					KEYS["PERIOD"] = 0;
+				else if (event.key.keysym.sym == SDLK_SLASH)
+					KEYS["SLASH"] = 0;
+				else if (event.key.keysym.sym == SDLK_RSHIFT)
+					KEYS["SHIFT_R"] = 0;
+				else if (event.key.keysym.sym == SDLK_LCTRL)
+					KEYS["CTRL_L"] = 0;
+				else if (event.key.keysym.sym == SDLK_LALT)
+					KEYS["ALT_L"] = 0;
+				else if (event.key.keysym.sym == SDLK_SPACE)
+					KEYS["SPACE"] = 0;
+				else if (event.key.keysym.sym == SDLK_RALT)
+					KEYS["ALT_R"] = 0;
+				else if (event.key.keysym.sym == SDLK_RCTRL)
+					KEYS["CTRL_R"] = 0;
+				else if (event.key.keysym.sym == SDLK_LEFT)
+					KEYS["LEFT"] = 0;
 				else if (event.key.keysym.sym == SDLK_UP)
-				{
-					buttons[Buttons::PaddleTwoUp] = false;
-				}
+					KEYS["UP"] = 0;
+				else if (event.key.keysym.sym == SDLK_RIGHT)
+					KEYS["RIGHT"] = 0;
 				else if (event.key.keysym.sym == SDLK_DOWN)
-				{
-					buttons[Buttons::PaddleTwoDown] = false;
-				}
+					KEYS["DOWN"] = 0;
 			}
 		}
 
@@ -488,14 +660,14 @@ int updateLoop()
 		// Set the draw color to be white
 		SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
 
-		// Draw the net
-		for (int y = 0; y < WINDOW_HEIGHT; ++y)
-		{
-			if (y % 5)
-			{
-				SDL_RenderDrawPoint(gRenderer, WINDOW_WIDTH / 2, y);
-			}
-		}
+		//// Draw the net
+		//for (int y = 0; y < WINDOW_HEIGHT; ++y)
+		//{
+		//	if (y % 5)
+		//	{
+		//		SDL_RenderDrawPoint(gRenderer, WINDOW_WIDTH / 2, y);
+		//	}
+		//}
 
 		//// Draw the ball
 		//ball.Draw(gRenderer);
@@ -509,6 +681,8 @@ int updateLoop()
 		//playerTwoScoreText.Draw();
 
 		//randomAssSprite.Draw();
+		
+		ExecuteFunction("Update", vector<boost::any> {});
 
 		// Present the backbuffer
 		SDL_RenderPresent(gRenderer);
