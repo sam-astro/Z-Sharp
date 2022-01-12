@@ -17,7 +17,7 @@
 using namespace std;
 using namespace boost;
 
-vector<string> types = { "int", "float", "string", "bool", "void", "null", "Sprite"};
+vector<string> types = { "int", "float", "string", "bool", "void", "null", "Sprite", "Vec2"};
 
 unordered_map<string, vector<vector<string>>> builtinFunctionValues;
 unordered_map<string, boost::any> builtinVarVals;
