@@ -21,8 +21,75 @@
 #include <SDL_image.h>
 #include <string>
 
+using namespace std;
+
 int WINDOW_WIDTH = 1280;
 int WINDOW_HEIGHT = 720;
+
+unordered_map<string, int> KEYS = 
+    {
+        {"ESCAPE", 0},
+        {"1", 0},
+        {"2", 0},
+        {"3", 0},
+        {"4", 0},
+        {"5", 0},
+        {"6", 0},
+        {"7", 0},
+        {"8", 0},
+        {"9", 0},
+        {"TILDE", 0},
+        {"MINUS", 0},
+        {"EQUALS", 0},
+        {"BACKSPACE", 0},
+        {"TAB", 0},
+        {"Q", 0},
+        {"W", 0},
+        {"E", 0},
+        {"R", 0},
+        {"T", 0},
+        {"Y", 0},
+        {"U", 0},
+        {"I", 0},
+        {"O", 0},
+        {"P", 0},
+        {"BRACKET_L", 0},
+        {"BRACKET_R", 0},
+        {"BACKSLASH", 0},
+        {"A", 0},
+        {"S", 0},
+        {"D", 0},
+        {"F", 0},
+        {"G", 0},
+        {"H", 0},
+        {"J", 0},
+        {"K", 0},
+        {"L", 0},
+        {"COLON", 0},
+        {"QUOTE", 0},
+        {"ENTER", 0},
+        {"SHIFT_L", 0},
+        {"Z", 0},
+        {"X", 0},
+        {"C", 0},
+        {"V", 0},
+        {"B", 0},
+        {"N", 0},
+        {"M", 0},
+        {"ANGLEBRACKET_L", 0},
+        {"ANGLEBRACKET_R", 0},
+        {"QUESTIONMARK", 0},
+        {"SHIFT_R", 0},
+        {"CTRL_L", 0},
+        {"ALT_L", 0},
+        {"SPACE", 0},
+        {"ALT_R", 0},
+        {"CTRL_R", 0},
+        {"LEFT", 0},
+        {"UP", 0},
+        {"RIGHT", 0},
+        {"DOWN", 0}
+    };
 
 enum Buttons
 {
@@ -311,25 +378,57 @@ int updateLoop()
 			else if (event.type == SDL_KEYDOWN)
 			{
 				if (event.key.keysym.sym == SDLK_ESCAPE)
-				{
-					running = false;
-				}
+					KEYS["ESCAPE"] = 1;
+				else if (event.key.keysym.sym == SDLK_0)
+					KEYS["0"] = 1;
+				else if (event.key.keysym.sym == SDLK_1)
+					KEYS["1"] = 1;
+				else if (event.key.keysym.sym == SDLK_2)
+					KEYS["2"] = 1;
+				else if (event.key.keysym.sym == SDLK_3)
+					KEYS["3"] = 1;
+				else if (event.key.keysym.sym == SDLK_4)
+					KEYS["4"] = 1;
+				else if (event.key.keysym.sym == SDLK_5)
+					KEYS["5"] = 1;
+				else if (event.key.keysym.sym == SDLK_6)
+					KEYS["6"] = 1;
+				else if (event.key.keysym.sym == SDLK_7)
+					KEYS["7"] = 1;
+				else if (event.key.keysym.sym == SDLK_8)
+					KEYS["8"] = 1;
+				else if (event.key.keysym.sym == SDLK_MINUS)
+					KEYS["MINUS"] = 1;
+				else if (event.key.keysym.sym == SDLK_EQUALS)
+					KEYS["EQUALS"] = 1;
+				else if (event.key.keysym.sym == SDLK_AC_BACK)
+					KEYS["BACKSPACE"] = 1;
+				else if (event.key.keysym.sym == SDLK_TAB)
+					KEYS["TAB"] = 1;
+				else if (event.key.keysym.sym == SDLK_q)
+					KEYS["q"] = 1;
 				else if (event.key.keysym.sym == SDLK_w)
-				{
-					buttons[Buttons::PaddleOneUp] = true;
-				}
-				else if (event.key.keysym.sym == SDLK_s)
-				{
-					buttons[Buttons::PaddleOneDown] = true;
-				}
-				else if (event.key.keysym.sym == SDLK_UP)
-				{
-					buttons[Buttons::PaddleTwoUp] = true;
-				}
-				else if (event.key.keysym.sym == SDLK_DOWN)
-				{
-					buttons[Buttons::PaddleTwoDown] = true;
-				}
+					KEYS["w"] = 1;
+				else if (event.key.keysym.sym == SDLK_e)
+					KEYS["e"] = 1;
+				else if (event.key.keysym.sym == SDLK_r)
+					KEYS["r"] = 1;
+				else if (event.key.keysym.sym == SDLK_t)
+					KEYS["t"] = 1;
+				else if (event.key.keysym.sym == SDLK_y)
+					KEYS["y"] = 1;
+				else if (event.key.keysym.sym == SDLK_u)
+					KEYS["u"] = 1;
+				else if (event.key.keysym.sym == SDLK_i)
+					KEYS["i"] = 1;
+				else if (event.key.keysym.sym == SDLK_o)
+					KEYS["o"] = 1;
+				else if (event.key.keysym.sym == SDLK_p)
+					KEYS["p"] = 1;
+				else if (event.key.keysym.sym == SDLK_LEFTBRACKET)
+					KEYS["BRACKET_L"] = 1;
+				else if (event.key.keysym.sym == SDLK_RIGHTBRACKET)
+					KEYS["BRACKET_R"] = 1;
 			}
 			else if (event.type == SDL_KEYUP)
 			{
