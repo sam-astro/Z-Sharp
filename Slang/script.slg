@@ -58,9 +58,10 @@ func Update(deltaTime)
 	float stopSpeed = deltaTime * 15
 	float newY = lPaddleTargetPosition.y
 	float lerpedY = Lerp(oldY, newY, stopSpeed)
-	print "0 < " + newY + " < " + SCREENH
+	//print "0 < " + newY + " < " + SCREENH
 	lPaddle.position = NVec2(newX, lerpedY)
 	
+	print "FPS: " + 1 / deltaTime
 	
 	
 	// Finally draws all of the sprites
