@@ -5,6 +5,10 @@
 
 using namespace std;
 
+
+float AnyAsFloat(const boost::any& val);
+
+
 bool isNumber(const string& str);
 
 bool stob(const string& str);

@@ -90,6 +90,30 @@ boost::any GetClassSubComponent(boost::any value, string subComponentName)
 	{
 		return any_cast<Vec2>(value).SubComponent(subComponentName);
 	}
+	// If a Sprite Class
+	if (any_type(value) == 4)
+	{
+		return any_cast<Sprite>(value).SubComponent(subComponentName);
+	}
+	return nullType;
+}
+
+boost::any EditClassSubComponent(boost::any value, string oper, boost::any otherVal, string subComponentName)
+{
+	// If a Vec2 Class
+	if (any_type(value) == 5)
+	{
+		Vec2 v = any_cast<Vec2>(value);
+		v.EditSubComponent(subComponentName, oper, otherVal);
+		return v;
+	}
+	// If a Sprite Class
+	if (any_type(value) == 4)
+	{
+		Sprite v = any_cast<Sprite>(value);
+		v.EditSubComponent(subComponentName, oper, otherVal);
+		return v;
+	}
 	return nullType;
 }
 
@@ -191,15 +215,14 @@ boost::any CPPFunction(const string& name, const vector<boost::any>& args)
 	}
 	else if (name == "CPP.Graphics.Draw")
 	{
-		Sprite d = any_cast<Sprite>(args[0]);
-		d.Draw();
+		any_cast<Sprite>(args[0]).Draw();
 	}
 	else if (name == "CPP.Input.GetKey")
-		return KEYS[any_cast<string>(args[0])] == 1;
+		return KEYS[StringRaw(any_cast<string>(args[0]))] == 1;
 	else if (name == "CPP.System.Print")
-		cout << AnyAsString(args[0]);
+		cout << StringRaw(AnyAsString(args[0]));
 	else if (name == "CPP.System.PrintLine")
-		cout << AnyAsString(args[0]) << endl;
+		cout << StringRaw(AnyAsString(args[0])) << endl;
 	else if (name == "CPP.System.Vec2")
 	{
 		Vec2 v(AnyAsFloat(args[0]), AnyAsFloat(args[1]));
@@ -208,7 +231,7 @@ boost::any CPPFunction(const string& name, const vector<boost::any>& args)
 	else
 		LogWarning("CPP function \'" + name + "\' does not exist.");
 
-	return 0;
+	return nullType;
 }
 
 #endif

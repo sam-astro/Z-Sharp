@@ -1,42 +1,51 @@
+int SCREENW = 780
+int SCREENH = 500
 
+int scoreOne = 0
+int scoreTwo = 0
+Vec2 paddleScale = NVec2(16, 70)
 
 func Main(input, in)
 {
-	print "PI is: " + PI
-	int x = 1
-	print "xis" + x
-	float k = 0
-	print k
-	while x < 5
-	{
-		print x
-		float s = Sin(x)
-		print s
-		k = Sigmoid(s)
-		print k
-		
-		x += 1
-	}
-	Vec2 aa = NVec2(6, 8)
-	print aa.x + " " + aa.y
-	global Sprite thisisasprite = CPP.Graphics.Sprite("./circle.png", aa, aa, 0)
-	CPP.Graphics.Init("This is a pong game", 500, 500)
+	CPP.Graphics.Init("This is a pong game", SCREENW, SCREENH)
 }
 
-func Update(input)
+func Start()
 {
-	//int x = 0
-	//int y = 0
-	//while x < 16
-	//{
-	//	while y < 16
-	//	{
-	//		SetPixel(x, y, 255, 0, 0)
-	//		y += 1
-	//	}
-	//	y = 0
-	//	x += 1
-	//}
-	CPP.Graphics.Draw(thisisasprite)
+	float xPosBall = SCREENW / 2
+	float yPosBall = SCREENH / 2
+	Vec2 ballPosition = NVec2(xPosBall, yPosBall)
+	Vec2 ballScale = NVec2(16, 16)
+	
+	Vec2 paddleScale = NVec2(16, 70)
+	
+	float yPosPaddle = yPosBall - paddleScale.y / 2
+	
+	Vec2 lPaddlePosition = NVec2(15, yPosPaddle)
+	
+	float rOffset = SCREENW - 15
+	Vec2 rPaddlePosition = NVec2(rOffset, yPosPaddle)
+	
+	global Sprite ballSprite = CPP.Graphics.Sprite("./square.png", ballPosition, ballScale, 0)
+	global Sprite lPaddle = CPP.Graphics.Sprite("./square.png", lPaddlePosition, paddleScale, 0)
+	global Sprite rPaddle = CPP.Graphics.Sprite("./square.png", rPaddlePosition, paddleScale, 0)
+}
+
+func Update()
+{
+	Vec2 as = NVec2(16, 70)
 	print "updating"
+	
+	if GetKey("W") == true
+	{
+		print "W"
+		as.x += 4
+		// lPaddle.position.y += 1
+	}
+	
+	print as.x + " , " + as.y
+	
+	CPP.Graphics.Draw(ballSprite)
+	CPP.Graphics.Draw(lPaddle)
+	CPP.Graphics.Draw(rPaddle)
 }

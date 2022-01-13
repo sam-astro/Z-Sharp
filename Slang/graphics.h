@@ -10,7 +10,6 @@
 #include <algorithm>
 #include <boost/any.hpp>
 #include "strops.h"
-#include "builtin.h"
 #include "main.h"
 #include <SDL.h>
 #include <SDL_image.h>
@@ -184,12 +183,63 @@ public:
 		return Vec2(x * rhs, y * rhs);
 	}
 
+	Vec2 operator*=(float rhs)
+	{
+		x *= rhs;
+		y *= rhs;
+
+		return *this;
+	}
+
+	Vec2 operator/(float rhs)
+	{
+		return Vec2(x / rhs, y / rhs);
+	}
+
+	Vec2 operator/=(float rhs)
+	{
+		x /= rhs;
+		y /= rhs;
+
+		return *this;
+	}
+
 	boost::any SubComponent(std::string componentName)
 	{
 		if (componentName == "x")
 			return x;
 		if (componentName == "y")
 			return y;
+	}
+
+	int EditSubComponent(std::string componentName, std::string oper, boost::any otherVal)
+	{
+		if (componentName == "x")
+		{
+			if (oper == "=")
+				x = AnyAsFloat(otherVal);
+			else if (oper == "+=")
+				x += AnyAsFloat(otherVal);
+			else if (oper == "-=")
+				x -= AnyAsFloat(otherVal);
+			else if (oper == "*=")
+				x *= AnyAsFloat(otherVal);
+			else if (oper == "/=")
+				x /= AnyAsFloat(otherVal);
+		}
+		if (componentName == "y")
+		{
+			if (oper == "=")
+				y = AnyAsFloat(otherVal);
+			else if (oper == "+=")
+				y += AnyAsFloat(otherVal);
+			else if (oper == "-=")
+				y -= AnyAsFloat(otherVal);
+			else if (oper == "*=")
+				y *= AnyAsFloat(otherVal);
+			else if (oper == "/=")
+				y /= AnyAsFloat(otherVal);
+		}
 	}
 
 	float x, y;
@@ -302,76 +352,84 @@ public:
 		rect.y = static_cast<int>(position.y);
 		rect.w = scale.x;
 		rect.h = scale.y;
+
+		Load();
 	}
 
-	void Load()
+	int Load()
 	{
 		SDL_Surface* surface = loadSurface(path);
 		texture = SDL_CreateTextureFromSurface(gRenderer, surface);
 		SDL_FreeSurface(surface);
-
-		isLoaded = true;
+		return 0;
 	}
 
-	void Draw()
+	int Draw()
 	{
-		if (texture == NULL)
-			Load();
-
 		rect.y = static_cast<int>(position.y);
-
 		SDL_RenderCopy(gRenderer, texture, NULL, &rect);
+		return 0;
 	}
 
 	boost::any SubComponent(std::string componentName)
 	{
 		if (componentName == "position")
 			return position;
+		if (componentName == "position.x")
+			return position.x;
+		if (componentName == "position.y")
+			return position.y;
+	}
+
+	int EditSubComponent(std::string componentName, std::string oper, boost::any otherVal)
+	{
+		if (componentName == "position")
+		{
+			if(oper == "=")
+				position = any_cast<Vec2>(otherVal);
+			else if(oper == "+=")
+				position += any_cast<Vec2>(otherVal);
+			else if(oper == "-=")
+				position -= any_cast<Vec2>(otherVal);
+			else if(oper == "*=")
+				position *= AnyAsFloat(otherVal);
+			else if(oper == "/=")
+				position /= AnyAsFloat(otherVal);
+		}
+		if (componentName == "position.x")
+		{
+			if (oper == "=")
+				position.x = AnyAsFloat(otherVal);
+			else if (oper == "+=")
+				position.x += AnyAsFloat(otherVal);
+			else if (oper == "-=")
+				position.x -= AnyAsFloat(otherVal);
+			else if (oper == "*=")
+				position.x *= AnyAsFloat(otherVal);
+			else if (oper == "/=")
+				position.x /= AnyAsFloat(otherVal);
+		}
+		if (componentName == "position.y")
+		{
+			if (oper == "=")
+				position.y = AnyAsFloat(otherVal);
+			else if (oper == "+=")
+				position.y += AnyAsFloat(otherVal);
+			else if (oper == "-=")
+				position.y -= AnyAsFloat(otherVal);
+			else if (oper == "*=")
+				position.y *= AnyAsFloat(otherVal);
+			else if (oper == "/=")
+				position.y /= AnyAsFloat(otherVal);
+		}
 	}
 
 	Vec2 position;
 	double angle;
 	std::string path;
 	SDL_Rect rect{};
-	SDL_Texture* texture = NULL;
-	bool isLoaded = false;
-};/*
-
-class PlayerScore
-{
-public:
-	PlayerScore(Vec2 position, SDL_Renderer* renderer, TTF_Font* font, SDL_Color scoreColor)
-		: renderer(renderer), font(font)
-	{
-		surface = TTF_RenderText_Solid(font, "0", scoreColor);
-		texture = SDL_CreateTextureFromSurface(renderer, surface);
-
-		int width, height;
-		SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
-
-		rect.x = static_cast<int>(position.x);
-		rect.y = static_cast<int>(position.y);
-		rect.w = width;
-		rect.h = height;
-	}
-
-	~PlayerScore()
-	{
-		SDL_FreeSurface(surface);
-		SDL_DestroyTexture(texture);
-	}
-
-	void Draw()
-	{
-		SDL_RenderCopy(renderer, texture, nullptr, &rect);
-	}
-
-	SDL_Renderer* renderer;
-	TTF_Font* font;
-	SDL_Surface* surface{};
-	SDL_Texture* texture{};
-	SDL_Rect rect{};
-};*/
+	SDL_Texture* texture;
+};
 
 int cleanupGraphics()
 {
@@ -429,25 +487,25 @@ int updateLoop()
 				else if (event.key.keysym.sym == SDLK_TAB)
 					KEYS["TAB"] = 1;
 				else if (event.key.keysym.sym == SDLK_q)
-					KEYS["q"] = 1;
+					KEYS["Q"] = 1;
 				else if (event.key.keysym.sym == SDLK_w)
-					KEYS["w"] = 1;
+					KEYS["W"] = 1;
 				else if (event.key.keysym.sym == SDLK_e)
-					KEYS["e"] = 1;
+					KEYS["E"] = 1;
 				else if (event.key.keysym.sym == SDLK_r)
-					KEYS["r"] = 1;
+					KEYS["R"] = 1;
 				else if (event.key.keysym.sym == SDLK_t)
-					KEYS["t"] = 1;
+					KEYS["T"] = 1;
 				else if (event.key.keysym.sym == SDLK_y)
-					KEYS["y"] = 1;
+					KEYS["Y"] = 1;
 				else if (event.key.keysym.sym == SDLK_u)
-					KEYS["u"] = 1;
+					KEYS["U"] = 1;
 				else if (event.key.keysym.sym == SDLK_i)
-					KEYS["i"] = 1;
+					KEYS["I"] = 1;
 				else if (event.key.keysym.sym == SDLK_o)
-					KEYS["o"] = 1;
+					KEYS["O"] = 1;
 				else if (event.key.keysym.sym == SDLK_p)
-					KEYS["p"] = 1;
+					KEYS["P"] = 1;
 				else if (event.key.keysym.sym == SDLK_LEFTBRACKET)
 					KEYS["BRACKET_L"] = 1;
 				else if (event.key.keysym.sym == SDLK_RIGHTBRACKET)
@@ -552,25 +610,25 @@ int updateLoop()
 				else if (event.key.keysym.sym == SDLK_TAB)
 					KEYS["TAB"] = 0;
 				else if (event.key.keysym.sym == SDLK_q)
-					KEYS["q"] = 0;
+					KEYS["Q"] = 0;
 				else if (event.key.keysym.sym == SDLK_w)
-					KEYS["w"] = 0;
+					KEYS["W"] = 0;
 				else if (event.key.keysym.sym == SDLK_e)
-					KEYS["e"] = 0;
+					KEYS["E"] = 0;
 				else if (event.key.keysym.sym == SDLK_r)
-					KEYS["r"] = 0;
+					KEYS["R"] = 0;
 				else if (event.key.keysym.sym == SDLK_t)
-					KEYS["t"] = 0;
+					KEYS["T"] = 0;
 				else if (event.key.keysym.sym == SDLK_y)
-					KEYS["y"] = 0;
+					KEYS["Y"] = 0;
 				else if (event.key.keysym.sym == SDLK_u)
-					KEYS["u"] = 0;
+					KEYS["U"] = 0;
 				else if (event.key.keysym.sym == SDLK_i)
-					KEYS["i"] = 0;
+					KEYS["I"] = 0;
 				else if (event.key.keysym.sym == SDLK_o)
-					KEYS["o"] = 0;
+					KEYS["O"] = 0;
 				else if (event.key.keysym.sym == SDLK_p)
-					KEYS["p"] = 0;
+					KEYS["P"] = 0;
 				else if (event.key.keysym.sym == SDLK_LEFTBRACKET)
 					KEYS["BRACKET_L"] = 0;
 				else if (event.key.keysym.sym == SDLK_RIGHTBRACKET)
@@ -646,64 +704,7 @@ int updateLoop()
 			}
 		}
 
-		//if (buttons[Buttons::PaddleOneUp])
-		//{
-		//	paddleOne.velocity.y = -PADDLE_SPEED;
-		//}
-		//else if (buttons[Buttons::PaddleOneDown])
-		//{
-		//	paddleOne.velocity.y = PADDLE_SPEED;
-		//}
-		//else
-		//{
-		//	paddleOne.velocity.y = 0.0f;
-		//}
-
-		//if (buttons[Buttons::PaddleTwoUp])
-		//{
-		//	paddleTwo.velocity.y = -PADDLE_SPEED;
-		//}
-		//else if (buttons[Buttons::PaddleTwoDown])
-		//{
-		//	paddleTwo.velocity.y = PADDLE_SPEED;
-		//}
-		//else
-		//{
-		//	paddleTwo.velocity.y = 0.0f;
-		//}
-
-		//// Update the paddle positions
-		//paddleOne.Update(dt);
-		//paddleTwo.Update(dt);
-
-		//// Clear the window to black
-		//SDL_SetRenderDrawColor(gRenderer, 0x0, 0x0, 0x0, 0xFF);
 		SDL_RenderClear(gRenderer);
-
-		//// Set the draw color to be white
-		//SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-
-		//// Draw the net
-		//for (int y = 0; y < WINDOW_HEIGHT; ++y)
-		//{
-		//	if (y % 5)
-		//	{
-		//		SDL_RenderDrawPoint(gRenderer, WINDOW_WIDTH / 2, y);
-		//	}
-		//}
-
-		//// Draw the ball
-		//ball.Draw(gRenderer);
-
-		//// Draw the paddles
-		//paddleOne.Draw(gRenderer);
-		//paddleTwo.Draw(gRenderer);
-
-		//// Display the scores
-		//playerOneScoreText.Draw();
-		//playerTwoScoreText.Draw();
-
-		//randomAssSprite.Draw();
 
 		ExecuteFunction("Update", vector<boost::any> {});
 
@@ -732,12 +733,8 @@ int initGraphics(std::string windowTitle, int width, int height)
 
 	//Get window surface
 	gScreenSurface = SDL_GetWindowSurface(gWindow);
-
-	//Sprite randomAssSprite(
-	//	Vec2((WINDOW_WIDTH / 2.0f) - (100 / 2.0f), (WINDOW_HEIGHT / 2.0f) - (100 / 2.0f)),
-	//	Vec2(100, 100),
-	//	0,
-	//	"./circle.png");
+	
+	ExecuteFunction("Start", vector<boost::any> {});
 
 	updateLoop();
 

@@ -85,9 +85,23 @@ func NSprite(path, x, y, r)
 	return s
 }
 
+// Draws sprite to window
+func Draw(spr)
+{
+	CPP.Graphics.Draw(spr)
+}
+
 // Creates new Vector2 class
 func NVec2(x, y)
 {
 	Vec2 v = CPP.System.Vec2(x, y)
 	return v
+}
+
+// Gets if key is down
+func GetKey(keyName)
+{
+	bool b = CPP.Input.GetKey(keyName)
+	print b
+	return b
 }

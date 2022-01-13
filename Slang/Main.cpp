@@ -263,7 +263,42 @@ bool BooleanLogic(const string& valA, const string& determinant, const string& v
 
 int varOperation(const vector<string>& str, unordered_map<string, boost::any>& variableValues)
 {
-	if (IsVar(str[0], variableValues))
+	if (count(str[0], '.') > 0)
+	{
+		if (IsVar(split(str[0], '.')[0], variableValues))
+		{
+			if (str[1] == "=")
+				EditClassSubComponent(variableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+			else if (str[1] == "+=")
+				EditClassSubComponent(variableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+			else if (str[1] == "-=")
+				EditClassSubComponent(variableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+			else if (str[1] == "*=")
+				EditClassSubComponent(variableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+			else if (str[1] == "/=")
+				EditClassSubComponent(variableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+			else
+				LogWarning("unrecognized operator \'" + str[1] + "\'");
+			return 0;
+		}
+		else if (IsVar(split(str[0], '.')[0], globalVariableValues))
+		{
+			if (str[1] == "=")
+				EditClassSubComponent(globalVariableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+			else if (str[1] == "+=")
+				EditClassSubComponent(globalVariableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+			else if (str[1] == "-=")
+				EditClassSubComponent(globalVariableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+			else if (str[1] == "*=")
+				EditClassSubComponent(globalVariableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+			else if (str[1] == "/=")
+				EditClassSubComponent(globalVariableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+			else
+				LogWarning("unrecognized operator \'" + str[1] + "\'");
+			return 0;
+		}
+	}
+	else if (IsVar(str[0], variableValues))
 	{
 		if (str[1] == "=")
 			variableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
@@ -277,7 +312,6 @@ int varOperation(const vector<string>& str, unordered_map<string, boost::any>& v
 			variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
 		else
 			LogWarning("unrecognized operator \'" + str[1] + "\'");
-		//cout << variables[v] << " is " << variableValues[v] << endl;
 		return 0;
 	}
 	else if (IsVar(str[0], globalVariableValues))
@@ -294,7 +328,6 @@ int varOperation(const vector<string>& str, unordered_map<string, boost::any>& v
 			globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
 		else
 			LogWarning("unrecognized operator \'" + str[1] + "\'");
-		//cout << variables[v] << " is " << variableValues[v] << endl;
 		return 0;
 	}
 	LogWarning("uninitialized variable or typo in \'" + str[0] + "\'");
@@ -349,6 +382,14 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	// Check existing variables: If matches, then it means
 	// the variables value is getting changed with an operator
 	else if (IsVar(words[lineNum][0], variableValues) || IsVar(words[lineNum][0], globalVariableValues))
+	{
+		// Evaluates what the operator (ex. '=', '+=') does to the value on the left by the value on the right
+		varOperation(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
+		return nullType;
+	}
+
+	// Check existing variables: To see if class sub component matches
+	else if (IsVar(split(words[lineNum][0], '.')[0], variableValues) || IsVar(split(words[lineNum][0], '.')[0], globalVariableValues))
 	{
 		// Evaluates what the operator (ex. '=', '+=') does to the value on the left by the value on the right
 		varOperation(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
@@ -501,7 +542,7 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 		}
 		catch (const std::exception&)
 		{
-			LogCriticalError("\'" + unWrapVec(words[lineNum]) + "\'\nIn function: " + functionName + "\nLine: " + to_string(lineNum));
+			LogCriticalError("\'" + unWrapVec(words[lineNum]) + "\'\n                  In function: " + functionName + "\n                  Line: " + to_string(lineNum));
 		}
 		if (!returnVal.empty())
 			return returnVal;
