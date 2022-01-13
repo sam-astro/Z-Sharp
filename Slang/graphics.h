@@ -733,7 +733,7 @@ int initGraphics(std::string windowTitle, int width, int height)
 	TTF_Init();
 
 	gWindow = SDL_CreateWindow(windowTitle.c_str(), 40, 40, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
-	gRenderer = SDL_CreateRenderer(gWindow, -1, 0);
+	gRenderer = SDL_CreateRenderer(gWindow, -1, 0, SDL_RENDERER_ACCELERATED);
 
 	//Get window surface
 	gScreenSurface = SDL_GetWindowSurface(gWindow);
