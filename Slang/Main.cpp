@@ -58,7 +58,7 @@ bool IsVar(const string& varName, const unordered_map<string, boost::any>& varia
 		return false;
 }
 
-vector<boost::any> VarValues(const vector<string>& varNames, const unordered_map<string, boost::any>& variableValues)
+vector<boost::any> VarValues(const vector<string>& varNames, unordered_map<string, boost::any>& variableValues)
 {
 	vector<boost::any> realValues;
 
@@ -66,7 +66,8 @@ vector<boost::any> VarValues(const vector<string>& varNames, const unordered_map
 	{
 		string varName = trim(varNames[varIndex]);
 
-		auto iA = variableValues.find(varName);
+		realValues.push_back(EvalExpression(varName, variableValues));
+		/*auto iA = variableValues.find(varName);
 		if (iA != variableValues.end())
 		{
 			realValues.push_back(iA->second);
@@ -78,7 +79,7 @@ vector<boost::any> VarValues(const vector<string>& varNames, const unordered_map
 				realValues.push_back(iB->second);
 			else
 				realValues.push_back(varName);
-		}
+		}*/
 	}
 
 	return realValues;
@@ -267,34 +268,14 @@ int varOperation(const vector<string>& str, unordered_map<string, boost::any>& v
 	{
 		if (IsVar(split(str[0], '.')[0], variableValues))
 		{
-			if (str[1] == "=")
-				EditClassSubComponent(variableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
-			else if (str[1] == "+=")
-				EditClassSubComponent(variableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
-			else if (str[1] == "-=")
-				EditClassSubComponent(variableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
-			else if (str[1] == "*=")
-				EditClassSubComponent(variableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
-			else if (str[1] == "/=")
-				EditClassSubComponent(variableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
-			else
-				LogWarning("unrecognized operator \'" + str[1] + "\'");
+			//InterpreterLog(unWrapVec(vector<string>(str.begin() + 2, str.end())));
+			variableValues[split(str[0], '.')[0]] = EditClassSubComponent(variableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
 			return 0;
 		}
 		else if (IsVar(split(str[0], '.')[0], globalVariableValues))
 		{
-			if (str[1] == "=")
-				EditClassSubComponent(globalVariableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
-			else if (str[1] == "+=")
-				EditClassSubComponent(globalVariableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
-			else if (str[1] == "-=")
-				EditClassSubComponent(globalVariableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
-			else if (str[1] == "*=")
-				EditClassSubComponent(globalVariableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
-			else if (str[1] == "/=")
-				EditClassSubComponent(globalVariableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
-			else
-				LogWarning("unrecognized operator \'" + str[1] + "\'");
+			//InterpreterLog(unWrapVec(vector<string>(str.begin() + 2, str.end())));
+			globalVariableValues[split(str[0], '.')[0]] = EditClassSubComponent(globalVariableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
 			return 0;
 		}
 	}

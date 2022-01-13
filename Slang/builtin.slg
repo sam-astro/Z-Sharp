@@ -45,6 +45,13 @@ func Round(input)
 	return out
 }
 
+// Linearly interpolates between a and b by t
+func Lerp(a, b, t)
+{
+	float out = CPP.Math.Lerp(a, b, t)
+	return out
+}
+
 // Clamps input between min and max
 func Clamp(input, min, max)
 {
@@ -102,6 +109,5 @@ func NVec2(x, y)
 func GetKey(keyName)
 {
 	bool b = CPP.Input.GetKey(keyName)
-	print b
 	return b
 }

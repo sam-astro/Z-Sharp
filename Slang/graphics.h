@@ -19,8 +19,10 @@
 #include <SDL_ttf.h>
 #include <SDL_image.h>
 #include <string>
+#include <any>
 
 using namespace std;
+using namespace boost;
 
 int WINDOW_WIDTH = 1280;
 int WINDOW_HEIGHT = 720;
@@ -212,7 +214,7 @@ public:
 			return y;
 	}
 
-	int EditSubComponent(std::string componentName, std::string oper, boost::any otherVal)
+	Vec2 EditSubComponent(std::string componentName, std::string oper, boost::any otherVal)
 	{
 		if (componentName == "x")
 		{
@@ -240,6 +242,7 @@ public:
 			else if (oper == "/=")
 				y /= AnyAsFloat(otherVal);
 		}
+		return *this;
 	}
 
 	float x, y;
@@ -381,7 +384,7 @@ public:
 			return position.y;
 	}
 
-	int EditSubComponent(std::string componentName, std::string oper, boost::any otherVal)
+	Sprite EditSubComponent(std::string componentName, std::string oper, boost::any otherVal)
 	{
 		if (componentName == "position")
 		{
@@ -422,6 +425,7 @@ public:
 			else if (oper == "/=")
 				position.y /= AnyAsFloat(otherVal);
 		}
+		return *this;
 	}
 
 	Vec2 position;
@@ -706,14 +710,14 @@ int updateLoop()
 
 		SDL_RenderClear(gRenderer);
 
-		ExecuteFunction("Update", vector<boost::any> {});
+		ExecuteFunction("Update", vector<boost::any> {dt});
 
 		// Present the backbuffer
 		SDL_RenderPresent(gRenderer);
 
 		// Calculate frame time
 		auto stopTime = std::chrono::high_resolution_clock::now();
-		dt = std::chrono::duration<float, std::chrono::milliseconds::period>(stopTime - startTime).count();
+		dt = std::chrono::duration<float, std::chrono::milliseconds::period>(stopTime - startTime).count() / 1000.0f;
 
 	}
 	return 0;

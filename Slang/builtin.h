@@ -30,6 +30,18 @@ public:
 
 boost::any nullType;
 
+float clamp(float v, float min, float max)
+{
+	if (v < min) return min;
+	if (v > max) return max;
+	return v;
+}
+
+float lerp(float a, float b, float f)
+{
+	return a + f * (b - a);
+}
+
 int LogWarning(const string& warningText)
 {
 	cerr << "\x1B[33mWARNING: " << warningText << "\033[0m\t\t" << endl;
@@ -203,6 +215,8 @@ boost::any CPPFunction(const string& name, const vector<boost::any>& args)
 		return tan(AnyAsFloat(args[0]));
 	else if (name == "CPP.Math.Round")
 		return AnyAsInt(args[0]);
+	else if (name == "CPP.Math.Lerp")
+		return lerp(AnyAsFloat(args[0]), AnyAsFloat(args[1]), AnyAsFloat(args[2]));
 	else if (name == "CPP.Graphics.Init")
 	{
 		InterpreterLog("Init graphics");
