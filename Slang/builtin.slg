@@ -52,6 +52,27 @@ func Lerp(a, b, t)
 	return out
 }
 
+// Get absolute value of x
+func Abs(x)
+{
+	float out = CPP.Math.Abs(x)
+	return out
+}
+
+// Convert radians to degrees
+func RadToDeg(x)
+{
+	float out = (x * PI) / 180
+	return out
+}
+
+// Convert degrees to radians
+func DegToRad(x)
+{
+	float out = (x * 180) / PI
+	return out
+}
+
 // Clamps input between min and max
 func Clamp(input, min, max)
 {

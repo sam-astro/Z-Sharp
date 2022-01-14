@@ -4,7 +4,9 @@ int SCREENH = 600
 int scoreOne = 0
 int scoreTwo = 0
 
-float paddleMoveSpeed = 200
+float ballSpeed = -3
+
+float paddleMoveSpeed = 7
 
 func Main(input, in)
 {
@@ -25,23 +27,29 @@ func Start()
 	Vec2 lPaddlePosition = NVec2(15, yPosPaddle)
 	global Vec2 lPaddleTargetPosition = NVec2(15, yPosPaddle)
 	
-	float rOffset = SCREENW - 15
+	float rOffset = SCREENW - (paddleScale.x + 15)
 	Vec2 rPaddlePosition = NVec2(rOffset, yPosPaddle)
-	global Vec2 rPaddleTargetPosition = NVec2(15, yPosPaddle)
+	global Vec2 rPaddleTargetPosition = NVec2(rOffset, yPosPaddle)
 	
-	global Sprite ballSprite = CPP.Graphics.Sprite("./square.png", ballPosition, ballScale, 0)
+	global Sprite ballSpr = CPP.Graphics.Sprite("./square.png", ballPosition, ballScale, 0)
 	global Sprite lPaddle = CPP.Graphics.Sprite("./square.png", lPaddlePosition, paddleScale, 0)
 	global Sprite rPaddle = CPP.Graphics.Sprite("./square.png", rPaddlePosition, paddleScale, 0)
+	
+	global Vec2 ballVelocity = NVec2(ballSpeed, 0)
 }
 
 func Update(deltaTime)
 {
-	//print deltaTime
+	float FPS = 1 / deltaTime
+	print "FPS: " + FPS
+
+	// Handles Left Paddle Movement
+	//
 	if GetKey("W") == true
 	{
 		float newX = lPaddle.position.x
 		// Subtract from Y to move up, because vertical coordinates are reversed
-		float newY = lPaddleTargetPosition.y - paddleMoveSpeed * deltaTime
+		float newY = lPaddleTargetPosition.y - paddleMoveSpeed
 		newY = Clamp(newY, 0, SCREENH - 70)
 		lPaddleTargetPosition = NVec2(newX, newY)
 	}
@@ -49,23 +57,86 @@ func Update(deltaTime)
 	{
 		float newX = lPaddle.position.x
 		// Add to Y to move down, because vertical coordinates are reversed
-		float newY = lPaddleTargetPosition.y + paddleMoveSpeed * deltaTime
+		float newY = lPaddleTargetPosition.y + paddleMoveSpeed
 		newY = Clamp(newY, 0, SCREENH - 70)
 		lPaddleTargetPosition = NVec2(newX, newY)
 	}
 	// Lerps from old position to destination smoothly
 	float oldY = lPaddle.position.y
-	float stopSpeed = deltaTime * 15
+	float stopSpeed = deltaTime * 6
 	float newY = lPaddleTargetPosition.y
 	float lerpedY = Lerp(oldY, newY, stopSpeed)
-	//print "0 < " + newY + " < " + SCREENH
 	lPaddle.position = NVec2(newX, lerpedY)
 	
-	print "FPS: " + 1 / deltaTime
+	// Handles Right Paddle Movement
+	//
+	if GetKey("UP") == true
+	{
+		float newX = rPaddle.position.x
+		// Subtract from Y to move up, because vertical coordinates are reversed
+		float newY = rPaddleTargetPosition.y - paddleMoveSpeed
+		newY = Clamp(newY, 0, SCREENH - 70)
+		rPaddleTargetPosition = NVec2(newX, newY)
+	}
+	if GetKey("DOWN") == true
+	{
+		float newX = rPaddle.position.x
+		// Add to Y to move down, because vertical coordinates are reversed
+		float newY = rPaddleTargetPosition.y + paddleMoveSpeed
+		newY = Clamp(newY, 0, SCREENH - 70)
+		rPaddleTargetPosition = NVec2(newX, newY)
+	}
+	// Lerps from old position to destination smoothly
+	float oldY = rPaddle.position.y
+	float stopSpeed = deltaTime * 6
+	float newY = rPaddleTargetPosition.y
+	float lerpedY = Lerp(oldY, newY, stopSpeed)
+	rPaddle.position = NVec2(newX, lerpedY)
 	
+	ballSpr.position += ballVelocity
+	
+	HandleBallBounce()
 	
 	// Finally draws all of the sprites
-	CPP.Graphics.Draw(ballSprite)
+	CPP.Graphics.Draw(ballSpr)
 	CPP.Graphics.Draw(lPaddle)
 	CPP.Graphics.Draw(rPaddle)
+}
+
+func HandleBallBounce()
+{
+	float ballX = ballSpr.position.x
+	float ballY = ballSpr.position.y
+	// Checks if the ball is on the same X coordinate as the left paddle
+	if ballX <= lPaddle.position.x
+	{
+		// Then check if ball is lower than the top edge
+		float positionAdjustedOffset = lPaddle.position.y
+		positionAdjustedOffset += lPaddle.scale.y
+		if ballY <= positionAdjustedOffset
+		{
+			// Finally check if ball is higher than the bottom edge
+			positionAdjustedOffset = lPaddle.position.y
+			positionAdjustedOffset -= lPaddle.scale.y
+			print positionAdjustedOffset
+			if ballY >= positionAdjustedOffset
+			{
+				float difference = lPaddle.position.y
+				difference -= ballY
+				
+				// float normalizedRelativeIntersectionY = (difference/(lPaddle.scale.y/2))
+				// float bounceAngle = normalizedRelativeIntersectionY * 1.3089
+				
+				// float ballVx = ballSpeed*Cos(bounceAngle)
+				// float ballVy = ballSpeed*-Sin(bounceAngle)
+				
+				// // Reflect horizontally
+				// if difference < 10
+				// {
+					// float newX = Sin(DegToRad())
+					// ballVelocity
+				// }
+			}
+		}
+	}
 }

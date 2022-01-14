@@ -39,9 +39,11 @@ int countInVector(const vector<string>& str, const string& ch);
 
 string Vec2Str(const vector<string>& str);
 
+vector<vector<string>> removeTabsWdArry(const vector<vector<string>>& str, const int& amnt);
+
 vector<string> removeTabs(const vector<string>& str, const int& amnt);
 
-vector<string> rangeInVec(const vector<string>& str, const int& min, const int& max);
+vector<string> rangeInVec(const vector<string>& str, const int& min, int max);
 
 vector<string> slice(vector<string> const& v, int min, int max);
 

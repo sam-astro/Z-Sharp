@@ -205,6 +205,26 @@ vector<string> removeTabs(const vector<string>& str, const int& amnt) {
 	return newStr;
 }
 
+vector<vector<string>> removeTabsWdArry(const vector<vector<string>>& str, const int& amnt) {
+	vector<vector<string>> newWds;
+
+	for (int i = 0; i < (int)str.size(); i++)
+	{
+		//newWds.push_back(rangeInVec(str[i], amnt, -1));
+		newWds.push_back(vector<string>());
+
+		for (int c = 0; c < (int)str[i].size(); c++)
+		{
+			if (str[i][c][0] != '\t' || c >= amnt)
+				newWds[i].push_back(str[i][c]);
+			else
+				newWds[i].push_back(str[i][c].substr(1, -1));
+		}
+	}
+
+	return newWds;
+}
+
 vector<string> rangeInVec(const vector<string>& str, const int& min, int max) {
 	if (max == -1)
 		max = (int)str.size();

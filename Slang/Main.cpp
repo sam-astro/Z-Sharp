@@ -29,7 +29,7 @@ boost::any GetVariableValue(const string& varName, const unordered_map<string, b
 
 	if (count(varName, '.') > 0)
 	{
-		classSubComponent = rangeInStr(varName, indexInStr(varName, '.')+1, -1);
+		classSubComponent = varName.substr(indexInStr(varName, '.')+1, -1);
 		baseName = split(varName, '.')[0];
 	}
 
@@ -243,7 +243,7 @@ bool BooleanLogic(const string& valA, const string& determinant, const string& v
 {
 	boost::any valARealValue = EvalExpression(valA, variableValues);
 	boost::any valBRealValue = EvalExpression(valB, variableValues);
-
+	//InterpreterLog(AnyAsString(valARealValue) + " " + determinant + " " + AnyAsString(valBRealValue) + " : " + to_string(AnyAsString(valARealValue) == AnyAsString(valBRealValue)));
 	if (determinant == "==")
 		return AnyAsString(valARealValue) == AnyAsString(valBRealValue);
 	else if (determinant == "!=")
@@ -264,55 +264,63 @@ bool BooleanLogic(const string& valA, const string& determinant, const string& v
 
 int varOperation(const vector<string>& str, unordered_map<string, boost::any>& variableValues)
 {
-	if (count(str[0], '.') > 0)
+	try
 	{
-		if (IsVar(split(str[0], '.')[0], variableValues))
+		if (count(str[0], '.') > 0)
 		{
-			//InterpreterLog(unWrapVec(vector<string>(str.begin() + 2, str.end())));
-			variableValues[split(str[0], '.')[0]] = EditClassSubComponent(variableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+			if (IsVar(split(str[0], '.')[0], variableValues))
+			{
+				//InterpreterLog(unWrapVec(vector<string>(str.begin() + 2, str.end())));
+				variableValues[split(str[0], '.')[0]] = EditClassSubComponent(variableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+				return 0;
+			}
+			else if (IsVar(split(str[0], '.')[0], globalVariableValues))
+			{
+				//InterpreterLog(unWrapVec(vector<string>(str.begin() + 2, str.end())));
+				globalVariableValues[split(str[0], '.')[0]] = EditClassSubComponent(globalVariableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+				return 0;
+			}
+		}
+		else if (IsVar(str[0], variableValues))
+		{
+			if (str[1] == "=")
+				variableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			else if (str[1] == "+=")
+				variableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			else if (str[1] == "-=")
+				variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else if (str[1] == "*=")
+				variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else if (str[1] == "/=")
+				variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else
+				LogWarning("unrecognized operator \'" + str[1] + "\'");
 			return 0;
 		}
-		else if (IsVar(split(str[0], '.')[0], globalVariableValues))
+		else if (IsVar(str[0], globalVariableValues))
 		{
-			//InterpreterLog(unWrapVec(vector<string>(str.begin() + 2, str.end())));
-			globalVariableValues[split(str[0], '.')[0]] = EditClassSubComponent(globalVariableValues[split(str[0], '.')[0]], str[1], EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues), split(str[0], '.')[1]);
+			if (str[1] == "=")
+				globalVariableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			else if (str[1] == "+=")
+				globalVariableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			else if (str[1] == "-=")
+				globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else if (str[1] == "*=")
+				globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else if (str[1] == "/=")
+				globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else
+				LogWarning("unrecognized operator \'" + str[1] + "\'");
 			return 0;
 		}
+		LogWarning("uninitialized variable or typo in \'" + str[0] + "\'");
+		return 1;
 	}
-	else if (IsVar(str[0], variableValues))
+	catch (const std::exception&)
 	{
-		if (str[1] == "=")
-			variableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-		else if (str[1] == "+=")
-			variableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
-		else if (str[1] == "-=")
-			variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-		else if (str[1] == "*=")
-			variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-		else if (str[1] == "/=")
-			variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-		else
-			LogWarning("unrecognized operator \'" + str[1] + "\'");
-		return 0;
+		LogWarning("uninitialized variable or typo in \'" + str[0] + "\'");
+		return 1;
 	}
-	else if (IsVar(str[0], globalVariableValues))
-	{
-		if (str[1] == "=")
-			globalVariableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-		else if (str[1] == "+=")
-			globalVariableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
-		else if (str[1] == "-=")
-			globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-		else if (str[1] == "*=")
-			globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-		else if (str[1] == "/=")
-			globalVariableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-		else
-			LogWarning("unrecognized operator \'" + str[1] + "\'");
-		return 0;
-	}
-	LogWarning("uninitialized variable or typo in \'" + str[0] + "\'");
-	return 1;
 }
 
 boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<string, boost::any>& variableValues)
@@ -362,7 +370,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 
 	// Check existing variables: If matches, then it means
 	// the variables value is getting changed with an operator
-	else if (IsVar(words[lineNum][0], variableValues) || IsVar(words[lineNum][0], globalVariableValues))
+	else if (count(words[lineNum][0], '.') == 0 && (IsVar(words[lineNum][0], variableValues) || IsVar(words[lineNum][0], globalVariableValues)))
 	{
 		// Evaluates what the operator (ex. '=', '+=') does to the value on the left by the value on the right
 		varOperation(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
@@ -370,7 +378,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	}
 
 	// Check existing variables: To see if class sub component matches
-	else if (IsVar(split(words[lineNum][0], '.')[0], variableValues) || IsVar(split(words[lineNum][0], '.')[0], globalVariableValues))
+	else if (count(words[lineNum][0], '.') > 0 && IsVar(split(words[lineNum][0], '.')[0], variableValues) || IsVar(split(words[lineNum][0], '.')[0], globalVariableValues))
 	{
 		// Evaluates what the operator (ex. '=', '+=') does to the value on the left by the value on the right
 		varOperation(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
@@ -380,7 +388,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	// Gathers while loop contents
 	else if (words[lineNum][0] == "while")
 	{
-		vector<string> whileContents;
+		vector<vector<string>> whileContents;
 		vector<string> whileParameters;
 
 		for (int w = 1; w < (int)words[lineNum].size(); w++)
@@ -392,24 +400,16 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 			numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
 			if (numOfBrackets == 0)
 				break;
-			whileContents.push_back("");
-			for (int w = 0; w < (int)words[p].size(); w++)
-			{
-				whileContents[(int)whileContents.size() - 1] += words[p][w] + " ";
-			}
+			whileContents.push_back(words[p]);
 		}
-		whileContents = removeTabs(whileContents, 1);
-
-		vector<vector<string>> innerWords;
-		for (int i = 0; i < (int)whileContents.size(); i++)
-			innerWords.push_back(split(whileContents[i], ' '));
+		whileContents = removeTabsWdArry(whileContents, 1);
 
 		while (BooleanLogic(whileParameters[0], whileParameters[1], whileParameters[2], variableValues))
 		{
 			//Iterate through all lines in while loop
 			for (int lineNum = 0; lineNum < (int)whileContents.size(); lineNum++)
 			{
-				boost::any returnVal = ProcessLine(innerWords, lineNum, variableValues);
+				boost::any returnVal = ProcessLine(whileContents, lineNum, variableValues);
 				if (!returnVal.empty())
 					return returnVal;
 			}
@@ -420,7 +420,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	// Gathers if statement contents
 	else if (words[lineNum][0] == "if")
 	{
-		vector<string> ifContents;
+		vector<vector<string>> ifContents;
 		vector<string> ifParameters;
 
 		for (int w = 1; w < (int)words[lineNum].size(); w++)
@@ -433,62 +433,54 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 			numOfBrackets += countInVector(words[lineNum], "{") - countInVector(words[lineNum], "}");
 			if (numOfBrackets == 0)
 				break;
-			ifContents.push_back("");
-			for (int w = 0; w < (int)words[lineNum].size(); w++)
-			{
-				ifContents[(int)ifContents.size() - 1] += words[lineNum][w] + " ";
-			}
+			ifContents.push_back(words[lineNum]);
 			lineNum++;
 		}
-		ifContents = removeTabs(ifContents, 1);
-
-		vector<vector<string>> innerWords;
-		for (int i = 0; i < (int)ifContents.size(); i++)
-			innerWords.push_back(split(ifContents[i], ' '));
+		ifContents = removeTabsWdArry(ifContents, 1);
 
 		if (BooleanLogic(ifParameters[0], ifParameters[1], ifParameters[2], variableValues))
 		{
 			//Iterate through all lines in if statement
 			for (int l = 0; l < (int)ifContents.size(); l++)
 			{
-				boost::any returnVal = ProcessLine(innerWords, l, variableValues);
+				boost::any returnVal = ProcessLine(ifContents, l, variableValues);
 				if (!returnVal.empty())
 					return returnVal;
 			}
 		}
-		else if (words.size() > lineNum + 1)
-			if (words[lineNum + 1][0] == "else")
-			{
-				lineNum += 1;
+		//else if (words.size() > lineNum + 1)
+		//	if (words[lineNum + 1][0] == "else")
+		//	{
+		//		lineNum += 1;
 
-				vector<string> elseContents;
+		//		vector<string> elseContents;
 
-				int numOfBrackets = 1;
-				while (lineNum < (int)words.size())
-				{
-					numOfBrackets += countInVector(words[lineNum], "{") - countInVector(words[lineNum], "}");
-					if (numOfBrackets == 0)
-						break;
-					elseContents.push_back("");
-					for (int w = 0; w < (int)words[lineNum].size(); w++)
-					{
-						elseContents[(int)elseContents.size() - 1] += words[lineNum][w] + " ";
-					}
-					lineNum++;
-				}
-				elseContents = removeTabs(elseContents, 2);
+		//		int numOfBrackets = 1;
+		//		while (lineNum < (int)words.size())
+		//		{
+		//			numOfBrackets += countInVector(words[lineNum], "{") - countInVector(words[lineNum], "}");
+		//			if (numOfBrackets == 0)
+		//				break;
+		//			elseContents.push_back("");
+		//			for (int w = 0; w < (int)words[lineNum].size(); w++)
+		//			{
+		//				elseContents[(int)elseContents.size() - 1] += words[lineNum][w] + " ";
+		//			}
+		//			lineNum++;
+		//		}
+		//		elseContents = removeTabs(elseContents, 2);
 
-				vector<vector<string>> innerWords;
-				for (int i = 0; i < (int)elseContents.size(); i++)
-					innerWords.push_back(split(elseContents[i], ' '));
+		//		vector<vector<string>> innerWords;
+		//		for (int i = 0; i < (int)elseContents.size(); i++)
+		//			innerWords.push_back(split(elseContents[i], ' '));
 
-				//Iterate through all lines in else statement
-				for (int lineNum = 0; lineNum < (int)elseContents.size(); lineNum++)
-				{
-					ProcessLine(innerWords, lineNum, variableValues);
-				}
-				return nullType;
-			}
+		//		//Iterate through all lines in else statement
+		//		for (int lineNum = 0; lineNum < (int)elseContents.size(); lineNum++)
+		//		{
+		//			ProcessLine(innerWords, lineNum, variableValues);
+		//		}
+		//		return nullType;
+		//	}
 		return nullType;
 	}
 	//// Gathers else statement contents
@@ -516,17 +508,16 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 	//Iterate through all lines in function
 	for (int lineNum = 1; lineNum < (int)words.size(); lineNum++)
 	{
-		boost::any returnVal = 0;
 		try
 		{
-			returnVal = ProcessLine(words, lineNum, variableValues);
+			boost::any returnVal = ProcessLine(words, lineNum, variableValues);
+			if (!returnVal.empty())
+				return returnVal;
 		}
 		catch (const std::exception&)
 		{
 			LogCriticalError("\'" + unWrapVec(words[lineNum]) + "\'\n                  In function: " + functionName + "\n                  Line: " + to_string(lineNum));
 		}
-		if (!returnVal.empty())
-			return returnVal;
 	}
 	return nullType;
 }

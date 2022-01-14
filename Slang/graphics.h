@@ -349,7 +349,7 @@ class Sprite
 {
 public:
 	Sprite(std::string path, Vec2 position, Vec2 scale, double angle)
-		: position(position), angle(angle), path(path)
+		: position(position), angle(angle), path(path), scale(scale)
 	{
 		rect.x = static_cast<int>(position.x);
 		rect.y = static_cast<int>(position.y);
@@ -369,6 +369,7 @@ public:
 
 	int Draw()
 	{
+		rect.x = static_cast<int>(position.x);
 		rect.y = static_cast<int>(position.y);
 		SDL_RenderCopy(gRenderer, texture, NULL, &rect);
 		return 0;
@@ -382,24 +383,30 @@ public:
 			return position.x;
 		if (componentName == "position.y")
 			return position.y;
+		if (componentName == "scale")
+			return scale;
+		if (componentName == "scale.x")
+			return scale.x;
+		if (componentName == "scale.y")
+			return scale.y;
 	}
 
 	Sprite EditSubComponent(std::string componentName, std::string oper, boost::any otherVal)
 	{
 		if (componentName == "position")
 		{
-			if(oper == "=")
+			if (oper == "=")
 				position = any_cast<Vec2>(otherVal);
-			else if(oper == "+=")
+			else if (oper == "+=")
 				position += any_cast<Vec2>(otherVal);
-			else if(oper == "-=")
+			else if (oper == "-=")
 				position -= any_cast<Vec2>(otherVal);
-			else if(oper == "*=")
+			else if (oper == "*=")
 				position *= AnyAsFloat(otherVal);
-			else if(oper == "/=")
+			else if (oper == "/=")
 				position /= AnyAsFloat(otherVal);
 		}
-		if (componentName == "position.x")
+		else if (componentName == "position.x")
 		{
 			if (oper == "=")
 				position.x = AnyAsFloat(otherVal);
@@ -412,7 +419,7 @@ public:
 			else if (oper == "/=")
 				position.x /= AnyAsFloat(otherVal);
 		}
-		if (componentName == "position.y")
+		else if (componentName == "position.y")
 		{
 			if (oper == "=")
 				position.y = AnyAsFloat(otherVal);
@@ -425,11 +432,53 @@ public:
 			else if (oper == "/=")
 				position.y /= AnyAsFloat(otherVal);
 		}
+
+		else if (componentName == "scale")
+		{
+			if (oper == "=")
+				scale = any_cast<Vec2>(otherVal);
+			else if (oper == "+=")
+				scale += any_cast<Vec2>(otherVal);
+			else if (oper == "-=")
+				scale -= any_cast<Vec2>(otherVal);
+			else if (oper == "*=")
+				scale *= AnyAsFloat(otherVal);
+			else if (oper == "/=")
+				scale /= AnyAsFloat(otherVal);
+		}
+		else if (componentName == "scale.x")
+		{
+			if (oper == "=")
+				scale.x = AnyAsFloat(otherVal);
+			else if (oper == "+=")
+				scale.x += AnyAsFloat(otherVal);
+			else if (oper == "-=")
+				scale.x -= AnyAsFloat(otherVal);
+			else if (oper == "*=")
+				scale.x *= AnyAsFloat(otherVal);
+			else if (oper == "/=")
+				scale.x /= AnyAsFloat(otherVal);
+		}
+		else if (componentName == "scale.y")
+		{
+			if (oper == "=")
+				scale.y = AnyAsFloat(otherVal);
+			else if (oper == "+=")
+				scale.y += AnyAsFloat(otherVal);
+			else if (oper == "-=")
+				scale.y -= AnyAsFloat(otherVal);
+			else if (oper == "*=")
+				scale.y *= AnyAsFloat(otherVal);
+			else if (oper == "/=")
+				scale.y /= AnyAsFloat(otherVal);
+		}
 		return *this;
 	}
 
 	Vec2 position;
+	Vec2 scale;
 	double angle;
+
 	std::string path;
 	SDL_Rect rect{};
 	SDL_Texture* texture;
@@ -732,8 +781,8 @@ int initGraphics(std::string windowTitle, int width, int height)
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 
-	gWindow = SDL_CreateWindow(windowTitle.c_str(), 40, 40, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN);
-	gRenderer = SDL_CreateRenderer(gWindow, -1, 0, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	gWindow = SDL_CreateWindow(windowTitle.c_str(), 40, 40, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	gRenderer = SDL_CreateRenderer(gWindow, -1, 0);
 
 	//Get window surface
 	gScreenSurface = SDL_GetWindowSurface(gWindow);

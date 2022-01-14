@@ -129,6 +129,11 @@ boost::any EditClassSubComponent(boost::any value, string oper, boost::any other
 	return nullType;
 }
 
+bool AxisAlignedCollision(const Sprite& a, const Sprite& b)
+{
+
+}
+
 // Initial script processing, which loads variables and functions from builtin
 int GetBuiltins(const string& s)
 {
@@ -217,6 +222,8 @@ boost::any CPPFunction(const string& name, const vector<boost::any>& args)
 		return AnyAsInt(args[0]);
 	else if (name == "CPP.Math.Lerp")
 		return lerp(AnyAsFloat(args[0]), AnyAsFloat(args[1]), AnyAsFloat(args[2]));
+	else if (name == "CPP.Math.Abs")
+		return abs(AnyAsFloat(args[0]));
 	else if (name == "CPP.Graphics.Init")
 	{
 		InterpreterLog("Init graphics");
