@@ -18,14 +18,14 @@
 using namespace std;
 using namespace boost;
 
-vector<string> types = { "int", "float", "string", "bool", "void", "null", "Sprite", "Vec2"};
+vector<string> types = { "int", "float", "string", "bool", "void", "null", "Sprite", "Vec2" };
 
 unordered_map<string, vector<vector<string>>> builtinFunctionValues;
 unordered_map<string, boost::any> builtinVarVals;
 
 class NullType {
 public:
-    string type = "NULL";
+	string type = "NULL";
 };
 
 boost::any nullType;
@@ -131,7 +131,14 @@ boost::any EditClassSubComponent(boost::any value, string oper, boost::any other
 
 bool AxisAlignedCollision(const Sprite& a, const Sprite& b)
 {
+	bool colX = false;
+	if ((a.position.x + (a.scale.x / 2) <= b.position.x + (b.scale.x / 2)) && (a.position.x - (a.scale.x / 2) >= b.position.x - (b.scale.x / 2)))
+		colX = true;
+	bool colY = false;
+	if ((a.position.y + (a.scale.y / 2) <= b.position.y + (b.scale.y / 2)) && (a.position.y - (a.scale.y / 2) >= b.position.y - (b.scale.y / 2)))
+		colY = true;
 
+	return colX && colY;
 }
 
 // Initial script processing, which loads variables and functions from builtin
@@ -235,8 +242,10 @@ boost::any CPPFunction(const string& name, const vector<boost::any>& args)
 		return s;
 	}
 	else if (name == "CPP.Graphics.Draw")
-	{
 		any_cast<Sprite>(args[0]).Draw();
+	else if (name == "CPP.Physics.AxisAlignedCollision")
+	{
+		return AxisAlignedCollision(any_cast<Sprite>(args[0]), any_cast<Sprite>(args[1]));
 	}
 	else if (name == "CPP.Input.GetKey")
 		return KEYS[StringRaw(any_cast<string>(args[0]))] == 1;

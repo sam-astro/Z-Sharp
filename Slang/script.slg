@@ -140,3 +140,9 @@ func HandleBallBounce()
 		}
 	}
 }
+
+func Colliding(a, b)
+{
+	bool b = CPP.Physics.AxisAlignedCollision(a, b)
+	return b
+}
