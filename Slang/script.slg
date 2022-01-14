@@ -39,7 +39,7 @@ func Start()
 	global Sprite lPaddle = CPP.Graphics.Sprite("./square.png", lPaddlePosition, paddleScale, 0)
 	global Sprite rPaddle = CPP.Graphics.Sprite("./square.png", rPaddlePosition, paddleScale, 0)
 	
-	// global Text scoreTextOne = CPP.Graphics.Text("score", centerOfScreen, 16, 255, 255, 255)
+	// global Text scoreTextOne = CPP.Graphics.Text("score", "./Arial.ttf", centerOfScreen, 20, 0, 255, 255, 255)
 	
 	global Vec2 ballVelocity = NVec2(ballSpeed, 0)
 }
@@ -146,6 +146,7 @@ func HandleBallBounce()
 		scoreOne += 1
 		ballSpr.position = ballPos
 		ballVelocity = NVec2(-ballSpeed, 0)
+		// scoreTextOne.content = scoreOne
 		return 0
 	}
 	
