@@ -4,7 +4,7 @@ int SCREENH = 600
 int scoreOne = 0
 int scoreTwo = 0
 
-float ballSpeed = -3
+float ballSpeed = 3
 
 float paddleMoveSpeed = 7
 
@@ -95,49 +95,58 @@ func Update(deltaTime)
 	
 	ballSpr.position += ballVelocity
 	
-	HandleBallBounce()
-	
 	// Finally draws all of the sprites
 	CPP.Graphics.Draw(ballSpr)
 	CPP.Graphics.Draw(lPaddle)
 	CPP.Graphics.Draw(rPaddle)
+	
+	HandleBallBounce()
 }
 
 func HandleBallBounce()
 {
 	float ballX = ballSpr.position.x
 	float ballY = ballSpr.position.y
-	// Checks if the ball is on the same X coordinate as the left paddle
-	if ballX <= lPaddle.position.x
+	float scaleY = ballSpr.scale.y
+	
+	// Checks if the ball is touching the ceiling
+	if ballY - scaleY <= 0
 	{
-		// Then check if ball is lower than the top edge
-		float positionAdjustedOffset = lPaddle.position.y
-		positionAdjustedOffset += lPaddle.scale.y
-		if ballY <= positionAdjustedOffset
-		{
-			// Finally check if ball is higher than the bottom edge
-			positionAdjustedOffset = lPaddle.position.y
-			positionAdjustedOffset -= lPaddle.scale.y
-			print positionAdjustedOffset
-			if ballY >= positionAdjustedOffset
-			{
-				float difference = lPaddle.position.y
-				difference -= ballY
-				
-				// float normalizedRelativeIntersectionY = (difference/(lPaddle.scale.y/2))
-				// float bounceAngle = normalizedRelativeIntersectionY * 1.3089
-				
-				// float ballVx = ballSpeed*Cos(bounceAngle)
-				// float ballVy = ballSpeed*-Sin(bounceAngle)
-				
-				// // Reflect horizontally
-				// if difference < 10
-				// {
-					// float newX = Sin(DegToRad())
-					// ballVelocity
-				// }
-			}
-		}
+		ballVelocity = NVec2(ballVelocity.x, -ballVelocity.y)
+		return 0
+	}
+	// Checks if the ball is touching the floor
+	if ballY + scaleY >= SCREENH
+	{
+		ballVelocity = NVec2(ballVelocity.x, -ballVelocity.y)
+		return 0
+	}
+	
+	// Checks if colliding with left paddle
+	bool coll = Colliding(ballSpr, lPaddle)
+	if coll == true
+	{
+		float difference = lPaddle.position.y
+		difference -= ballY
+		float normalizedRelativeIntersectionY = (difference/(lPaddle.scale.y/2))
+		float bounceAngle = normalizedRelativeIntersectionY * 1.30899694
+		float ballVx = ballSpeed*Cos(bounceAngle)
+		float ballVy = ballSpeed*-Sin(bounceAngle)
+		ballVelocity = NVec2(ballVx, ballVy)
+		return 0
+	}
+	// Checks if colliding with right paddle
+	bool coll = Colliding(ballSpr, rPaddle)
+	if coll == true
+	{
+		float difference = rPaddle.position.y
+		difference -= ballY
+		float normalizedRelativeIntersectionY = (difference/(rPaddle.scale.y/2))
+		float bounceAngle = normalizedRelativeIntersectionY * 1.30899694
+		float ballVx = ballSpeed*Cos(bounceAngle)
+		float ballVy = ballSpeed*-Sin(bounceAngle)
+		ballVelocity = NVec2(ballVx, ballVy)
+		return 0
 	}
 }
 
