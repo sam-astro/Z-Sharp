@@ -8,20 +8,24 @@ float ballSpeed = 3
 
 float paddleMoveSpeed = 7
 
+// Main is always run at the VERY BEGINNING. Start() is the start of GRAPHICS
+// so if you never call CPP.Grapgics.Init, then Start won't run
 func Main(input, in)
 {
+	// Immediately creates the window, then Start(), then the game loop. The game loop calls Update() every frame
 	CPP.Graphics.Init("This is a pong game", SCREENW, SCREENH)
 }
 
 func Start()
 {
-	float xPosBall = SCREENW / 2
-	float yPosBall = SCREENH / 2
-	Vec2 ballPosition = NVec2(xPosBall, yPosBall)
+	float centerX = SCREENW / 2
+	float centerY = SCREENH / 2
+	global Vec2 centerOfScreen = NVec2(centerX, centerY)
+	
 	Vec2 ballScale = NVec2(16, 16)
+	Vec2 ballPos = centerOfScreen - ballScale
 	
 	Vec2 paddleScale = NVec2(16, 70)
-	
 	float yPosPaddle = yPosBall - paddleScale.y / 2
 	
 	Vec2 lPaddlePosition = NVec2(15, yPosPaddle)
@@ -31,7 +35,7 @@ func Start()
 	Vec2 rPaddlePosition = NVec2(rOffset, yPosPaddle)
 	global Vec2 rPaddleTargetPosition = NVec2(rOffset, yPosPaddle)
 	
-	global Sprite ballSpr = CPP.Graphics.Sprite("./square.png", ballPosition, ballScale, 0)
+	global Sprite ballSpr = CPP.Graphics.Sprite("./square.png", ballPos, ballScale, 0)
 	global Sprite lPaddle = CPP.Graphics.Sprite("./square.png", lPaddlePosition, paddleScale, 0)
 	global Sprite rPaddle = CPP.Graphics.Sprite("./square.png", rPaddlePosition, paddleScale, 0)
 	
@@ -119,6 +123,27 @@ func HandleBallBounce()
 	if ballY + scaleY >= SCREENH
 	{
 		ballVelocity = NVec2(ballVelocity.x, -ballVelocity.y)
+		return 0
+	}
+	
+	// Checks if ball is in player 1 goal
+	if ballX < 0
+	{
+		Vec2 ballScale = NVec2(16, 16)
+		Vec2 ballPos = centerOfScreen - ballScale
+		scoreTwo += 1
+		ballSpr.position = ballPos
+		ballVelocity = NVec2(ballSpeed, 0)
+		return 0
+	}
+	// Checks if ball is in player 2 goal
+	if ballX > SCREENW
+	{
+		Vec2 ballScale = NVec2(16, 16)
+		Vec2 ballPos = centerOfScreen - ballScale
+		scoreOne += 1
+		ballSpr.position = ballPos
+		ballVelocity = NVec2(-ballSpeed, 0)
 		return 0
 	}
 	
