@@ -369,8 +369,9 @@ public:
 
 	int Draw()
 	{
-		rect.x = static_cast<int>(position.x);
-		rect.y = static_cast<int>(position.y);
+		// rect.x = static_cast<int>(position.x);
+		rect.x = position.x;
+		rect.y = position.y;
 		SDL_RenderCopy(gRenderer, texture, NULL, &rect);
 		return 0;
 	}
@@ -487,29 +488,36 @@ public:
 class Text
 {
 public:
-	Text(std::string path, Vec2 position, Vec2 scale, double angle)
-		: position(position), angle(angle), path(path), scale(scale)
+	Text(std::string content, std::string pathToFont, Vec2 position, float fontSize, double angle, int r, int g, int b)
+		: position(position), angle(angle), content(content), pathToFont(pathToFont), fontSize(fontSize), r(r), g(g), b(b)
 	{
-		rect.x = static_cast<int>(position.x);
-		rect.y = static_cast<int>(position.y);
-		rect.w = scale.x;
-		rect.h = scale.y;
+		rect.x = position.x;
+		rect.y = position.y;
+		// rect.y = static_cast<int>(position.y);
 
 		Load();
 	}
 
 	int Load()
 	{
-		SDL_Surface* surface = loadSurface(path);
+		TTF_Font* font = TTF_OpenFont(pathToFont, fontSize);
+
+		SDL_Color color = {r, g, b};
+
+		SDL_Surface* surface = TTF_RenderText_Solid(font, content, color); 
+
 		texture = SDL_CreateTextureFromSurface(gRenderer, surface);
+
+		TTF_SizeText(font, Message, &rect.w, &rect.h);
+		
 		SDL_FreeSurface(surface);
 		return 0;
 	}
 
 	int Draw()
 	{
-		rect.x = static_cast<int>(position.x);
-		rect.y = static_cast<int>(position.y);
+		rect.x = position.x;
+		rect.y = position.y;
 		SDL_RenderCopy(gRenderer, texture, NULL, &rect);
 		return 0;
 	}
@@ -522,12 +530,12 @@ public:
 			return position.x;
 		if (componentName == "position.y")
 			return position.y;
-		if (componentName == "scale")
-			return scale;
-		if (componentName == "scale.x")
-			return scale.x;
-		if (componentName == "scale.y")
-			return scale.y;
+		if (componentName == "fontSize")
+			return fontSize;
+		if (componentName == "content")
+			return content;
+		if (componentName == "pathToFont")
+			return pathToFont;
 	}
 
 	Sprite EditSubComponent(std::string componentName, std::string oper, boost::any otherVal)
@@ -572,51 +580,78 @@ public:
 				position.y /= AnyAsFloat(otherVal);
 		}
 
-		else if (componentName == "scale")
+		else if (componentName == "fontSize")
 		{
 			if (oper == "=")
-				scale = any_cast<Vec2>(otherVal);
+				fontSize = AnyAsFloat(otherVal);
 			else if (oper == "+=")
-				scale += any_cast<Vec2>(otherVal);
+				fontSize += AnyAsFloat(otherVal);
 			else if (oper == "-=")
-				scale -= any_cast<Vec2>(otherVal);
+				fontSize -= AnyAsFloat(otherVal);
 			else if (oper == "*=")
-				scale *= AnyAsFloat(otherVal);
+				fontSize *= AnyAsFloat(otherVal);
 			else if (oper == "/=")
-				scale /= AnyAsFloat(otherVal);
+				fontSize /= AnyAsFloat(otherVal);
 		}
-		else if (componentName == "scale.x")
+		
+		else if (componentName == "r")
 		{
 			if (oper == "=")
-				scale.x = AnyAsFloat(otherVal);
+				r = AnyAsFloat(otherVal);
 			else if (oper == "+=")
-				scale.x += AnyAsFloat(otherVal);
+				r += AnyAsFloat(otherVal);
 			else if (oper == "-=")
-				scale.x -= AnyAsFloat(otherVal);
+				r -= AnyAsFloat(otherVal);
 			else if (oper == "*=")
-				scale.x *= AnyAsFloat(otherVal);
+				r *= AnyAsFloat(otherVal);
 			else if (oper == "/=")
-				scale.x /= AnyAsFloat(otherVal);
+				r /= AnyAsFloat(otherVal);
 		}
-		else if (componentName == "scale.y")
+		else if (componentName == "g")
 		{
 			if (oper == "=")
-				scale.y = AnyAsFloat(otherVal);
+				g = AnyAsFloat(otherVal);
 			else if (oper == "+=")
-				scale.y += AnyAsFloat(otherVal);
+				g += AnyAsFloat(otherVal);
 			else if (oper == "-=")
-				scale.y -= AnyAsFloat(otherVal);
+				g -= AnyAsFloat(otherVal);
 			else if (oper == "*=")
-				scale.y *= AnyAsFloat(otherVal);
+				g *= AnyAsFloat(otherVal);
 			else if (oper == "/=")
-				scale.y /= AnyAsFloat(otherVal);
+				g /= AnyAsFloat(otherVal);
+		}
+		else if (componentName == "b")
+		{
+			if (oper == "=")
+				b = AnyAsFloat(otherVal);
+			else if (oper == "+=")
+				b += AnyAsFloat(otherVal);
+			else if (oper == "-=")
+				b -= AnyAsFloat(otherVal);
+			else if (oper == "*=")
+				b *= AnyAsFloat(otherVal);
+			else if (oper == "/=")
+				b /= AnyAsFloat(otherVal);
+		}
+		
+		else if (componentName == "content")
+		{
+			if (oper == "=")
+				content = AnyAsString(otherVal);
+			else if (oper == "+=")
+				content += AnyAsString(otherVal);
 		}
 		return *this;
 	}
 
 	Vec2 position;
-	Vec2 scale;
+	float fontSize;
 	double angle;
+	int r;
+	int g;
+	int b;
+	std::string content;
+	std::string pathToFont;
 
 	std::string path;
 	SDL_Rect rect{};
