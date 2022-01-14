@@ -106,6 +106,8 @@ func Update(deltaTime)
 	CPP.Graphics.Draw(lPaddle)
 	CPP.Graphics.Draw(rPaddle)
 	
+	// scoreTextOne.DrawText()
+	
 	HandleBallBounce()
 }
 
