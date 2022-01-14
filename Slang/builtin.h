@@ -129,17 +129,17 @@ boost::any EditClassSubComponent(boost::any value, string oper, boost::any other
 	return nullType;
 }
 
-bool AxisAlignedCollision(const Sprite& a, const Sprite& b)
+bool AxisAlignedCollision(const Sprite& a, const Sprite& b) // AABB - AABB collision
 {
-	bool colX = false;
-	if ((a.position.x + (a.scale.x / 2) <= b.position.x + (b.scale.x / 2)) && (a.position.x - (a.scale.x / 2) >= b.position.x - (b.scale.x / 2)))
-		colX = true;
-	bool colY = false;
-	if ((a.position.y + (a.scale.y / 2) <= b.position.y + (b.scale.y / 2)) && (a.position.y - (a.scale.y / 2) >= b.position.y - (b.scale.y / 2)))
-		colY = true;
-
-	return colX && colY;
-}
+    // collision x-axis?
+    bool collisionX = a.position.x + a.scale.x >= b.position.x &&
+        b.position.x + b.scale.x >= a.position.x;
+    // collision y-axis?
+    bool collisionY = a.position.y + a.scale.y >= b.position.y &&
+        b.position.y + b.scale.y >= b.position.y;
+    // collision only if on both axes
+    return collisionX && collisionY;
+}  
 
 // Initial script processing, which loads variables and functions from builtin
 int GetBuiltins(const string& s)
