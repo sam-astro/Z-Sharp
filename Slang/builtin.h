@@ -18,7 +18,7 @@
 using namespace std;
 using namespace boost;
 
-vector<string> types = { "int", "float", "string", "bool", "void", "null", "Sprite", "Vec2" };
+vector<string> types = { "int", "float", "string", "bool", "void", "null", "Sprite", "Vec2", "Text" };
 
 unordered_map<string, vector<vector<string>>> builtinFunctionValues;
 unordered_map<string, boost::any> builtinVarVals;
@@ -243,6 +243,13 @@ boost::any CPPFunction(const string& name, const vector<boost::any>& args)
 	}
 	else if (name == "CPP.Graphics.Draw")
 		any_cast<Sprite>(args[0]).Draw();
+	else if (name == "CPP.Graphics.Text")
+	{
+		Text t(StringRaw(AnyAsString(args[0])), any_cast<Vec2>(args[1]), any_cast<Vec2>(args[2]), AnyAsFloat(args[3]), AnyAsFloat(args[4]), AnyAsFloat(args[5]), AnyAsFloat(args[6]), AnyAsFloat(args[7]));
+		return t;
+	}
+	else if (name == "CPP.Graphics.DrawText")
+		any_cast<Text>(args[0]).Draw();
 	else if (name == "CPP.Physics.AxisAlignedCollision")
 	{
 		return AxisAlignedCollision(any_cast<Sprite>(args[0]), any_cast<Sprite>(args[1]));
