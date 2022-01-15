@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Slang", "Slang\Slang.vcxproj", "{D5F150F8-1F83-41EB-A195-1B5C3CA9322A}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Slang-Installer", "Slang-Installer\Slang-Installer.vdproj", "{42EA0B7A-2068-4065-B9EB-041F32933A66}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -21,6 +23,11 @@ Global
 		{D5F150F8-1F83-41EB-A195-1B5C3CA9322A}.Release|x64.Build.0 = Release|x64
 		{D5F150F8-1F83-41EB-A195-1B5C3CA9322A}.Release|x86.ActiveCfg = Release|Win32
 		{D5F150F8-1F83-41EB-A195-1B5C3CA9322A}.Release|x86.Build.0 = Release|Win32
+		{42EA0B7A-2068-4065-B9EB-041F32933A66}.Debug|x64.ActiveCfg = Release
+		{42EA0B7A-2068-4065-B9EB-041F32933A66}.Debug|x64.Build.0 = Release
+		{42EA0B7A-2068-4065-B9EB-041F32933A66}.Debug|x86.ActiveCfg = Debug
+		{42EA0B7A-2068-4065-B9EB-041F32933A66}.Release|x64.ActiveCfg = Release
+		{42EA0B7A-2068-4065-B9EB-041F32933A66}.Release|x86.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

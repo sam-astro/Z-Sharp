@@ -49,12 +49,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="script.slg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="CMakeLists.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="tut\hello_world.bmp">
       <Filter>Source Files</Filter>
     </Image>

@@ -657,7 +657,7 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		LogCriticalError("No script provided! Please drag and drop .SLG file over interpreter executable file, or provide it's path as a command-line argument.");
+		LogWarning("No script provided! Please drag and drop .SLG file over interpreter executable file, or provide it's path as a command-line argument.");
 		system("pause");
 		exit(1);
 	}

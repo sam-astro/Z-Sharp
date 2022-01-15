@@ -163,12 +163,6 @@
     <ClInclude Include="strops.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="script.slg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="CMakeLists.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="icon.ico" />
     <Image Include="tut\hello_world.bmp" />
   </ItemGroup>

@@ -12,7 +12,7 @@
 #include "strops.h"
 #include "main.h"
 #include <SDL.h>
-#include <SDL_image.h>
+#include <SDL_image.h> 
 #include <stdio.h>
 #include <chrono>
 #include <SDL.h>
@@ -189,7 +189,7 @@ public:
 	{
 		x *= rhs;
 		y *= rhs;
-
+		
 		return *this;
 	}
 
@@ -360,6 +360,9 @@ public:
 		rect.y = static_cast<int>(position.y);
 		rect.w = scale.x;
 		rect.h = scale.y;
+		// Centers
+		rect.x = position.x - (rect.w / 2);
+		rect.y = position.y - (rect.h / 2);
 
 		Load();
 	}
@@ -383,10 +386,10 @@ public:
 
 	int Draw()
 	{
+		SDL_RenderCopy(gRenderer, texture, NULL, &rect);
 		// Centers
 		rect.x = position.x - (rect.w / 2);
 		rect.y = position.y - (rect.h / 2);
-		SDL_RenderCopy(gRenderer, texture, NULL, &rect);
 		return 0;
 	}
 
@@ -493,6 +496,9 @@ public:
 			else if (oper == "/=")
 				scale.y /= AnyAsFloat(otherVal);
 		}
+		// Centers
+		rect.x = position.x - (rect.w / 2);
+		rect.y = position.y - (rect.h / 2);
 		return *this;
 	}
 
@@ -534,8 +540,8 @@ public:
 		scale.y = rect.h;
 
 		// Centers
-		position.x = rect.x - (rect.w / 2);
-		position.y = rect.y - (rect.h / 2);
+		rect.x = position.x - (rect.w / 2);
+		rect.y = position.y - (rect.h / 2);
 
 		SDL_FreeSurface(surface);
 		return 0;
@@ -556,8 +562,8 @@ public:
 		scale.y = rect.h;
 
 		// Centers
-		position.x = rect.x - (rect.w / 2);
-		position.y = rect.y - (rect.h / 2);
+		rect.x = position.x - (rect.w / 2);
+		rect.y = position.y - (rect.h / 2);
 
 		SDL_FreeSurface(surface);
 		return 0;

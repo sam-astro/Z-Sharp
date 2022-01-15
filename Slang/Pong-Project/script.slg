@@ -24,11 +24,9 @@ func Start()
 	
 	Vec2 ballScale = NVec2(10, 10)
 	Vec2 ballPos = centerOfScreen
-	ballPos	-= ballScale
 	
 	Vec2 paddleScale = NVec2(4, 70)
 	float yPosPaddle = centerOfScreen.y
-	yPosPaddle -= paddleScale.y / 2
 	
 	Vec2 lPaddlePosition = NVec2(15, yPosPaddle)
 	global Vec2 lPaddleTargetPosition = NVec2(15, yPosPaddle)
