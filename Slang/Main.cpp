@@ -647,7 +647,7 @@ int main(int argc, char* argv[])
 #if defined(__unix__)
 		chdir(projectDirectory);
 #elif defined(_MSC_VER)
-		LPCWSTR s = wide.c_str();
+		LPCSTR s = projectDirectory.c_str();
 		SetCurrentDirectory(s);
 #endif
 
