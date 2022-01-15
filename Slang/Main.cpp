@@ -663,7 +663,7 @@ int main(int argc, char* argv[])
 	}
 #else
 	// If in developer mode
-	std::string scriptPath = "./script.slg";
+	std::string scriptPath = "./Pong-Example-Project/script.slg";
 #if DEVELOPER_MESSAGES == true
 	cout << scriptPath << endl;
 #endif

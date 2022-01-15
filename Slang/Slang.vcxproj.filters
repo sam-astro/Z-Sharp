@@ -49,9 +49,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="tut\hello_world.bmp">
-      <Filter>Source Files</Filter>
-    </Image>
     <Image Include="icon.ico">
       <Filter>Resource Files</Filter>
     </Image>

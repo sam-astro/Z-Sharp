@@ -171,7 +171,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico" />
-    <Image Include="tut\hello_world.bmp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Slang.rc" />
