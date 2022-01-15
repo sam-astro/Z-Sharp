@@ -562,7 +562,7 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 	return nullType;
 }
 
-int parseStuLang(string script)
+int parseSlang(string script)
 {
 	script = replace(script, "    ", "\t");
 
@@ -684,7 +684,7 @@ int main(int argc, char* argv[])
 
 	system("pause");
 
-	parseStuLang(scriptString.str());
+	parseSlang(scriptString.str());
 
 	return 0;
 }

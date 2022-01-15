@@ -360,6 +360,9 @@ public:
 		rect.y = static_cast<int>(position.y);
 		rect.w = scale.x;
 		rect.h = scale.y;
+		// Centers
+		rect.x = position.x - (rect.w / 2);
+		rect.y = position.y - (rect.h / 2);
 
 		Load();
 	}
@@ -384,6 +387,9 @@ public:
 	int Draw()
 	{
 		SDL_RenderCopy(gRenderer, texture, NULL, &rect);
+		// Centers
+		rect.x = position.x - (rect.w / 2);
+		rect.y = position.y - (rect.h / 2);
 		return 0;
 	}
 
@@ -535,7 +541,7 @@ public:
 
 		// Centers
 		rect.x = position.x - (rect.w / 2);
-		rect.y = rect.y - (rect.h / 2);
+		rect.y = position.y - (rect.h / 2);
 
 		SDL_FreeSurface(surface);
 		return 0;

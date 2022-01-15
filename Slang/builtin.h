@@ -69,7 +69,7 @@ int InterpreterLog(const string& logText)
 	int Min = bt.tm_min;
 	int Sec = bt.tm_sec;
 
-	cout << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mStuLang: \x1B[32m" << logText << "\033[0m\t\t" << endl;
+	cout << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mSlang: \x1B[32m" << logText << "\033[0m\t\t" << endl;
 	return 1;
 }
 
@@ -92,7 +92,7 @@ int LogCriticalError(const string& errorText)
 	int Min = bt.tm_min;
 	int Sec = bt.tm_sec;
 
-	cerr << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mStuLang: \x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
+	cerr << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mSlang: \x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
 	exit(EXIT_FAILURE);
 	return 2;
 }
