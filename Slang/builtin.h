@@ -97,28 +97,26 @@ int LogCriticalError(const string& errorText)
 
 boost::any GetClassSubComponent(boost::any value, string subComponentName)
 {
+	// If a Sprite Class
+	if (any_type(value) == 4)
+	{
+		return any_cast<Sprite>(value).SubComponent(subComponentName);
+	}
 	// If a Vec2 Class
 	if (any_type(value) == 5)
 	{
 		return any_cast<Vec2>(value).SubComponent(subComponentName);
 	}
-	// If a Sprite Class
-	if (any_type(value) == 4)
+	// If a Text Class
+	if (any_type(value) == 6)
 	{
-		return any_cast<Sprite>(value).SubComponent(subComponentName);
+		return any_cast<Text>(value).SubComponent(subComponentName);
 	}
 	return nullType;
 }
 
 boost::any EditClassSubComponent(boost::any value, string oper, boost::any otherVal, string subComponentName)
 {
-	// If a Vec2 Class
-	if (any_type(value) == 5)
-	{
-		Vec2 v = any_cast<Vec2>(value);
-		v.EditSubComponent(subComponentName, oper, otherVal);
-		return v;
-	}
 	// If a Sprite Class
 	if (any_type(value) == 4)
 	{
@@ -126,20 +124,42 @@ boost::any EditClassSubComponent(boost::any value, string oper, boost::any other
 		v.EditSubComponent(subComponentName, oper, otherVal);
 		return v;
 	}
+	// If a Vec2 Class
+	if (any_type(value) == 5)
+	{
+		Vec2 v = any_cast<Vec2>(value);
+		v.EditSubComponent(subComponentName, oper, otherVal);
+		return v;
+	}
+	// If a Text Class
+	if (any_type(value) == 6)
+	{
+		Text t = any_cast<Text>(value);
+		t.EditSubComponent(subComponentName, oper, otherVal);
+		return t;
+	}
 	return nullType;
 }
 
 bool AxisAlignedCollision(const Sprite& a, const Sprite& b) // AABB - AABB collision
 {
-    // collision x-axis?
-    bool collisionX = a.position.x + a.scale.x >= b.position.x &&
-        b.position.x + b.scale.x >= a.position.x;
-    // collision y-axis?
-    bool collisionY = a.position.y + a.scale.y >= b.position.y &&
-        b.position.y + b.scale.y >= b.position.y;
-    // collision only if on both axes
-    return collisionX && collisionY;
-}  
+	// collision x-axis?
+	bool collisionX = a.position.x + a.scale.x >= b.position.x &&
+	    b.position.x + b.scale.x >= a.position.x;
+	// collision y-axis?
+	bool collisionY = a.position.y + a.scale.y >= b.position.y &&
+	    b.position.y + b.scale.y >= a.position.y;
+
+	//// collision x-axis?
+	//bool collisionX = a.position.x - a.scale.x / 2 >= b.position.x + b.scale.x / 2 ||
+	//	a.position.x + a.scale.x / 2 <= b.position.x - b.scale.x / 2;
+	//// collision y-axis?
+	//bool collisionY = a.position.y - a.scale.y / 2 >= b.position.y + b.scale.y / 2 ||
+	//	a.position.y + a.scale.y / 2 <= b.position.y - b.scale.y / 2;
+
+	// collision only if on both axes
+	return collisionX && collisionY;
+}
 
 // Initial script processing, which loads variables and functions from builtin
 int GetBuiltins(const string& s)
@@ -217,56 +237,60 @@ int GetBuiltins(const string& s)
 }
 
 // Executes 
-boost::any CPPFunction(const string& name, const vector<boost::any>& args)
+boost::any SLBFunction(const string& name, const vector<boost::any>& args)
 {
-	if (name == "CPP.Math.Sin")
+	if (name == "SLB.Math.Sin")
 		return sin(AnyAsFloat(args[0]));
-	else if (name == "CPP.Math.Cos")
+	else if (name == "SLB.Math.Cos")
 		return cos(AnyAsFloat(args[0]));
-	else if (name == "CPP.Math.Tan")
+	else if (name == "SLB.Math.Tan")
 		return tan(AnyAsFloat(args[0]));
-	else if (name == "CPP.Math.Round")
+	else if (name == "SLB.Math.Round")
 		return AnyAsInt(args[0]);
-	else if (name == "CPP.Math.Lerp")
+	else if (name == "SLB.Math.Lerp")
 		return lerp(AnyAsFloat(args[0]), AnyAsFloat(args[1]), AnyAsFloat(args[2]));
-	else if (name == "CPP.Math.Abs")
+	else if (name == "SLB.Math.Abs")
 		return abs(AnyAsFloat(args[0]));
-	else if (name == "CPP.Graphics.Init")
+	else if (name == "SLB.Graphics.Init")
 	{
 		InterpreterLog("Init graphics");
 		initGraphics(StringRaw(AnyAsString(args[0])), AnyAsInt(args[1]), AnyAsInt(args[2]));
 	}
-	else if (name == "CPP.Graphics.Sprite")
+	else if (name == "SLB.Graphics.Sprite")
 	{
 		Sprite s(StringRaw(AnyAsString(args[0])), any_cast<Vec2>(args[1]), any_cast<Vec2>(args[2]), AnyAsFloat(args[3]));
 		return s;
 	}
-	else if (name == "CPP.Graphics.Draw")
+	else if (name == "SLB.Graphics.Draw")
 		any_cast<Sprite>(args[0]).Draw();
-	else if (name == "CPP.Graphics.Text")
+	else if (name == "SLB.Graphics.Load")
+		any_cast<Sprite>(args[0]).Load();
+	else if (name == "SLB.Graphics.Text")
 	{
-		Text t(StringRaw(AnyAsString(args[0])), any_cast<Vec2>(args[1]), any_cast<Vec2>(args[2]), AnyAsFloat(args[3]), AnyAsFloat(args[4]), AnyAsFloat(args[5]), AnyAsFloat(args[6]), AnyAsFloat(args[7]));
+		Text t(StringRaw(AnyAsString(args[0])), StringRaw(AnyAsString(args[1])), any_cast<Vec2>(args[2]), AnyAsFloat(args[3]), AnyAsFloat(args[4]), AnyAsFloat(args[5]), AnyAsFloat(args[6]), AnyAsFloat(args[7]));
 		return t;
 	}
-	else if (name == "CPP.Graphics.DrawText")
+	else if (name == "SLB.Graphics.DrawText")
 		any_cast<Text>(args[0]).Draw();
-	else if (name == "CPP.Physics.AxisAlignedCollision")
+	else if (name == "SLB.Graphics.LoadText")
+		any_cast<Text>(args[0]).Load();
+	else if (name == "SLB.Physics.AxisAlignedCollision")
 	{
 		return AxisAlignedCollision(any_cast<Sprite>(args[0]), any_cast<Sprite>(args[1]));
 	}
-	else if (name == "CPP.Input.GetKey")
+	else if (name == "SLB.Input.GetKey")
 		return KEYS[StringRaw(any_cast<string>(args[0]))] == 1;
-	else if (name == "CPP.System.Print")
+	else if (name == "SLB.System.Print")
 		cout << StringRaw(AnyAsString(args[0]));
-	else if (name == "CPP.System.PrintLine")
+	else if (name == "SLB.System.PrintLine")
 		cout << StringRaw(AnyAsString(args[0])) << endl;
-	else if (name == "CPP.System.Vec2")
+	else if (name == "SLB.System.Vec2")
 	{
 		Vec2 v(AnyAsFloat(args[0]), AnyAsFloat(args[1]));
 		return v;
 	}
 	else
-		LogWarning("CPP function \'" + name + "\' does not exist.");
+		LogWarning("SLB function \'" + name + "\' does not exist.");
 
 	return nullType;
 }

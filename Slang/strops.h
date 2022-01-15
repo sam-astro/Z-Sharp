@@ -7,6 +7,9 @@ using namespace std;
 
 
 float AnyAsFloat(const boost::any& val);
+string AnyAsString(const boost::any& val);
+int AnyAsInt(const boost::any& val);
+bool AnyAsBool(const boost::any& val);
 
 
 bool isNumber(const string& str);
@@ -29,7 +32,9 @@ vector<string> split(const string& str, const char& del);
 
 int count(const string& str, const char& ch);
 
-int countNoOverlap(const string& str, const char& ch1, const char& ch2);
+int countNoOverlap(const string& str, const char& searchFor, const char& ch1, const char& ch2);
+
+int countOutsideParenthesis(const string& str, const char& searchFor);
 
 int indexInStr(const string& str, const char& ch);
 

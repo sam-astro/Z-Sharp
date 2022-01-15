@@ -131,7 +131,8 @@ int count(const string& str, const char& ch) {
 	return cnt;
 }
 
-int countNoOverlap(const string& str, const char& ch1, const char& ch2) {
+int countNoOverlap(const string& str, const char& searchFor, const char& ch1, const char& ch2)
+{
 	int cnt = 0;
 
 	bool waitingForClose = false;
@@ -141,10 +142,28 @@ int countNoOverlap(const string& str, const char& ch1, const char& ch2) {
 		if (str[i] == ch1)
 			waitingForClose = true;
 		else if (str[i] == ch2 && waitingForClose == true)
-		{
-			cnt++;
 			waitingForClose = false;
-		}
+		else if (str[i] == searchFor && waitingForClose == true)
+			cnt++;
+	}
+
+	return cnt;
+}
+
+int countOutsideParenthesis(const string& str, const char& searchFor)
+{
+	int cnt = 0;
+
+	bool waitingForClose = false;
+
+	for (int i = 0; i < (int)str.size(); i++)
+	{
+		if (str[i] == '(')
+			waitingForClose = true;
+		else if (str[i] == ')' && waitingForClose == true)
+			waitingForClose = false;
+		else if (str[i] == searchFor && waitingForClose == false)
+			cnt++;
 	}
 
 	return cnt;

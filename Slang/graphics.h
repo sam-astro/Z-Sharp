@@ -206,6 +206,11 @@ public:
 		return *this;
 	}
 
+	bool operator==(Vec2 other)
+	{
+		return x == other.x && y == other.y;
+	}
+
 	boost::any SubComponent(std::string componentName)
 	{
 		if (componentName == "x")
@@ -376,6 +381,11 @@ public:
 		return 0;
 	}
 
+	bool operator==(Sprite other)
+	{
+		return position == other.position && angle == other.angle && scale == other.scale && texture == other.texture;
+	}
+
 	boost::any SubComponent(std::string componentName)
 	{
 		if (componentName == "position")
@@ -394,6 +404,7 @@ public:
 
 	Sprite EditSubComponent(std::string componentName, std::string oper, boost::any otherVal)
 	{
+		//cout << ("ComponentName = " + componentName + " Op = " + oper + " OtherVal = " + AnyAsString(otherVal)) << endl;
 		if (componentName == "position")
 		{
 			if (oper == "=")
@@ -500,15 +511,17 @@ public:
 
 	int Load()
 	{
-		TTF_Font* font = TTF_OpenFont(pathToFont, fontSize);
+		TTF_Font* font = TTF_OpenFont(pathToFont.c_str(), fontSize);
 
 		SDL_Color color = {r, g, b};
 
-		SDL_Surface* surface = TTF_RenderText_Solid(font, content, color); 
+		SDL_Surface* surface = TTF_RenderText_Solid(font, content.c_str(), color);
 
 		texture = SDL_CreateTextureFromSurface(gRenderer, surface);
 
-		TTF_SizeText(font, Message, &rect.w, &rect.h);
+		TTF_SizeText(font, content.c_str(), &rect.w, &rect.h);
+		scale.x = rect.w;
+		scale.y = rect.h;
 		
 		SDL_FreeSurface(surface);
 		return 0;
@@ -516,20 +529,25 @@ public:
 
 	int Draw()
 	{
-		rect.x = position.x;
-		rect.y = position.y;
 		SDL_RenderCopy(gRenderer, texture, NULL, &rect);
 		return 0;
 	}
 
 	boost::any SubComponent(std::string componentName)
 	{
+		//cerr << componentName << endl;
 		if (componentName == "position")
 			return position;
 		if (componentName == "position.x")
 			return position.x;
 		if (componentName == "position.y")
 			return position.y;
+		if (componentName == "scale")
+			return scale;
+		if (componentName == "scale.x")
+			return scale.x;
+		if (componentName == "scale.y")
+			return scale.y;
 		if (componentName == "fontSize")
 			return fontSize;
 		if (componentName == "content")
@@ -538,8 +556,9 @@ public:
 			return pathToFont;
 	}
 
-	Sprite EditSubComponent(std::string componentName, std::string oper, boost::any otherVal)
+	Text EditSubComponent(const std::string componentName, const std::string oper, const boost::any otherVal)
 	{
+		//cerr << componentName << " " << AnyAsString(otherVal) << endl;
 		if (componentName == "position")
 		{
 			if (oper == "=")
@@ -645,6 +664,7 @@ public:
 	}
 
 	Vec2 position;
+	Vec2 scale;
 	float fontSize;
 	double angle;
 	int r;

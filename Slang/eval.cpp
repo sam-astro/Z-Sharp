@@ -1,4 +1,4 @@
-// CPP program to evaluate a given expression
+// SLB program to evaluate a given expression
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -35,7 +35,8 @@ float applyOp(const float& a, const float& b, const char& op) {
 
 // Function that returns value of
 // expression after evaluation.
-float evaluate(const string& t) {
+float evaluate(const string& t)
+{
 	string tokens = replace(t, " ", "");
 
 	float i;
@@ -44,16 +45,11 @@ float evaluate(const string& t) {
 	stack <char> ops;
 	bool negative = false;
 
-	for (i = 0; i < tokens.length(); i++) {
-
-		// Current token is a whitespace,
-		// skip it.
-		if (tokens[i] == ' ')
-			continue;
-
+	for (i = 0; i < tokens.length(); i++)
+	{
 		// Current token is an opening
 		// brace, push it to 'ops'
-		else if (tokens[i] == '(')
+		if (tokens[i] == '(')
 		{
 			ops.push(tokens[i]);
 		}
@@ -116,7 +112,7 @@ float evaluate(const string& t) {
 		// Current token is an operator.
 		else
 		{
-			if (tokens[i] == '-' && (i == 0 || tokens[i-1] == '*' || tokens[i-1] == '/' || tokens[i-1] == '+' || tokens[i-1] == '-' || tokens[i-1] == '^'))
+			if (tokens[i] == '-' && (i == 0 || tokens[i-1] == '*' || tokens[i-1] == '/' || tokens[i-1] == '+' || tokens[i-1] == '-' || tokens[i-1] == '^' || tokens[i-1] == '(' || tokens[i-1] == ')'))
 			{
 				negative = true;
 				continue;

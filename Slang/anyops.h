@@ -9,6 +9,7 @@ using namespace boost;
 using namespace std;
 
 int LogWarning(const string& warningText);
+int any_type(const boost::any& val);
 
 // Gets if any is NullType
 bool any_null(const boost::any& val)
@@ -45,7 +46,7 @@ bool AnyAsBool(const boost::any& val)
 				}
 				catch (boost::bad_any_cast) // Does not convert, return
 				{
-					LogWarning("invalid conversion to type \'bool\'");
+					LogWarning("invalid conversion from " + to_string(any_type(val)) + " to type \'bool\'");
 					return false;
 				}
 			}
@@ -84,7 +85,7 @@ string AnyAsString(const boost::any& val)
 				}
 				catch (boost::bad_any_cast) // Does not convert, return
 				{
-					LogWarning("invalid conversion to type \'string\'");
+					LogWarning("invalid conversion from " + to_string(any_type(val)) + " to type \'string\'");
 					return "";
 				}
 			}
@@ -123,7 +124,7 @@ float AnyAsFloat(const boost::any& val)
 				}
 				catch (boost::bad_any_cast e) // Does not convert, return
 				{
-					LogWarning("invalid conversion to type \'float\'");
+					LogWarning("invalid conversion from " + to_string(any_type(val)) + " to type \'float\'");
 					return 0;
 				}
 			}
@@ -162,7 +163,7 @@ int AnyAsInt(const boost::any& val)
 				}
 				catch (boost::bad_any_cast) // Does not convert, return
 				{
-					LogWarning("invalid conversion to type \'int\'");
+					LogWarning("invalid conversion from " + to_string(any_type(val)) + " to type \'int\'");
 					return 0;
 				}
 			}
@@ -170,8 +171,38 @@ int AnyAsInt(const boost::any& val)
 	}
 }
 
+// Will get type 'any' val to a Vec2
+Vec2 AnyAsVec2(const boost::any& val)
+{
+	if (any_null(val))
+		return Vec2(0, 0);
+	try // Try converting to Vec2
+	{
+		return any_cast<Vec2>(val);
+	}
+	catch (boost::bad_any_cast)
+	{
+		try // Try converting to float then Vec2
+		{
+			return Vec2(any_cast<float>(val), any_cast<float>(val));
+		}
+		catch (boost::bad_any_cast)
+		{
+			try // Try converting to int then Vec2
+			{
+				return Vec2(any_cast<int>(val), any_cast<int>(val));
+			}
+			catch (boost::bad_any_cast) // Does not convert, return
+			{
+				LogWarning("invalid conversion from " + to_string(any_type(val)) + " to type \'Vec2\'");
+				return Vec2(0, 0);
+			}
+		}
+	}
+}
+
 // Gets type of 'any' val
-// 0 -> int;  1 -> float;  2 -> bool;  3 -> string;  4 -> Sprite; 5 -> Vec2;
+// 0 -> int;  1 -> float;  2 -> bool;  3 -> string;  4 -> Sprite; 5 -> Vec2; 6 -> Text;
 int any_type(const boost::any& val)
 {
 	try // Try converting to int
@@ -214,16 +245,47 @@ int any_type(const boost::any& val)
 							Vec2 v = any_cast<Vec2>(val);
 							return 5;
 						}
-						catch (boost::bad_any_cast) // Does not convert, return
+						catch (boost::bad_any_cast) // Try converting to Text
 						{
-							LogWarning("variable has no type");
-							return -1;
+							try
+							{
+								Text t = any_cast<Text>(val);
+								return 6;
+							}
+							catch (boost::bad_any_cast) // Does not convert, return
+							{
+								LogWarning("variable has no type");
+								return -1;
+							}
 						}
 					}
 				}
 			}
 		}
 	}
+}
+
+// Compares two 'any' values to see if they contain the same data
+bool any_compare(const boost::any& a, const boost::any& b)
+{
+	int aType = any_type(a);
+	int bType = any_type(b);
+
+	// If they are different types, then they can't possibly be equal
+	if ((aType > 3 && bType <= 3) || (aType <= 3 && bType > 3))
+		return false;
+
+	// If it is a float, int, bool, or string, then they can easily be compared in their string form
+	if (aType <= 3)
+		return AnyAsString(a) == AnyAsString(b);
+
+	// If it is a Sprite, then compare separately after converted
+	else if (aType == 4)
+		return any_cast<Sprite>(a) == any_cast<Sprite>(b);
+
+	// If it is a Vec2, then compare separately after converted
+	else if (aType == 5)
+		return any_cast<Vec2>(a) == any_cast<Vec2>(b);
 }
 
 #endif
