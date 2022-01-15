@@ -24,6 +24,7 @@
     <ProjectGuid>{d5f150f8-1f83-41eb-a195-1b5c3ca9322a}</ProjectGuid>
     <RootNamespace>Slang</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>StuLang</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
