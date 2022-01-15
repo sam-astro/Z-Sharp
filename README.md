@@ -1,5 +1,5 @@
-# Slang
-Slang, which stands for ***S****tupid  **Lang**uage* is a custom programming language I made because I don't like c++ very much (Slang's interpreter is written in c++ though). Slang scripts have the file extension .slg. The base syntax and formatting I would say is quite similar to C#, but differs as task complexity increases. It has support for graphics using SDL2, and by default is not enabled. Here is some example code.
+# Slang, or StuLang
+Slang, or StuLang, which stands for ***Stu****pid  **Lang**uage* is a custom programming language I made because I don't like c++ very much (Slang's interpreter is written in c++ though). Slang scripts have the file extension .slg. The base syntax and formatting I would say is quite similar to C#, but differs as task complexity increases. It has support for graphics using SDL2, and by default is not enabled. Here is some example code.
 ```c#
 // Comments are indicated by two forward slashes
 // They can only be on their own line
