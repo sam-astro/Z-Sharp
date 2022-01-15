@@ -9,12 +9,25 @@
 #include <sstream>
 #include <boost/any.hpp>
 #include <unordered_map>
+#include <stdio.h>
+#include <codecvt>
+
+#if defined(__unix__)
+#include <unistd.h>
+#elif defined(_MSC_VER)
+#include <windows.h>
+#endif
 
 #include "eval.h"
 #include "strops.h"
 #include "builtin.h"
 #include "main.h"
 #include "anyops.h"
+
+#include "SLB.h"
+
+#define DEVELOPER_MESSAGES false
+#define EXAMPLE_PROJECT false
 
 using namespace std;
 using namespace boost;
@@ -80,7 +93,6 @@ vector<boost::any> VarValues(const vector<string>& varNames, unordered_map<strin
 			else
 				realValues.push_back(EvalExpression(varName, variableValues));
 		}
-		//InterpreterLog(varName + " " + AnyAsString(realValues[realValues.size() - 1]));
 	}
 
 	return realValues;
@@ -106,7 +118,9 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 	string expression = trim(ex);
 	bool inQuotes = false;
 
+#if DEVELOPER_MESSAGES == true
 	InterpreterLog("OLDEXPRESSION: |" + expression + "|");
+#endif
 
 	bool isFunc = IsFunction(split(expression, '(')[0]);
 	bool isSLB = split(expression, '.')[0] == "SLB";
@@ -173,10 +187,8 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 
 					i++;
 				}
-				//InterpreterLog(split(expression, '(')[0] + " " + AnyAsString(GetVariableValue(split(argContents, ',')[0], variableValues)));
 				string returnVal = AnyAsString(ExecuteFunction(name, VarValues(split(argContents, ','), variableValues)));
 				newExpression += returnVal;
-				//cout << newExpression << endl;
 			}
 			else if (split(name, '.')[0] == "SLB" && !inQuotes)
 			{
@@ -207,7 +219,9 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 			newExpression += expression[i];
 		}
 	}
+#if DEVELOPER_MESSAGES == true
 	InterpreterLog("NEW EXPRESSION: |" + newExpression + "|");
+#endif
 
 	bool addStrings = false;
 	for (int i = 0; i < (int)newExpression.size(); i++)
@@ -244,7 +258,9 @@ bool BooleanLogic(const string& valA, const string& determinant, const string& v
 {
 	boost::any valARealValue = EvalExpression(valA, variableValues);
 	boost::any valBRealValue = EvalExpression(valB, variableValues);
-	//InterpreterLog(AnyAsString(valARealValue) + " " + determinant + " " + AnyAsString(valBRealValue) + " : " + AnyAsString(valA) + " " + determinant + " " + AnyAsString(valB) + " : " + to_string(AnyAsString(valARealValue) == AnyAsString(valBRealValue)));
+#if DEVELOPER_MESSAGES == true
+	InterpreterLog(AnyAsString(valARealValue) + " " + determinant + " " + AnyAsString(valBRealValue) + " : " + AnyAsString(valA) + " " + determinant + " " + AnyAsString(valB) + " : " + to_string(AnyAsString(valARealValue) == AnyAsString(valBRealValue)));
+#endif
 	if (determinant == "==")
 		return any_compare(valARealValue, valBRealValue);
 	else if (determinant == "!=")
@@ -265,89 +281,86 @@ bool BooleanLogic(const string& valA, const string& determinant, const string& v
 
 int varOperation(const vector<string>& str, unordered_map<string, boost::any>& variableValues)
 {
-		if (IsVar(str[0], variableValues))
+	if (IsVar(str[0], variableValues))
+	{
+		// Checks if type is simple, like int or string
+		if (any_type(variableValues[str[0]]) <= 3)
 		{
-			// Checks if type is simple, like int or string
-			if (any_type(variableValues[str[0]]) <= 3)
-			{
-				if (str[1] == "=")
-					variableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-				else if (str[1] == "+=")
-					variableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
-				else if (str[1] == "-=")
-					variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-				else if (str[1] == "*=")
-					variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-				else if (str[1] == "/=")
-					variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-				else
-					LogWarning("unrecognized operator \'" + str[1] + "\'");
-			}
-			// Else it is a Vec2. No other complex class can be operated on it's base form (ex. you can't do: Sprite += Sprite)
-			else if(any_type(variableValues[str[0]]) == 5)
-			{
-				boost::any otherExpression = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-				if (str[1] == "=")
-					variableValues[str[0]] = otherExpression;
-				else if (str[1] == "+=")
-					variableValues[str[0]] = AnyAsVec2(variableValues[str[0]]) + AnyAsVec2(otherExpression);
-				else if (str[1] == "-=")
-						variableValues[str[0]] = AnyAsVec2(variableValues[str[0]]) - AnyAsVec2(otherExpression);
-				else if (str[1] == "*=")
-						variableValues[str[0]] = AnyAsVec2(variableValues[str[0]]) * AnyAsFloat(otherExpression);
-				else if (str[1] == "/=")
-					variableValues[str[0]] = AnyAsVec2(variableValues[str[0]]) / AnyAsFloat(otherExpression);
-				else
-					LogWarning("unrecognized operator \'" + str[1] + "\'");
-			}
-			return 0;
+			if (str[1] == "=")
+				variableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			else if (str[1] == "+=")
+				variableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			else if (str[1] == "-=")
+				variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else if (str[1] == "*=")
+				variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else if (str[1] == "/=")
+				variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else
+				LogWarning("unrecognized operator \'" + str[1] + "\'");
 		}
-		else if (IsVar(str[0], globalVariableValues))
+		// Else it is a Vec2. No other complex class can be operated on it's base form (ex. you can't do: Sprite += Sprite)
+		else if (any_type(variableValues[str[0]]) == 5)
 		{
-			// Checks if type is simple, like int or string
-			if (any_type(globalVariableValues[str[0]]) <= 3)
-			{
-				if (str[1] == "=")
-					globalVariableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-				else if (str[1] == "+=")
-					globalVariableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
-				else if (str[1] == "-=")
-					globalVariableValues[str[0]] = AnyAsFloat(globalVariableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-				else if (str[1] == "*=")
-					globalVariableValues[str[0]] = AnyAsFloat(globalVariableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-				else if (str[1] == "/=")
-					globalVariableValues[str[0]] = AnyAsFloat(globalVariableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-				else
-					LogWarning("unrecognized operator \'" + str[1] + "\'");
-			}
-			// Else it is a Vec2. No other complex class can be operated on it's base form (ex. you can't do: Sprite += Sprite)
-			else if (any_type(globalVariableValues[str[0]]) == 5)
-			{
-				boost::any otherExpression = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-				if (str[1] == "=")
-					globalVariableValues[str[0]] = otherExpression;
-				else if (str[1] == "+=")
-					globalVariableValues[str[0]] = AnyAsVec2(globalVariableValues[str[0]]) + AnyAsVec2(otherExpression);
-				else if (str[1] == "-=")
-					globalVariableValues[str[0]] = AnyAsVec2(globalVariableValues[str[0]]) - AnyAsVec2(otherExpression);
-				else if (str[1] == "*=")
-					globalVariableValues[str[0]] = AnyAsVec2(globalVariableValues[str[0]]) * AnyAsFloat(otherExpression);
-				else if (str[1] == "/=")
-					globalVariableValues[str[0]] = AnyAsVec2(globalVariableValues[str[0]]) / AnyAsFloat(otherExpression);
-				else
-					LogWarning("unrecognized operator \'" + str[1] + "\'");
-			}
-			return 0;
+			boost::any otherExpression = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			if (str[1] == "=")
+				variableValues[str[0]] = otherExpression;
+			else if (str[1] == "+=")
+				variableValues[str[0]] = AnyAsVec2(variableValues[str[0]]) + AnyAsVec2(otherExpression);
+			else if (str[1] == "-=")
+				variableValues[str[0]] = AnyAsVec2(variableValues[str[0]]) - AnyAsVec2(otherExpression);
+			else if (str[1] == "*=")
+				variableValues[str[0]] = AnyAsVec2(variableValues[str[0]]) * AnyAsFloat(otherExpression);
+			else if (str[1] == "/=")
+				variableValues[str[0]] = AnyAsVec2(variableValues[str[0]]) / AnyAsFloat(otherExpression);
+			else
+				LogWarning("unrecognized operator \'" + str[1] + "\'");
 		}
-		LogWarning("uninitialized variable or typo in \'" + str[0] + "\'");
-		return 1;
+		return 0;
+	}
+	else if (IsVar(str[0], globalVariableValues))
+	{
+		// Checks if type is simple, like int or string
+		if (any_type(globalVariableValues[str[0]]) <= 3)
+		{
+			if (str[1] == "=")
+				globalVariableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			else if (str[1] == "+=")
+				globalVariableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			else if (str[1] == "-=")
+				globalVariableValues[str[0]] = AnyAsFloat(globalVariableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else if (str[1] == "*=")
+				globalVariableValues[str[0]] = AnyAsFloat(globalVariableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else if (str[1] == "/=")
+				globalVariableValues[str[0]] = AnyAsFloat(globalVariableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else
+				LogWarning("unrecognized operator \'" + str[1] + "\'");
+		}
+		// Else it is a Vec2. No other complex class can be operated on it's base form (ex. you can't do: Sprite += Sprite)
+		else if (any_type(globalVariableValues[str[0]]) == 5)
+		{
+			boost::any otherExpression = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			if (str[1] == "=")
+				globalVariableValues[str[0]] = otherExpression;
+			else if (str[1] == "+=")
+				globalVariableValues[str[0]] = AnyAsVec2(globalVariableValues[str[0]]) + AnyAsVec2(otherExpression);
+			else if (str[1] == "-=")
+				globalVariableValues[str[0]] = AnyAsVec2(globalVariableValues[str[0]]) - AnyAsVec2(otherExpression);
+			else if (str[1] == "*=")
+				globalVariableValues[str[0]] = AnyAsVec2(globalVariableValues[str[0]]) * AnyAsFloat(otherExpression);
+			else if (str[1] == "/=")
+				globalVariableValues[str[0]] = AnyAsVec2(globalVariableValues[str[0]]) / AnyAsFloat(otherExpression);
+			else
+				LogWarning("unrecognized operator \'" + str[1] + "\'");
+		}
+		return 0;
+	}
+	LogWarning("uninitialized variable or typo in \'" + str[0] + "\'");
+	return 1;
 }
 
 boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<string, boost::any>& variableValues)
 {
-	//InterpreterLog(unWrapVec(words[lineNum]));
-	//InterpreterLog(AnyAsString(GetVariableValue("out", variableValues)));
-
 	if (words[lineNum][0][0] == '/' && words[lineNum][0][1] == '/')
 		return nullType;
 
@@ -369,10 +382,10 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	// Check if it is function
 	else if (IsFunction(trim(split(words[lineNum][0], '(')[0])))
 	{
-		if(count(words[lineNum][0], '(') >0 && count(words[lineNum][0], ')') > 0)
-		ExecuteFunction(trim(split(words[lineNum][0], '(')[0]), vector<boost::any>());
+		if (count(words[lineNum][0], '(') > 0 && count(words[lineNum][0], ')') > 0)
+			ExecuteFunction(trim(split(words[lineNum][0], '(')[0]), vector<boost::any>());
 		else
-		ExecuteFunction(trim(split(words[lineNum][0], '(')[0]), VarValues(split(RMParenthesis("(" + split(unWrapVec(rangeInVec(words[lineNum], 0, (int)words[lineNum].size()-1)), '(')[1]), ','), variableValues));
+			ExecuteFunction(trim(split(words[lineNum][0], '(')[0]), VarValues(split(RMParenthesis("(" + split(unWrapVec(rangeInVec(words[lineNum], 0, (int)words[lineNum].size() - 1)), '(')[1]), ','), variableValues));
 		return nullType;
 	}
 
@@ -527,7 +540,9 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 	for (int i = 0; i < (int)inputVarVals.size(); i++) {
 
 		variableValues[args[i]] = inputVarVals[i];
-		//cout << functionName + "  \x1B[33m" << args[i] << " == " << AnyAsString(inputVarVals[i]) << "\033[0m\t\t" << endl;
+#if DEVELOPER_MESSAGES == true
+		cout << functionName + "  \x1B[33m" << args[i] << " == " << AnyAsString(inputVarVals[i]) << "\033[0m\t\t" << endl;
+#endif
 	}
 
 	//Iterate through all lines in function
@@ -575,7 +590,6 @@ int parseSlang(string script)
 				}
 
 			args = trim(replace(args, functName + " ", ""));
-			//InterpreterLog(args);
 			functionContents.push_back(split(args, ','));
 
 			int numOfBrackets = 1;
@@ -605,32 +619,71 @@ int parseSlang(string script)
 	}
 
 	// Executes main, which is the starting function
-	ExecuteFunction("Main", vector<boost::any> {"hi", 0});
+	ExecuteFunction("Main", vector<boost::any> {});
 
 	return 0;
 }
 
 int main(int argc, char* argv[])
 {
-	// Get builtin script contents
-	ifstream builtin("../Slang/builtin.slg");
-	stringstream builtinString;
-	builtinString << builtin.rdbuf();
-
 	// Gathers builtin functions and variables
-	GetBuiltins(builtinString.str());
+	GetBuiltins(SLBContents);
 	functionValues = builtinFunctionValues;
 	globalVariableValues = builtinVarVals;
 
-	// Get default script contents
-	ifstream script("../Slang/script.slg");
 	stringstream scriptString;
-	scriptString << script.rdbuf();
+#if EXAMPLE_PROJECT == false
+	// If scriptname is supplied and not in developer mode
+	if (argc > 1)
+	{
+		std::string scriptPath = argv[1];
+#if DEVELOPER_MESSAGES == true
+		cout << scriptPath << endl;
+#endif
+		std::string projectDirectory = scriptPath.substr(0, scriptPath.find_last_of("/\\"));
+		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+		std::wstring wide = converter.from_bytes(projectDirectory);
 
-	while (true) {
-		system("pause");
-		break;
+#if defined(__unix__)
+		chdir(projectDirectory);
+#elif defined(_MSC_VER)
+		LPCWSTR s = wide.c_str();
+		SetCurrentDirectory(s);
+#endif
+
+		// Get script contents
+		ifstream script(scriptPath);
+		scriptString << script.rdbuf();
 	}
+	else
+	{
+		LogCriticalError("No script provided! Please drag and drop .SLG file over interpreter executable file, or provide it's path as a command-line argument.");
+		system("pause");
+		exit(1);
+	}
+#else
+	// If in developer mode
+	std::string scriptPath = "./script.slg";
+#if DEVELOPER_MESSAGES == true
+	cout << scriptPath << endl;
+#endif
+	std::string projectDirectory = scriptPath.substr(0, scriptPath.find_last_of("/\\"));
+	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
+	std::wstring wide = converter.from_bytes(projectDirectory);
+
+#if defined(__unix__)
+	chdir(projectDirectory);
+#elif defined(_MSC_VER)
+	LPCWSTR s = wide.c_str();
+	SetCurrentDirectory(s);
+#endif
+	// Get script contents
+	ifstream script(scriptPath);
+	scriptString << script.rdbuf();
+#endif
+
+	system("pause");
+
 	parseSlang(scriptString.str());
 
 	return 0;

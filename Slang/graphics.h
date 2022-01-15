@@ -372,11 +372,20 @@ public:
 		return 0;
 	}
 
+	int Update()
+	{
+		SDL_Surface* surface = loadSurface(path);
+		SDL_DestroyTexture(texture);
+		texture = SDL_CreateTextureFromSurface(gRenderer, surface);
+		SDL_FreeSurface(surface);
+		return 0;
+	}
+
 	int Draw()
 	{
-		// rect.x = static_cast<int>(position.x);
-		rect.x = position.x;
-		rect.y = position.y;
+		// Centers
+		rect.x = position.x - (rect.w / 2);
+		rect.y = position.y - (rect.h / 2);
 		SDL_RenderCopy(gRenderer, texture, NULL, &rect);
 		return 0;
 	}
@@ -504,25 +513,52 @@ public:
 	{
 		rect.x = position.x;
 		rect.y = position.y;
-		// rect.y = static_cast<int>(position.y);
+
+		font = TTF_OpenFont(pathToFont.c_str(), fontSize);
 
 		Load();
 	}
 
 	int Load()
 	{
-		TTF_Font* font = TTF_OpenFont(pathToFont.c_str(), fontSize);
-
-		SDL_Color color = {r, g, b};
+		SDL_Color color = { r, g, b };
 
 		SDL_Surface* surface = TTF_RenderText_Solid(font, content.c_str(), color);
 
+		SDL_DestroyTexture(texture);
 		texture = SDL_CreateTextureFromSurface(gRenderer, surface);
 
 		TTF_SizeText(font, content.c_str(), &rect.w, &rect.h);
+
 		scale.x = rect.w;
 		scale.y = rect.h;
-		
+
+		// Centers
+		position.x = rect.x - (rect.w / 2);
+		position.y = rect.y - (rect.h / 2);
+
+		SDL_FreeSurface(surface);
+		return 0;
+	}
+
+	int Update()
+	{
+		SDL_Color color = { r, g, b };
+
+		SDL_Surface* surface = TTF_RenderText_Solid(font, content.c_str(), color);
+
+		SDL_DestroyTexture(texture);
+		texture = SDL_CreateTextureFromSurface(gRenderer, surface);
+
+		TTF_SizeText(font, content.c_str(), &rect.w, &rect.h);
+
+		scale.x = rect.w;
+		scale.y = rect.h;
+
+		// Centers
+		position.x = rect.x - (rect.w / 2);
+		position.y = rect.y - (rect.h / 2);
+
 		SDL_FreeSurface(surface);
 		return 0;
 	}
@@ -612,7 +648,7 @@ public:
 			else if (oper == "/=")
 				fontSize /= AnyAsFloat(otherVal);
 		}
-		
+
 		else if (componentName == "r")
 		{
 			if (oper == "=")
@@ -652,7 +688,7 @@ public:
 			else if (oper == "/=")
 				b /= AnyAsFloat(otherVal);
 		}
-		
+
 		else if (componentName == "content")
 		{
 			if (oper == "=")
@@ -660,6 +696,9 @@ public:
 			else if (oper == "+=")
 				content += AnyAsString(otherVal);
 		}
+
+		// Updates changes to text
+		Update();
 		return *this;
 	}
 
@@ -672,6 +711,8 @@ public:
 	int b;
 	std::string content;
 	std::string pathToFont;
+
+	TTF_Font* font;
 
 	std::string path;
 	SDL_Rect rect{};
@@ -980,7 +1021,7 @@ int initGraphics(std::string windowTitle, int width, int height)
 
 	//Get window surface
 	gScreenSurface = SDL_GetWindowSurface(gWindow);
-	
+
 	ExecuteFunction("Start", vector<boost::any> {});
 
 	updateLoop();

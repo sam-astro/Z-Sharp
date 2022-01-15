@@ -15,6 +15,8 @@
 #include <SDL.h>
 #include <ctime>
 
+#define DEVELOPER_MESSAGES false
+
 using namespace std;
 using namespace boost;
 
@@ -144,11 +146,11 @@ boost::any EditClassSubComponent(boost::any value, string oper, boost::any other
 bool AxisAlignedCollision(const Sprite& a, const Sprite& b) // AABB - AABB collision
 {
 	// collision x-axis?
-	bool collisionX = a.position.x + a.scale.x >= b.position.x &&
-	    b.position.x + b.scale.x >= a.position.x;
+	bool collisionX = a.position.x + a.scale.x / 2 >= b.position.x - b.scale.x / 2 &&
+		b.position.x + b.scale.x / 2 >= a.position.x - a.scale.x;
 	// collision y-axis?
-	bool collisionY = a.position.y + a.scale.y >= b.position.y &&
-	    b.position.y + b.scale.y >= a.position.y;
+	bool collisionY = a.position.y + a.scale.y / 2 >= b.position.y - b.scale.y / 2 &&
+		b.position.y + b.scale.y / 2 >= a.position.y - a.scale.y / 2;
 
 	//// collision x-axis?
 	//bool collisionX = a.position.x - a.scale.x / 2 >= b.position.x + b.scale.x / 2 ||
@@ -162,9 +164,9 @@ bool AxisAlignedCollision(const Sprite& a, const Sprite& b) // AABB - AABB colli
 }
 
 // Initial script processing, which loads variables and functions from builtin
-int GetBuiltins(const string& s)
+int GetBuiltins(std::string s)
 {
-	string script = replace(s, "    ", "\t");
+	std::string script = replace(s, "    ", "\t");
 
 	vector<string> lines = split(script, '\n');
 	vector<vector<string>> words;
@@ -184,7 +186,9 @@ int GetBuiltins(const string& s)
 
 			string functName = split(words[lineNum][1], '(')[0];
 
+#if DEVELOPER_MESSAGES == true
 			InterpreterLog("Load builtin function " + functName);
+#endif
 
 			string args = "";
 			for (int w = 1; w < (int)words[lineNum].size(); w++) // Get all words from the instantiation line: these are the args
@@ -211,22 +215,30 @@ int GetBuiltins(const string& s)
 			if (words[lineNum][0] == "string")
 			{
 				builtinVarVals[words[lineNum][1]] = StringRaw(words[lineNum][3]);
+#if DEVELOPER_MESSAGES == true
 				InterpreterLog("Load builtin variable " + words[lineNum][1]);
+#endif
 			}
 			else if (words[lineNum][0] == "int")
 			{
 				builtinVarVals[words[lineNum][1]] = stoi(words[lineNum][3]);
+#if DEVELOPER_MESSAGES == true
 				InterpreterLog("Load builtin variable " + words[lineNum][1]);
+#endif
 			}
 			else if (words[lineNum][0] == "float")
 			{
 				builtinVarVals[words[lineNum][1]] = stof(words[lineNum][3]);
+#if DEVELOPER_MESSAGES == true
 				InterpreterLog("Load builtin variable " + words[lineNum][1]);
+#endif
 			}
 			else if (words[lineNum][0] == "bool")
 			{
 				builtinVarVals[words[lineNum][1]] = stob(words[lineNum][3]);
+#if DEVELOPER_MESSAGES == true
 				InterpreterLog("Load builtin variable " + words[lineNum][1]);
+#endif
 			}
 			//else
 			//	LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
@@ -253,7 +265,9 @@ boost::any SLBFunction(const string& name, const vector<boost::any>& args)
 		return abs(AnyAsFloat(args[0]));
 	else if (name == "SLB.Graphics.Init")
 	{
+#if DEVELOPER_MESSAGES == true
 		InterpreterLog("Init graphics");
+#endif
 		initGraphics(StringRaw(AnyAsString(args[0])), AnyAsInt(args[1]), AnyAsInt(args[2]));
 	}
 	else if (name == "SLB.Graphics.Sprite")

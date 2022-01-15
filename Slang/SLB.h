@@ -1,3 +1,8 @@
+#include<string>
+
+using namespace std;
+
+std::string SLBContents = R"(
 // Default variables, can be overwritten
 // if re-initialized or changed
 float PI = 3.14159265358979323846264338
@@ -27,14 +32,14 @@ func Tan(input)
 // Sigmoid activation function
 func Sigmoid(input)
 {
-	float out = 1 / (1+EulersNumber^-input)
+	float out = 1 / (1 + EulersNumber ^ -input)
 	return out
 }
 
 // Hyperbolic tangent activation function
 func Tanh(input)
 {
-	float out = ((EulersNumber^input)-(EulersNumber^-input))/((EulersNumber^input)+(EulersNumber^-input))
+	float out = ((EulersNumber ^ input) - (EulersNumber ^ -input)) / ((EulersNumber ^ input) + (EulersNumber ^ -input))
 	return out
 }
 
@@ -132,3 +137,5 @@ func GetKey(keyName)
 	bool b = SLB.Input.GetKey(keyName)
 	return b
 }
+)"
+;
