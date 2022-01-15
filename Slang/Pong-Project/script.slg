@@ -4,9 +4,9 @@ int SCREENH = 600
 int scoreOne = 0
 int scoreTwo = 0
 
-float ballSpeed = 8
+float ballSpeed = 400
 
-float paddleMoveSpeed = 16
+float paddleMoveSpeed = 800
 
 // Main is always run at the VERY BEGINNING. Start() is the start of GRAPHICS
 // so if you never call SLB.Grapgics.Init, then Start won't run
@@ -63,7 +63,7 @@ func Update(deltaTime)
 	{
 		float newX = lPaddle.position.x
 		// Subtract from Y to move up, because vertical coordinates are reversed
-		float newY = lPaddleTargetPosition.y - paddleMoveSpeed
+		float newY = lPaddleTargetPosition.y - paddleMoveSpeed * deltaTime
 		newY = Clamp(newY, 0 + lPaddle.scale.y / 2, SCREENH - lPaddle.scale.y / 2)
 		lPaddleTargetPosition = NVec2(newX, newY)
 	}
@@ -71,7 +71,7 @@ func Update(deltaTime)
 	{
 		float newX = lPaddle.position.x
 		// Add to Y to move down, because vertical coordinates are reversed
-		float newY = lPaddleTargetPosition.y + paddleMoveSpeed
+		float newY = lPaddleTargetPosition.y + paddleMoveSpeed * deltaTime
 		newY = Clamp(newY, 0 + lPaddle.scale.y / 2, SCREENH - lPaddle.scale.y / 2)
 		lPaddleTargetPosition = NVec2(newX, newY)
 	}
@@ -88,7 +88,7 @@ func Update(deltaTime)
 	{
 		float newX = rPaddle.position.x
 		// Subtract from Y to move up, because vertical coordinates are reversed
-		float newY = rPaddleTargetPosition.y - paddleMoveSpeed
+		float newY = rPaddleTargetPosition.y - paddleMoveSpeed * deltaTime
 		newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
 		rPaddleTargetPosition = NVec2(newX, newY)
 	}
@@ -96,7 +96,7 @@ func Update(deltaTime)
 	{
 		float newX = rPaddle.position.x
 		// Add to Y to move down, because vertical coordinates are reversed
-		float newY = rPaddleTargetPosition.y + paddleMoveSpeed
+		float newY = rPaddleTargetPosition.y + paddleMoveSpeed * deltaTime
 		newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
 		rPaddleTargetPosition = NVec2(newX, newY)
 	}
@@ -107,7 +107,9 @@ func Update(deltaTime)
 	float lerpedY = Lerp(oldY, newY, stopSpeed)
 	rPaddle.position = NVec2(newX, lerpedY)
 	
-	ballSpr.position += ballVelocity
+	Vec2 scaledVelocity = ballVelocity
+	scaledVelocity *= deltaTime
+	ballSpr.position += scaledVelocity
 	
 	// Finally draws all of the sprites
 	SLB.Graphics.Draw(ballSpr)
