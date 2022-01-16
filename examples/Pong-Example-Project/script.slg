@@ -1,0 +1,215 @@
+int SCREENW = 900
+int SCREENH = 600
+
+int scoreOne = 0
+int scoreTwo = 0
+
+float ballSpeed = 400
+
+float paddleMoveSpeed = 800
+
+// Main is always run at the VERY BEGINNING. Start() is the start of GRAPHICS
+// so if you never call SLB.Grapgics.Init, then Start won't run
+func Main()
+{
+	// Immediately creates the window, then Start(), then the game loop. The game loop calls Update() every frame
+	SLB.Graphics.Init("This is a pong game", SCREENW, SCREENH)
+}
+
+func Start()
+{
+	float centerX = SCREENW / 2
+	float centerY = SCREENH / 2
+	global Vec2 centerOfScreen = NVec2(centerX, centerY)
+	
+	Vec2 ballScale = NVec2(10, 10)
+	Vec2 ballPos = centerOfScreen
+	
+	Vec2 paddleScale = NVec2(4, 70)
+	float yPosPaddle = centerOfScreen.y
+	
+	Vec2 lPaddlePosition = NVec2(15, yPosPaddle)
+	global Vec2 lPaddleTargetPosition = NVec2(15, yPosPaddle)
+	
+	float rOffset = SCREENW - 15
+	Vec2 rPaddlePosition = NVec2(rOffset, yPosPaddle)
+	global Vec2 rPaddleTargetPosition = NVec2(rOffset, yPosPaddle)
+	
+	global Sprite ballSpr = SLB.Graphics.Sprite("./square.png", ballPos, ballScale, 0)
+	global Sprite lPaddle = SLB.Graphics.Sprite("./square.png", lPaddlePosition, paddleScale, 0)
+	global Sprite rPaddle = SLB.Graphics.Sprite("./square.png", rPaddlePosition, paddleScale, 0)
+	
+	Vec2 netScale = NVec2(1, SCREENH)
+	global Sprite net = SLB.Graphics.Sprite("./net.png", centerOfScreen, netScale, 0)
+	
+	float leftOffset = SCREENW / 4
+	Vec2 scoreOnePos = NVec2(leftOffset, 30)
+	global Text scoreTextOne = SLB.Graphics.Text("0", "./arial.ttf", scoreOnePos, 60, 0, 255, 255, 255)
+	float rightOffset = SCREENW - (SCREENW / 4)
+	Vec2 scoreTwoPos = NVec2(rightOffset, 30)
+	global Text scoreTextTwo = SLB.Graphics.Text("0", "./arial.ttf", scoreTwoPos, 60, 0, 255, 255, 255)
+	
+	global Vec2 ballVelocity = NVec2(ballSpeed, ballSpeed)
+}
+
+func Update(deltaTime)
+{
+	float FPS = 1 / deltaTime
+	print "FPS: " + FPS
+
+	// Handles Left Paddle Movement
+	//
+	if GetKey("W") == true
+	{
+		float newX = lPaddle.position.x
+		// Subtract from Y to move up, because vertical coordinates are reversed
+		float newY = lPaddleTargetPosition.y - paddleMoveSpeed * deltaTime
+		newY = Clamp(newY, 0 + lPaddle.scale.y / 2, SCREENH - lPaddle.scale.y / 2)
+		lPaddleTargetPosition = NVec2(newX, newY)
+	}
+	if GetKey("S") == true
+	{
+		float newX = lPaddle.position.x
+		// Add to Y to move down, because vertical coordinates are reversed
+		float newY = lPaddleTargetPosition.y + paddleMoveSpeed * deltaTime
+		newY = Clamp(newY, 0 + lPaddle.scale.y / 2, SCREENH - lPaddle.scale.y / 2)
+		lPaddleTargetPosition = NVec2(newX, newY)
+	}
+	// Lerps from old position to destination smoothly
+	float oldY = lPaddle.position.y
+	float stopSpeed = deltaTime * 6
+	float newY = lPaddleTargetPosition.y
+	float lerpedY = Lerp(oldY, newY, stopSpeed)
+	lPaddle.position = NVec2(newX, lerpedY)
+	
+	// Handles Right Paddle Movement
+	//
+	if GetKey("UP") == true
+	{
+		float newX = rPaddle.position.x
+		// Subtract from Y to move up, because vertical coordinates are reversed
+		float newY = rPaddleTargetPosition.y - paddleMoveSpeed * deltaTime
+		newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
+		rPaddleTargetPosition = NVec2(newX, newY)
+	}
+	if GetKey("DOWN") == true
+	{
+		float newX = rPaddle.position.x
+		// Add to Y to move down, because vertical coordinates are reversed
+		float newY = rPaddleTargetPosition.y + paddleMoveSpeed * deltaTime
+		newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
+		rPaddleTargetPosition = NVec2(newX, newY)
+	}
+	// Lerps from old position to destination smoothly
+	float oldY = rPaddle.position.y
+	float stopSpeed = deltaTime * 6
+	float newY = rPaddleTargetPosition.y
+	float lerpedY = Lerp(oldY, newY, stopSpeed)
+	rPaddle.position = NVec2(newX, lerpedY)
+	
+	Vec2 scaledVelocity = ballVelocity
+	scaledVelocity *= deltaTime
+	ballSpr.position += scaledVelocity
+	
+	// Finally draws all of the sprites
+	SLB.Graphics.Draw(ballSpr)
+	SLB.Graphics.Draw(lPaddle)
+	SLB.Graphics.Draw(rPaddle)
+	
+	SLB.Graphics.Draw(net)
+	
+	SLB.Graphics.DrawText(scoreTextOne)
+	SLB.Graphics.DrawText(scoreTextTwo)
+	
+	HandleBallBounce()
+}
+
+func HandleBallBounce()
+{
+	float ballX = ballSpr.position.x
+	float ballY = ballSpr.position.y
+	float scaleY = ballSpr.scale.y
+	
+	float topEdge = ballY - scaleY/2
+	// Checks if the ball is touching the ceiling
+	if topEdge <= 0
+	{
+		float vX = ballVelocity.x
+		float vY = ballVelocity.y
+		vY *= -1
+		ballVelocity = NVec2(vX, vY)
+		return 0
+	}
+	float bottomEdge = ballY + scaleY/2
+	// Checks if the ball is touching the floor
+	if bottomEdge >= SCREENH
+	{
+		float vX = ballVelocity.x
+		float vY = ballVelocity.y
+		vY *= -1
+		ballVelocity = NVec2(vX, vY)
+		return 0
+	}
+	
+	// Checks if ball is in player 1 goal
+	if ballX < 0
+	{
+		Vec2 ballPos = centerOfScreen
+		ballPos -= ballSpr.scale
+		ballPos.x -= SCREENW / 3
+		scoreTwo += 1
+		ballSpr.position = ballPos
+		ballVelocity = NVec2(ballSpeed, 0)
+		scoreTextTwo.content = Round(scoreTwo)
+	}
+	// Checks if ball is in player 2 goal
+	if ballX > SCREENW
+	{
+		Vec2 ballPos = centerOfScreen
+		ballPos -= ballSpr.scale
+		ballPos.x += SCREENW / 3
+		scoreOne += 1
+		ballSpr.position = ballPos
+		ballVelocity = NVec2(-ballSpeed, 0)
+		scoreTextOne.content = Round(scoreOne)
+	}
+	
+	// Checks if colliding with left paddle
+	bool coll = Colliding(ballSpr, lPaddle)
+	if coll == true
+	{
+		float difference = lPaddle.position.y
+		difference -= ballY
+		float paddleHeight = lPaddle.scale.y
+		float normalizedRelativeIntersectionY = difference / (paddleHeight / 2)
+		float bounceAngle = normalizedRelativeIntersectionY * 0.523599
+		float ballVx = ballSpeed
+		ballVx *= Cos(bounceAngle)
+		float ballVy = ballSpeed
+		ballVy *= Sin(bounceAngle)
+		ballVy *= -1
+		ballVelocity = NVec2(ballVx, ballVy)
+	}
+	// Checks if colliding with right paddle
+	bool coll = Colliding(ballSpr, rPaddle)
+	if coll == true
+	{
+		float difference = rPaddle.position.y
+		difference -= ballY
+		float paddleHeight = rPaddle.scale.y
+		float normalizedRelativeIntersectionY = difference / (paddleHeight / 2)
+		float bounceAngle = normalizedRelativeIntersectionY * 0.523599
+		float ballVx = ballSpeed
+		ballVx *= Cos(bounceAngle)
+		ballVx *= -1
+		float ballVy = ballSpeed
+		ballVy *= Sin(bounceAngle)
+		ballVelocity = NVec2(ballVx, ballVy)
+	}
+}
+
+func Colliding(a, b)
+{
+	bool b = SLB.Physics.AxisAlignedCollision(a, b)
+	return b
+}
