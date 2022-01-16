@@ -16,7 +16,7 @@
 #include <ctime>
 #include <math.h>
 
-#define DEVELOPER_MESSAGES false
+//#define DEVELOPER_MESSAGES false
 
 using namespace std;
 using namespace boost;
@@ -57,7 +57,7 @@ int InterpreterLog(const string& logText)
 
 	tm bt{};
 #if defined(__unix__)
-	localtime_r(&timer, &bt);
+	//localtime_r(&timer, &bt);
 #elif defined(_MSC_VER)
 	localtime_s(&bt, &timer);
 #else
@@ -66,9 +66,12 @@ int InterpreterLog(const string& logText)
 	bt = *localtime(&timer);
 #endif
 
-	int Hour = bt.tm_hour;
-	int Min = bt.tm_min;
-	int Sec = bt.tm_sec;
+	//int Hour = bt.tm_hour;
+	//int Min = bt.tm_min;
+	//int Sec = bt.tm_sec;
+	int Hour = 0;
+	int Min = 0;
+	int Sec = 0;
 
 	cout << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mSlang: \x1B[32m" << logText << "\033[0m\t\t" << endl;
 	return 1;
@@ -80,7 +83,7 @@ int LogCriticalError(const string& errorText)
 
 	tm bt{};
 #if defined(__unix__)
-	localtime_r(&timer, &bt);
+	//localtime_r(&timer, &bt);
 #elif defined(_MSC_VER)
 	localtime_s(&bt, &timer);
 #else
@@ -89,9 +92,12 @@ int LogCriticalError(const string& errorText)
 	bt = *localtime(&timer);
 #endif
 
-	int Hour = bt.tm_hour;
-	int Min = bt.tm_min;
-	int Sec = bt.tm_sec;
+	//int Hour = bt.tm_hour;
+	//int Min = bt.tm_min;
+	//int Sec = bt.tm_sec;
+	int Hour = 0;
+	int Min = 0;
+	int Sec = 0;
 
 	cerr << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mSlang: \x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
 	exit(EXIT_FAILURE);
@@ -188,7 +194,7 @@ int GetBuiltins(std::string s)
 			string functName = split(words[lineNum][1], '(')[0];
 
 #if DEVELOPER_MESSAGES == true
-			InterpreterLog("Load builtin function " + functName);
+			InterpreterLog("Load builtin function " + functName + "...");
 #endif
 
 			string args = "";
@@ -217,28 +223,28 @@ int GetBuiltins(std::string s)
 			{
 				builtinVarVals[words[lineNum][1]] = StringRaw(words[lineNum][3]);
 #if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load builtin variable " + words[lineNum][1]);
+				InterpreterLog("Load builtin variable " + words[lineNum][1] + "...");
 #endif
 			}
 			else if (words[lineNum][0] == "int")
 			{
 				builtinVarVals[words[lineNum][1]] = stoi(words[lineNum][3]);
 #if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load builtin variable " + words[lineNum][1]);
+				InterpreterLog("Load builtin variable " + words[lineNum][1] + "...");
 #endif
 			}
 			else if (words[lineNum][0] == "float")
 			{
 				builtinVarVals[words[lineNum][1]] = stof(words[lineNum][3]);
 #if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load builtin variable " + words[lineNum][1]);
+				InterpreterLog("Load builtin variable " + words[lineNum][1] + "...");
 #endif
 			}
 			else if (words[lineNum][0] == "bool")
 			{
 				builtinVarVals[words[lineNum][1]] = stob(words[lineNum][3]);
 #if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load builtin variable " + words[lineNum][1]);
+				InterpreterLog("Load builtin variable " + words[lineNum][1] + "...");
 #endif
 			}
 			//else

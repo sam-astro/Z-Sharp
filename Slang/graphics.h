@@ -217,6 +217,7 @@ public:
 			return x;
 		if (componentName == "y")
 			return y;
+		return 0;
 	}
 
 	Vec2 EditSubComponent(std::string componentName, std::string oper, boost::any otherVal)
@@ -412,6 +413,7 @@ public:
 			return scale.x;
 		if (componentName == "scale.y")
 			return scale.y;
+		return 0;
 	}
 
 	Sprite EditSubComponent(std::string componentName, std::string oper, boost::any otherVal)
@@ -527,7 +529,7 @@ public:
 
 	int Load()
 	{
-		SDL_Color color = { r, g, b };
+		SDL_Color color = { (Uint8)r, (Uint8)g, (Uint8)b };
 
 		SDL_Surface* surface = TTF_RenderText_Solid(font, content.c_str(), color);
 
@@ -549,7 +551,7 @@ public:
 
 	int Update()
 	{
-		SDL_Color color = { r, g, b };
+		SDL_Color color = { (Uint8)r, (Uint8)g, (Uint8)b };
 
 		SDL_Surface* surface = TTF_RenderText_Solid(font, content.c_str(), color);
 
@@ -596,6 +598,7 @@ public:
 			return content;
 		if (componentName == "pathToFont")
 			return pathToFont;
+		return 0;
 	}
 
 	Text EditSubComponent(const std::string componentName, const std::string oper, const boost::any otherVal)

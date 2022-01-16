@@ -286,6 +286,8 @@ bool any_compare(const boost::any& a, const boost::any& b)
 	// If it is a Vec2, then compare separately after converted
 	else if (aType == 5)
 		return any_cast<Vec2>(a) == any_cast<Vec2>(b);
+		
+	return false;
 }
 
 #endif

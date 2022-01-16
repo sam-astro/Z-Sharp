@@ -2,6 +2,17 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#define DEVELOPER_MESSAGES true
+#define EXAMPLE_PROJECT false
+
+#if defined(__unix__)
+#define UNIX true
+#define WINDOWS false
+#elif defined(_MSC_VER)
+#define UNIX false
+#define WINDOWS true
+#endif
+
 #include <regex>
 #include <limits>
 #include <algorithm>
@@ -12,9 +23,9 @@
 #include <stdio.h>
 #include <codecvt>
 
-#if defined(__unix__)
+#if UNIX
 #include <unistd.h>
-#elif defined(_MSC_VER)
+#elif WINDOWS
 #include <windows.h>
 #endif
 
@@ -25,9 +36,6 @@
 #include "anyops.h"
 
 #include "SLB.h"
-
-#define DEVELOPER_MESSAGES true
-#define EXAMPLE_PROJECT false
 
 using namespace std;
 using namespace boost;
@@ -536,15 +544,23 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 	vector<vector<string>> words = functionValues[functionName];
 
 	unordered_map<string, boost::any> variableValues = {};
-	vector<string> args = words[0];
-	for (int i = 0; i < (int)inputVarVals.size(); i++) {
-
-		variableValues[args[i]] = inputVarVals[i];
+	
+	vector<string> args = words[0]; // This causes problem in linux
+	
+	for (int i = 0; i < (int)inputVarVals.size(); i++)
+	{
+		if(i < args.size())
+		{
+			variableValues[args[i]] = inputVarVals[i];
 #if DEVELOPER_MESSAGES == true
-		cout << functionName + "  \x1B[33m" << args[i] << " == " << AnyAsString(inputVarVals[i]) << "\033[0m\t\t" << endl;
+			cout << functionName + "  \x1B[33m" << args[i] << " == " << AnyAsString(inputVarVals[i]) << "\033[0m\t\t" << endl;
 #endif
+		}
 	}
 
+	#if DEVELOPER_MESSAGES
+	InterpreterLog("Iterate");
+	#endif
 	//Iterate through all lines in function
 	for (int lineNum = 1; lineNum < (int)words.size(); lineNum++)
 	{
@@ -571,6 +587,9 @@ int parseSlang(string script)
 	for (int i = 0; i < (int)lines.size(); i++)
 		words.push_back(split(lines[i], ' '));
 
+	#if DEVELOPER_MESSAGES
+	InterpreterLog("Gather variables & functions...");
+	#endif
 	// First go through entire script and iterate through all types to see if line is a variable
 	// or function declaration, then store it with it's value
 	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
@@ -618,6 +637,9 @@ int parseSlang(string script)
 		}
 	}
 
+	#if DEVELOPER_MESSAGES
+	InterpreterLog("Start Main()");
+	#endif
 	// Executes main, which is the starting function
 	ExecuteFunction("Main", vector<boost::any> {});
 
@@ -637,16 +659,19 @@ int main(int argc, char* argv[])
 	if (argc > 1)
 	{
 		std::string scriptPath = argv[1];
-#if DEVELOPER_MESSAGES == true
+#if DEVELOPER_MESSAGES
 		cout << scriptPath << endl;
 #endif
+
 		std::string projectDirectory = scriptPath.substr(0, scriptPath.find_last_of("/\\"));
+#if UNIX
+		chdir(projectDirectory.c_str());
+		#if DEVELOPER_MESSAGES
+		InterpreterLog("Change directory to " + projectDirectory + "...");
+		#endif
+#elif WINDOWS
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		std::wstring wide = converter.from_bytes(projectDirectory);
-
-#if defined(__unix__)
-		chdir(projectDirectory.c_str());
-#elif defined(_MSC_VER)
 		LPCWSTR s = wide.c_str();
 		SetCurrentDirectory(s);
 #endif
@@ -654,6 +679,9 @@ int main(int argc, char* argv[])
 		// Get script contents
 		ifstream script(scriptPath);
 		scriptString << script.rdbuf();
+		#if DEVELOPER_MESSAGES
+		InterpreterLog("Gather script contents...");
+		#endif
 	}
 	else
 	{
@@ -667,14 +695,14 @@ int main(int argc, char* argv[])
 #if DEVELOPER_MESSAGES == true
 	cout << scriptPath << endl;
 #endif
+
 	std::string projectDirectory = scriptPath.substr(0, scriptPath.find_last_of("/\\"));
+#if UNIX
+	//chdir(projectDirectory.c_str());
+#elif WINDOWS
 	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 	std::wstring wide = converter.from_bytes(projectDirectory);
-
-#if defined(__unix__)
-	chdir(projectDirectory.c_str());
-#elif defined(_MSC_VER)
-	LPCSTR s = projectDirectory.c_str();
+	LPCWSTR s = wide.c_str();
 	SetCurrentDirectory(s);
 #endif
 	// Get script contents
@@ -684,6 +712,9 @@ int main(int argc, char* argv[])
 
 	//system("pause");
 
+	#if DEVELOPER_MESSAGES
+	InterpreterLog("Parsing...");
+	#endif
 	parseSlang(scriptString.str());
 
 	return 0;
