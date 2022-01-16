@@ -7,6 +7,7 @@ project(Slang)
 # Above line indicates to Cmake that minimum version 2.8 is required.
 # As you may have noted all lines beginning with hash symbol are treated as comments by Cmake.
 SET(programName Slang)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 # In the above line we declared a variable programName and assigned it a value MyApp. We will make use of the same later.project(PrjMyApp)
 # here we define the project or solution (for visual studio) name
 # In following lines we try to find out the packages of additional libraries, if reqd. Here we are trying to locate PCL and mrpt library.
@@ -14,15 +15,17 @@ SET(programName Slang)
 # we Show that later.
 # find_package(PCL 1.2 REQUIRED)
 # FIND_PACKAGE(MRPT REQUIRED base;bayes;obs;gui)
+add_executable (Slang Main.cpp main.h anyops.h builtin.h strops.cpp strops.h eval.cpp eval.h graphics.h SLB.h)
 
 # here we specify the additional include directories for the project. These files come in additional include directories option of VC++
 # project.
 # either the variable values from package like ${PCL_INCLUDE_DIRS} or absolute paths as shown in second and third line may be used.
 #include_directories(${PCL_INCLUDE_DIRS})
 find_package(SDL2 REQUIRED)
-find_package(SDL2_IMAGE REQUIRED)
-find_package(SDL2_TTF REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})
+find_package(SDL2_image REQUIRED)
+find_package(SDL2_ttf REQUIRED)
+
+include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
 include_directories("D:/Code/SDL2_ttf-2.0.15/include")
 include_directories("D:/Code/SDL2-2.0.18/include")
 include_directories("D:/Code/SDL2_image-2.0.5/include")
@@ -56,9 +59,8 @@ include_directories(${Boost_INCLUDE_DIRS})
 # compilation in windows platform.
 # Followed by the executable name come all your source and header files.
 # All cpp fles will be clubbed into source folder and all .h files will be added to header files folder of the project.
-add_executable (Slang Main.cpp main.h anyops.h builtin.h strops.cpp strops.h eval.cpp eval.h graphics.h SLB.h)
 
-target_link_libraries(Slang m SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib ${Boost_LIBRARIES} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
+target_link_libraries(Slang m SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib ${Boost_LIBRARIES} ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES})
 
 # target_link_libraries (Slang SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib ${SDL2_LIBRARIES})
 # # Add the required libraries for linking:
