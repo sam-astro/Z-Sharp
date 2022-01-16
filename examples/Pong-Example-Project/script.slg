@@ -54,7 +54,7 @@ func Start()
 	global Text scoreTextTwo = SLB.Graphics.Text("0", "./arial.ttf", scoreTwoPos, 60, 0, 255, 255, 255)
 	
 	Vec2 instructionsPos = NVec2(centerOfScreen.x, SCREENH - 60)
-	global Text instructionsText = SLB.Graphics.Text("Use 'W' and 'S' or 'UP' and 'DOWN' arrows to control or press '0' zero to toggle AI", "./arial.ttf", instructionsPos, 20, 0, 255, 255, 255)
+	global Text instructionsText = SLB.Graphics.Text("Use 'W' and 'S' or 'UP' and 'DOWN' arrows to control or press 'ENTER' to toggle AI", "./arial.ttf", instructionsPos, 20, 0, 255, 255, 255)
 	
 	global Vec2 ballVelocity = NVec2(ballSpeed, ballSpeed)
 }
@@ -139,7 +139,7 @@ func Update(deltaTime)
 	float lerpedY = Lerp(oldY, newY, stopSpeed)
 	rPaddle.position = NVec2(newX, lerpedY)
 	
-	if GetKey("0") == true
+	if GetKey("ENTER") == true
 	{
 		if aiOn == true
 		{
