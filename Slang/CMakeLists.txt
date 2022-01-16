@@ -19,6 +19,8 @@ SET(programName Slang)
 # project.
 # either the variable values from package like ${PCL_INCLUDE_DIRS} or absolute paths as shown in second and third line may be used.
 #include_directories(${PCL_INCLUDE_DIRS})
+find_package(SDL2 REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS})
 include_directories("D:/Code/SDL2_ttf-2.0.15/include")
 include_directories("D:/Code/SDL2-2.0.18/include")
 include_directories("D:/Code/SDL2_image-2.0.5/include")
@@ -37,13 +39,6 @@ link_directories("D:/Code/boost")
 # here we add definitions for any package if requred.
 #add_definitions(${PCL_DEFINITIONS})
 
-# The following line is very important.
-# It specifies the executable name. Here the executable is the first parameter i.e. Slang and a file Slang.exe will be created on
-# compilation in windows platform.
-# Followed by the executable name come all your source and header files.
-# All cpp fles will be clubbed into source folder and all .h files will be added to header files folder of the project.
-add_executable (Slang Main.cpp main.h anyops.h builtin.h strops.cpp strops.h eval.cpp eval.h graphics.h SLB.h)
-
 # target_include_directories (Slang "D:/Code/boost/")
 # There may be some additional dependencies which you may have to specify for the project, which you may do as in following lines.
 # Note that first parameter is the executable name.
@@ -52,13 +47,18 @@ set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF) 
 FIND_PACKAGE(Boost REQUIRED COMPONENTS system) 
 
-if(Boost_FOUND)
-    include_directories(${Boost_INCLUDE_DIRS}) 
-    #add_executable(progname file1.cxx file2.cxx) 
-    target_link_libraries(Slang SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib ${Boost_LIBRARIES})
-endif()
+include_directories(${Boost_INCLUDE_DIRS}) 
 
-target_link_libraries (Slang SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib)
+# The following line is very important.
+# It specifies the executable name. Here the executable is the first parameter i.e. Slang and a file Slang.exe will be created on
+# compilation in windows platform.
+# Followed by the executable name come all your source and header files.
+# All cpp fles will be clubbed into source folder and all .h files will be added to header files folder of the project.
+add_executable (Slang Main.cpp main.h anyops.h builtin.h strops.cpp strops.h eval.cpp eval.h graphics.h SLB.h)
+
+target_link_libraries(Slang m SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib ${Boost_LIBRARIES} ${SDL2_LIBRARIES})
+
+# target_link_libraries (Slang SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib ${SDL2_LIBRARIES})
 # # Add the required libraries for linking:
 # TARGET_LINK_LIBRARIES(${programName}
 # ${MRPT_LIBS} # This is filled by FIND_PACKAGE(MRPT ...)
