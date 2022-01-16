@@ -15,25 +15,91 @@
     {
         "Entry"
         {
-        "MsmKey" = "8:_8ADF09B7BD7545E0B2DD721FDB93C744"
+        "MsmKey" = "8:_1BBDEA811E8A494DB30AB0E778BEF5B3"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_AA01B7461F5045E383661493B7E7654A"
+        "MsmKey" = "8:_2441313DD4DA406BBC1915DDEE0AC74C"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_AE404ABD11A04BF7AC95D60AB9EC740C"
+        "MsmKey" = "8:_29CB0EFE95A142F4A149E51FAE871DDE"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
         {
-        "MsmKey" = "8:_D83ED5005DC14298848CCC583C2F42F8"
+        "MsmKey" = "8:_30B059D12CC4427B998612ABE14AD9FE"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_38EBD2EEB8C34316A3249C9D9873B1C2"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_4B23F888FF8342319507C8AAA3334953"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_5F99C783A5A5405FAEED16B4899E66A3"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_63B7B5320B9540CBB4C2AFA5A14B2649"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_6631FA01F35946F2B90DE75D9A2924D7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_7C9D3FE3584D494F807EBD12C93E2FC5"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8116B924B2DC45BB901E89A2EEB674E6"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_84E97BEFD3C240DC822DAEF66BB20D79"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_8D4524D8D2654AF28CD2B8483A2B2505"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_F1964A3FC0114E58A81978C4C7107596"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FEA298B841784CB2933DCEB504513792"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -62,6 +128,14 @@
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.7.2"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.7.2 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.7.2"
+                    }
+                }
             }
         }
         "Release"
@@ -69,7 +143,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:..\\Releases\\Slang-Installer\\Slang-Installer.msi"
+        "OutputFilename" = "8:..\\Releases\\Slang-Installer-Win-x64\\Slang-Installer.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -116,10 +190,30 @@
         }
         "File"
         {
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8ADF09B7BD7545E0B2DD721FDB93C744"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1BBDEA811E8A494DB30AB0E778BEF5B3"
             {
-            "SourcePath" = "8:..\\Releases\\Slang\\SDL2.dll"
-            "TargetName" = "8:SDL2.dll"
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\Pong-Example-Project\\square.png"
+            "TargetName" = "8:square.png"
+            "Tag" = "8:"
+            "Folder" = "8:_AB72F4F4665144CA990532BBC3679E36"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_29CB0EFE95A142F4A149E51FAE871DDE"
+            {
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\libtiff-5.dll"
+            "TargetName" = "8:libtiff-5.dll"
             "Tag" = "8:"
             "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
             "Condition" = "8:"
@@ -136,9 +230,9 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_AA01B7461F5045E383661493B7E7654A"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_30B059D12CC4427B998612ABE14AD9FE"
             {
-            "SourcePath" = "8:..\\Releases\\Slang\\SDL2_image.dll"
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\SDL2_image.dll"
             "TargetName" = "8:SDL2_image.dll"
             "Tag" = "8:"
             "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
@@ -156,10 +250,210 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D83ED5005DC14298848CCC583C2F42F8"
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_38EBD2EEB8C34316A3249C9D9873B1C2"
             {
-            "SourcePath" = "8:..\\Releases\\Slang\\SDL2_ttf.dll"
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\zlib1.dll"
+            "TargetName" = "8:zlib1.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4B23F888FF8342319507C8AAA3334953"
+            {
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\libpng16-16.dll"
+            "TargetName" = "8:libpng16-16.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5F99C783A5A5405FAEED16B4899E66A3"
+            {
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\Pong-Example-Project\\net.png"
+            "TargetName" = "8:net.png"
+            "Tag" = "8:"
+            "Folder" = "8:_AB72F4F4665144CA990532BBC3679E36"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_63B7B5320B9540CBB4C2AFA5A14B2649"
+            {
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\SDL2.dll"
+            "TargetName" = "8:SDL2.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_6631FA01F35946F2B90DE75D9A2924D7"
+            {
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\SDL2_ttf.dll"
             "TargetName" = "8:SDL2_ttf.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7C9D3FE3584D494F807EBD12C93E2FC5"
+            {
+            "SourcePath" = "8:installer-icon.ico"
+            "TargetName" = "8:installer-icon.ico"
+            "Tag" = "8:"
+            "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8116B924B2DC45BB901E89A2EEB674E6"
+            {
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\libjpeg-9.dll"
+            "TargetName" = "8:libjpeg-9.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_84E97BEFD3C240DC822DAEF66BB20D79"
+            {
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\Pong-Example-Project\\arial.ttf"
+            "TargetName" = "8:arial.ttf"
+            "Tag" = "8:"
+            "Folder" = "8:_AB72F4F4665144CA990532BBC3679E36"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8D4524D8D2654AF28CD2B8483A2B2505"
+            {
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\libwebp-7.dll"
+            "TargetName" = "8:libwebp-7.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F1964A3FC0114E58A81978C4C7107596"
+            {
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\Pong-Example-Project\\script.slg"
+            "TargetName" = "8:script.slg"
+            "Tag" = "8:"
+            "Folder" = "8:_AB72F4F4665144CA990532BBC3679E36"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FEA298B841784CB2933DCEB504513792"
+            {
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\libfreetype-6.dll"
+            "TargetName" = "8:libfreetype-6.dll"
             "Tag" = "8:"
             "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
             "Condition" = "8:"
@@ -214,6 +508,17 @@
             "Property" = "8:TARGETDIR"
                 "Folders"
                 {
+                    "{9EF0B969-E518-4E46-987F-47570745A589}:_AB72F4F4665144CA990532BBC3679E36"
+                    {
+                    "Name" = "8:Pong-Example"
+                    "AlwaysCreate" = "11:FALSE"
+                    "Condition" = "8:"
+                    "Transitive" = "11:FALSE"
+                    "Property" = "8:_495B588DEE224794A522A05C77945DF4"
+                        "Folders"
+                        {
+                        }
+                    }
                 }
             }
         }
@@ -232,15 +537,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Slang"
-        "ProductCode" = "8:{506D3959-3D6F-4A4D-8F4C-E7A0F500EFDD}"
-        "PackageCode" = "8:{F1C0D6B7-AD54-4E72-9BBC-F85826A6A3D7}"
+        "ProductCode" = "8:{3F1665C5-F602-4107-B71C-6101FF2DC973}"
+        "PackageCode" = "8:{E26509B2-C19C-4E07-A5D1-8E05B189963C}"
         "UpgradeCode" = "8:{8ABDE53F-7FF9-455B-A777-B4C1C624FA13}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.1.0"
+        "ProductVersion" = "8:1.2.1"
         "Manufacturer" = "8:Sam-Astro"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -250,7 +555,7 @@
         "Keywords" = "8:"
         "ARPCOMMENTS" = "8:Installer for Slang interpreter"
         "ARPURLINFOABOUT" = "8:"
-        "ARPPRODUCTICON" = "8:"
+        "ARPPRODUCTICON" = "8:_7C9D3FE3584D494F807EBD12C93E2FC5"
         "ARPIconIndex" = "3:0"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
@@ -752,9 +1057,9 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_AE404ABD11A04BF7AC95D60AB9EC740C"
+            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_2441313DD4DA406BBC1915DDEE0AC74C"
             {
-            "SourcePath" = "8:..\\Releases\\Slang\\Slang.exe"
+            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\Slang.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
@@ -772,7 +1077,7 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
+            "OutputConfiguration" = "8:Release|x64"
             "OutputGroupCanonicalName" = "8:Built"
             "OutputProjectGuid" = "8:{D5F150F8-1F83-41EB-A195-1B5C3CA9322A}"
             "ShowKeyOutput" = "11:TRUE"

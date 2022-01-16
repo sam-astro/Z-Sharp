@@ -6,7 +6,11 @@ int scoreTwo = 0
 
 float ballSpeed = 400
 
-float paddleMoveSpeed = 800
+float paddleMoveSpeed = 600
+
+float lerpSpeed = 14
+
+bool aiOn = false
 
 // Main is always run at the VERY BEGINNING. Start() is the start of GRAPHICS
 // so if you never call SLB.Grapgics.Init, then Start won't run
@@ -49,6 +53,9 @@ func Start()
 	Vec2 scoreTwoPos = NVec2(rightOffset, 30)
 	global Text scoreTextTwo = SLB.Graphics.Text("0", "./arial.ttf", scoreTwoPos, 60, 0, 255, 255, 255)
 	
+	Vec2 instructionsPos = NVec2(centerOfScreen.x, SCREENH - 60)
+	global Text instructionsText = SLB.Graphics.Text("Use 'W' and 'S' or 'UP' and 'DOWN' arrows to control or press '0' zero to toggle AI", "./arial.ttf", instructionsPos, 20, 0, 255, 255, 255)
+	
 	global Vec2 ballVelocity = NVec2(ballSpeed, ballSpeed)
 }
 
@@ -77,7 +84,7 @@ func Update(deltaTime)
 	}
 	// Lerps from old position to destination smoothly
 	float oldY = lPaddle.position.y
-	float stopSpeed = deltaTime * 6
+	float stopSpeed = deltaTime * lerpSpeed
 	float newY = lPaddleTargetPosition.y
 	float lerpedY = Lerp(oldY, newY, stopSpeed)
 	lPaddle.position = NVec2(newX, lerpedY)
@@ -86,26 +93,63 @@ func Update(deltaTime)
 	//
 	if GetKey("UP") == true
 	{
-		float newX = rPaddle.position.x
-		// Subtract from Y to move up, because vertical coordinates are reversed
-		float newY = rPaddleTargetPosition.y - paddleMoveSpeed * deltaTime
-		newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
-		rPaddleTargetPosition = NVec2(newX, newY)
+		if aiOn == false
+		{
+			float newX = rPaddle.position.x
+			// Subtract from Y to move up, because vertical coordinates are reversed
+			float newY = rPaddleTargetPosition.y - paddleMoveSpeed * deltaTime
+			newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
+			rPaddleTargetPosition = NVec2(newX, newY)
+		}
 	}
 	if GetKey("DOWN") == true
 	{
-		float newX = rPaddle.position.x
-		// Add to Y to move down, because vertical coordinates are reversed
-		float newY = rPaddleTargetPosition.y + paddleMoveSpeed * deltaTime
-		newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
-		rPaddleTargetPosition = NVec2(newX, newY)
+		if aiOn == false
+		{
+			float newX = rPaddle.position.x
+			// Add to Y to move down, because vertical coordinates are reversed
+			float newY = rPaddleTargetPosition.y + paddleMoveSpeed * deltaTime
+			newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
+			rPaddleTargetPosition = NVec2(newX, newY)
+		}
+	}
+	if aiOn == true
+	{
+		if rPaddle.position.y < ballSpr.position.y
+		{
+			float newX = rPaddle.position.x
+			// Add to Y to move down, because vertical coordinates are reversed
+			float newY = rPaddleTargetPosition.y + paddleMoveSpeed * deltaTime
+			newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
+			rPaddleTargetPosition = NVec2(newX, newY)
+		}
+		if rPaddle.position.y > ballSpr.position.y
+		{
+			float newX = rPaddle.position.x
+			// Subtract from Y to move up, because vertical coordinates are reversed
+			float newY = rPaddleTargetPosition.y - paddleMoveSpeed * deltaTime
+			newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
+			rPaddleTargetPosition = NVec2(newX, newY)
+		}
 	}
 	// Lerps from old position to destination smoothly
 	float oldY = rPaddle.position.y
-	float stopSpeed = deltaTime * 6
+	float stopSpeed = deltaTime * lerpSpeed
 	float newY = rPaddleTargetPosition.y
 	float lerpedY = Lerp(oldY, newY, stopSpeed)
 	rPaddle.position = NVec2(newX, lerpedY)
+	
+	if GetKey("0") == true
+	{
+		if aiOn == true
+		{
+			aiOn = false
+		}
+		if aiOn == false
+		{
+			aiOn = true
+		}
+	}
 	
 	Vec2 scaledVelocity = ballVelocity
 	scaledVelocity *= deltaTime
@@ -120,6 +164,8 @@ func Update(deltaTime)
 	
 	SLB.Graphics.DrawText(scoreTextOne)
 	SLB.Graphics.DrawText(scoreTextTwo)
+	
+	SLB.Graphics.DrawText(instructionsText)
 	
 	HandleBallBounce()
 }
