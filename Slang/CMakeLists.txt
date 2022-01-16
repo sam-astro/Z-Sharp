@@ -19,6 +19,17 @@ SET(programName Slang)
 # project.
 # either the variable values from package like ${PCL_INCLUDE_DIRS} or absolute paths as shown in second and third line may be used.
 #include_directories(${PCL_INCLUDE_DIRS})
+set(Boost_USE_STATIC_LIBS OFF) 
+set(Boost_USE_MULTITHREADED ON)  
+set(Boost_USE_STATIC_RUNTIME OFF) 
+find_package(Boost COMPONENTS any) 
+
+if(Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIRS}) 
+    add_executable(progname file1.cxx file2.cxx) 
+    target_link_libraries(progname ${Boost_LIBRARIES})
+endif()
+
 include_directories("D:/Code/SDL2_ttf-2.0.15/include")
 include_directories("D:/Code/SDL2-2.0.18/include")
 include_directories("D:/Code/SDL2_image-2.0.5/include")
@@ -44,7 +55,7 @@ link_directories("D:/Code/boost")
 # All cpp fles will be clubbed into source folder and all .h files will be added to header files folder of the project.
 add_executable (Slang Main.cpp main.h anyops.h builtin.h strops.cpp strops.h eval.cpp eval.h graphics.h SLB.h)
 
-target_include_directories (Slang "D:/Code/boost")
+target_include_directories (Slang "D:/Code/boost/")
 # There may be some additional dependencies which you may have to specify for the project, which you may do as in following lines.
 # Note that first parameter is the executable name.
 target_link_libraries (Slang SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib)
