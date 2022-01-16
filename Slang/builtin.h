@@ -288,7 +288,7 @@ boost::any SLBFunction(const string& name, const vector<boost::any>& args)
 		any_cast<Sprite>(args[0]).Load();
 	else if (name == "SLB.Graphics.Text")
 	{
-		Text t(StringRaw(AnyAsString(args[0])), StringRaw(AnyAsString(args[1])), any_cast<Vec2>(args[2]), AnyAsFloat(args[3]), AnyAsFloat(args[4]), AnyAsInt(args[5]), AnyAsInt(args[6]), AnyAsInt(args[7]));
+		Text t(StringRaw(AnyAsString(args[0])), StringRaw(AnyAsString(args[1])), any_cast<Vec2>(args[2]), AnyAsFloat(args[3]), AnyAsFloat(args[4]), (Uint8)AnyAsFloat(args[5]), (Uint8)AnyAsFloat(args[6]), (Uint8)AnyAsFloat(args[7]));
 		return t;
 	}
 	else if (name == "SLB.Graphics.DrawText")

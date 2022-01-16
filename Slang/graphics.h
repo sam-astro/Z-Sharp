@@ -516,12 +516,12 @@ public:
 class Text
 {
 public:
-	Text(std::string content, std::string pathToFont, Vec2 position, float fontSize, double angle, int r, int g, int b)
+	Text(std::string content, std::string pathToFont, Vec2 position, float fontSize, double angle, Uint8 r, Uint8 g, Uint8 b)
 		: position(position), angle(angle), content(content), pathToFont(pathToFont), fontSize(fontSize), r(r), g(g), b(b)
 	{
 		rect.x = position.x;
 		rect.y = position.y;
-
+		
 		font = TTF_OpenFont(pathToFont.c_str(), fontSize);
 
 		Load();
@@ -529,11 +529,14 @@ public:
 
 	int Load()
 	{
-		SDL_Color color = { (Uint8)r, (Uint8)g, (Uint8)b };
+		cout << "Load" << endl;
+		SDL_Color color = { r, g, b };
 
 		SDL_Surface* surface = TTF_RenderText_Solid(font, content.c_str(), color);
-
-		SDL_DestroyTexture(texture);
+		
+		//if(texture != NULL)
+		//	SDL_DestroyTexture(texture);
+		cout << "Loaded" << endl;
 		texture = SDL_CreateTextureFromSurface(gRenderer, surface);
 
 		TTF_SizeText(font, content.c_str(), &rect.w, &rect.h);
@@ -551,7 +554,7 @@ public:
 
 	int Update()
 	{
-		SDL_Color color = { (Uint8)r, (Uint8)g, (Uint8)b };
+		SDL_Color color = { r, g, b };
 
 		SDL_Surface* surface = TTF_RenderText_Solid(font, content.c_str(), color);
 
@@ -715,9 +718,9 @@ public:
 	Vec2 scale;
 	float fontSize;
 	double angle;
-	int r;
-	int g;
-	int b;
+	Uint8 r;
+	Uint8 g;
+	Uint8 b;
 	std::string content;
 	std::string pathToFont;
 

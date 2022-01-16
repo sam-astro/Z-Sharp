@@ -2,7 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#define DEVELOPER_MESSAGES true
+#define DEVELOPER_MESSAGES false
 #define EXAMPLE_PROJECT false
 
 #if defined(__unix__)

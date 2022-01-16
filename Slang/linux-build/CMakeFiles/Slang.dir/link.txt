@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/Slang.dir/Main.cpp.o CMakeFiles/Slang.dir/strops.cpp.o CMakeFiles/Slang.dir/eval.cpp.o  -o Slang  -lm /usr/lib/x86_64-linux-gnu/libboost_system.so.1.71.0 -lSDL2 -lSDL2_image -lSDL2_ttf 
