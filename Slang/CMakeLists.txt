@@ -7,7 +7,7 @@ project(Slang)
 # Above line indicates to Cmake that minimum version 2.8 is required.
 # As you may have noted all lines beginning with hash symbol are treated as comments by Cmake.
 SET(programName Slang)
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeFiles/")
 # In the above line we declared a variable programName and assigned it a value MyApp. We will make use of the same later.project(PrjMyApp)
 # here we define the project or solution (for visual studio) name
 # In following lines we try to find out the packages of additional libraries, if reqd. Here we are trying to locate PCL and mrpt library.
