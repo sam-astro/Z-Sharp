@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.21 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -32,6 +32,7 @@ include_directories("D:/Code/boost")
 link_directories("D:/Code/SDL2_ttf-2.0.15/lib/x64")
 link_directories("D:/Code/SDL2-2.0.18/lib/x64")
 link_directories("D:/Code/SDL2_image-2.0.5/lib/x64")
+link_directories("D:/Code/boost")
 
 # here we add definitions for any package if requred.
 #add_definitions(${PCL_DEFINITIONS})
@@ -43,6 +44,7 @@ link_directories("D:/Code/SDL2_image-2.0.5/lib/x64")
 # All cpp fles will be clubbed into source folder and all .h files will be added to header files folder of the project.
 add_executable (Slang Main.cpp main.h anyops.h builtin.h strops.cpp strops.h eval.cpp eval.h graphics.h SLB.h)
 
+target_include_directories (Slang "D:/Code/boost")
 # There may be some additional dependencies which you may have to specify for the project, which you may do as in following lines.
 # Note that first parameter is the executable name.
 target_link_libraries (Slang SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib)
