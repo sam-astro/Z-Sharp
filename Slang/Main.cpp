@@ -658,7 +658,7 @@ int main(int argc, char* argv[])
 	else
 	{
 		LogWarning("No script provided! Please drag and drop .SLG file over interpreter executable file, or provide it's path as a command-line argument.");
-		system("pause");
+		//system("pause");
 		exit(1);
 	}
 #else
@@ -682,7 +682,7 @@ int main(int argc, char* argv[])
 	scriptString << script.rdbuf();
 #endif
 
-	system("pause");
+	//system("pause");
 
 	parseSlang(scriptString.str());
 
