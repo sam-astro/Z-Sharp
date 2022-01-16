@@ -672,7 +672,7 @@ int main(int argc, char* argv[])
 	std::wstring wide = converter.from_bytes(projectDirectory);
 
 #if defined(__unix__)
-	chdir(projectDirectory);
+	chdir(projectDirectory.c_str());
 #elif defined(_MSC_VER)
 	LPCWSTR s = wide.c_str();
 	SetCurrentDirectory(s);
