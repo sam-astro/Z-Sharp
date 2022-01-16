@@ -11,7 +11,7 @@
 #include "strops.h"
 #include "graphics.h"
 #include "anyops.h"
-#include <boost/any.hpp>
+#include "./boost/any.hpp"
 #include <SDL.h>
 #include <ctime>
 

@@ -1,7 +1,7 @@
 #ifndef STROPS_H
 #define STROPS_H
 
-#include <boost/any.hpp>
+#include "./boost/any.hpp"
 
 using namespace std;
 
