@@ -26,7 +26,7 @@
 
 #include "SLB.h"
 
-#define DEVELOPER_MESSAGES false
+#define DEVELOPER_MESSAGES true
 #define EXAMPLE_PROJECT false
 
 using namespace std;
@@ -647,7 +647,7 @@ int main(int argc, char* argv[])
 #if defined(__unix__)
 		chdir(projectDirectory.c_str());
 #elif defined(_MSC_VER)
-		LPCSTR s = projectDirectory.c_str();
+		LPCWSTR s = wide.c_str();
 		SetCurrentDirectory(s);
 #endif
 
