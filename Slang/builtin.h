@@ -14,6 +14,7 @@
 #include <boost/any.hpp>
 #include <SDL.h>
 #include <ctime>
+#include <math.h>
 
 #define DEVELOPER_MESSAGES false
 

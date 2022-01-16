@@ -7,6 +7,7 @@
 #include <stack>
 #include "eval.h"
 #include "strops.h"
+#include <math.h>
 // #include "builtin.h"
 using namespace std;
 
