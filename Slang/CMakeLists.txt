@@ -31,4 +31,4 @@ FIND_PACKAGE(Boost REQUIRED COMPONENTS system)
 
 include_directories(${Boost_INCLUDE_DIRS}) 
 
-target_link_libraries(Slang m SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib ${Boost_LIBRARIES} ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES})
+target_link_libraries(Slang m ${Boost_LIBRARIES} ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES} ${SDL2_TTF_LIBRARIES})
