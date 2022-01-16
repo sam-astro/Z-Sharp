@@ -645,7 +645,7 @@ int main(int argc, char* argv[])
 		std::wstring wide = converter.from_bytes(projectDirectory);
 
 #if defined(__unix__)
-		chdir(projectDirectory);
+		chdir(projectDirectory.c_str());
 #elif defined(_MSC_VER)
 		LPCSTR s = projectDirectory.c_str();
 		SetCurrentDirectory(s);
@@ -672,10 +672,9 @@ int main(int argc, char* argv[])
 	std::wstring wide = converter.from_bytes(projectDirectory);
 
 #if defined(__unix__)
-	const char[] pC = projectDirectory.c_str();
-	chdir(pC);
+	chdir(projectDirectory.c_str());
 #elif defined(_MSC_VER)
-	LPCWSTR s = wide.c_str();
+	LPCSTR s = projectDirectory.c_str();
 	SetCurrentDirectory(s);
 #endif
 	// Get script contents
