@@ -20,9 +20,9 @@ SET(programName Slang)
 # either the variable values from package like ${PCL_INCLUDE_DIRS} or absolute paths as shown in second and third line may be used.
 #include_directories(${PCL_INCLUDE_DIRS})
 find_package(SDL2 REQUIRED)
-find_package(SDL_IMAGE REQUIRED)
-find_package(SDL_TTF REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS} ${SDLIMAGE_INCLUDE_DIRS} ${SDLTTF_INCLUDE_DIRS})
+find_package(SDL2_IMAGE REQUIRED)
+find_package(SDL2_TTF REQUIRED)
+include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS} ${SDL2TTF_INCLUDE_DIRS})
 include_directories("D:/Code/SDL2_ttf-2.0.15/include")
 include_directories("D:/Code/SDL2-2.0.18/include")
 include_directories("D:/Code/SDL2_image-2.0.5/include")
@@ -58,7 +58,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 # All cpp fles will be clubbed into source folder and all .h files will be added to header files folder of the project.
 add_executable (Slang Main.cpp main.h anyops.h builtin.h strops.cpp strops.h eval.cpp eval.h graphics.h SLB.h)
 
-target_link_libraries(Slang m SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib ${Boost_LIBRARIES} ${SDL2_LIBRARIES} ${SDL2TTF_LIBRARIES})
+target_link_libraries(Slang m SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib ${Boost_LIBRARIES} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
 
 # target_link_libraries (Slang SDL2.lib SDL2main.lib SDL2_ttf.lib SDL2_image.lib ${SDL2_LIBRARIES})
 # # Add the required libraries for linking:
