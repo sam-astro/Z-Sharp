@@ -25,6 +25,7 @@
 
 #if UNIX
 #include <unistd.h>
+#include <filesystem>
 #elif WINDOWS
 #include <windows.h>
 #endif
@@ -541,26 +542,23 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 boost::any ExecuteFunction(const string& functionName, const vector<boost::any>& inputVarVals)
 {
 	// Get contents of function
-	vector<vector<string>> words = functionValues[functionName];
+	std::vector<std::vector<std::string>> words = functionValues[functionName];
 
 	unordered_map<string, boost::any> variableValues = {};
 	
-	vector<string> args = words[0]; // This causes problem in linux
+	std::vector<std::string> funcArgs = words[0]; // This causes problem in linux
 	
 	for (int i = 0; i < (int)inputVarVals.size(); i++)
 	{
-		if(i < args.size())
+		if(i < funcArgs.size())
 		{
-			variableValues[args[i]] = inputVarVals[i];
+			variableValues[funcArgs[i]] = inputVarVals[i];
 #if DEVELOPER_MESSAGES == true
-			cout << functionName + "  \x1B[33m" << args[i] << " == " << AnyAsString(inputVarVals[i]) << "\033[0m\t\t" << endl;
+			cout << functionName + "  \x1B[33m" << funcArgs[i] << " == " << AnyAsString(inputVarVals[i]) << "\033[0m\t\t" << endl;
 #endif
 		}
 	}
 
-	#if DEVELOPER_MESSAGES
-	InterpreterLog("Iterate");
-	#endif
 	//Iterate through all lines in function
 	for (int lineNum = 1; lineNum < (int)words.size(); lineNum++)
 	{
@@ -581,6 +579,9 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 int parseSlang(string script)
 {
 	script = replace(script, "    ", "\t");
+	#if DEVELOPER_MESSAGES
+	InterpreterLog("Contents:\n" + script);
+	#endif
 
 	vector<string> lines = split(script, '\n');
 	vector<vector<string>> words;
@@ -600,6 +601,9 @@ int parseSlang(string script)
 			vector<vector<string>> functionContents;
 
 			string functName = split(words[lineNum][1], '(')[0];
+#if DEVELOPER_MESSAGES == true
+			InterpreterLog("Load script function " + functName + "...");
+#endif
 
 			string args = "";
 			if (indexInStr(unWrapVec(words[lineNum]), ')') - indexInStr(unWrapVec(words[lineNum]), '(') > 1)
@@ -624,14 +628,30 @@ int parseSlang(string script)
 		}
 		else
 		{
-			if (words[lineNum][0] == "string")
+			if (words[lineNum][0] == "string"){
 				globalVariableValues[words[lineNum][1]] = StringRaw(words[lineNum][3]);
-			else if (words[lineNum][0] == "int")
+#if DEVELOPER_MESSAGES == true
+				InterpreterLog("Load script variable " + words[lineNum][1] + "...");
+#endif
+}
+			else if (words[lineNum][0] == "int"){
 				globalVariableValues[words[lineNum][1]] = stoi(words[lineNum][3]);
-			else if (words[lineNum][0] == "float")
+#if DEVELOPER_MESSAGES == true
+				InterpreterLog("Load script variable " + words[lineNum][1] + "...");
+#endif
+}
+			else if (words[lineNum][0] == "float"){
 				globalVariableValues[words[lineNum][1]] = stof(words[lineNum][3]);
-			else if (words[lineNum][0] == "bool")
+#if DEVELOPER_MESSAGES == true
+				InterpreterLog("Load script variable " + words[lineNum][1] + "...");
+#endif
+}
+			else if (words[lineNum][0] == "bool"){
 				globalVariableValues[words[lineNum][1]] = stob(words[lineNum][3]);
+#if DEVELOPER_MESSAGES == true
+				InterpreterLog("Load script variable " + words[lineNum][1] + "...");
+#endif
+}
 			//else
 			//	LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
 		}
@@ -653,8 +673,8 @@ int main(int argc, char* argv[])
 	functionValues = builtinFunctionValues;
 	globalVariableValues = builtinVarVals;
 
-	stringstream scriptString;
-#if EXAMPLE_PROJECT == false
+	std::string scriptTextContents;
+
 	// If scriptname is supplied and not in developer mode
 	if (argc > 1)
 	{
@@ -665,23 +685,41 @@ int main(int argc, char* argv[])
 
 		std::string projectDirectory = scriptPath.substr(0, scriptPath.find_last_of("/\\"));
 #if UNIX
+		// Get script contents
+		auto ss = ostringstream{};
+		ifstream input_file(scriptPath);
+		ss << input_file.rdbuf();
+		scriptTextContents = ss.str();
+		#if DEVELOPER_MESSAGES
+		InterpreterLog("Gather script contents...");
+		#endif
+		
 		chdir(projectDirectory.c_str());
 		#if DEVELOPER_MESSAGES
 		InterpreterLog("Change directory to " + projectDirectory + "...");
 		#endif
+		#if DEVELOPER_MESSAGES
+		string newPath = filesystem::current_path();
+		InterpreterLog("Current working directory is " + newPath);
+		#endif
 #elif WINDOWS
+		// Get script contents
+		ifstream script(scriptPath);
+		stringstream scriptString;
+		scriptString << script.rdbuf();
+		scriptTextContents = scriptString.str();
+		#if DEVELOPER_MESSAGES
+		InterpreterLog("Gather script contents...");
+		#endif
+		
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		std::wstring wide = converter.from_bytes(projectDirectory);
 		LPCWSTR s = wide.c_str();
 		SetCurrentDirectory(s);
-#endif
-
-		// Get script contents
-		ifstream script(scriptPath);
-		scriptString << script.rdbuf();
 		#if DEVELOPER_MESSAGES
-		InterpreterLog("Gather script contents...");
+		InterpreterLog("Change directory to " + projectDirectory + "...");
 		#endif
+#endif
 	}
 	else
 	{
@@ -689,33 +727,13 @@ int main(int argc, char* argv[])
 		//system("pause");
 		exit(1);
 	}
-#else
-	// If in developer mode
-	std::string scriptPath = "./Pong-Example-Project/script.slg";
-#if DEVELOPER_MESSAGES == true
-	cout << scriptPath << endl;
-#endif
-
-	std::string projectDirectory = scriptPath.substr(0, scriptPath.find_last_of("/\\"));
-#if UNIX
-	//chdir(projectDirectory.c_str());
-#elif WINDOWS
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-	std::wstring wide = converter.from_bytes(projectDirectory);
-	LPCWSTR s = wide.c_str();
-	SetCurrentDirectory(s);
-#endif
-	// Get script contents
-	ifstream script(scriptPath);
-	scriptString << script.rdbuf();
-#endif
 
 	//system("pause");
 
 	#if DEVELOPER_MESSAGES
 	InterpreterLog("Parsing...");
 	#endif
-	parseSlang(scriptString.str());
+	parseSlang(scriptTextContents);
 
 	return 0;
 }
