@@ -113,8 +113,10 @@ SDL_Renderer* gRenderer = NULL;
 SDL_Surface* gScreenSurface = NULL;
 
 bool running = true;
-bool buttons[4] = {};
 float dt = 0.0f;
+
+float clamp(float v, float min, float max);
+
 
 SDL_Surface* loadSurface(std::string path)
 {
@@ -529,14 +531,10 @@ public:
 
 	int Load()
 	{
-		cout << "Load" << endl;
 		SDL_Color color = { r, g, b };
 
 		SDL_Surface* surface = TTF_RenderText_Solid(font, content.c_str(), color);
 		
-		//if(texture != NULL)
-		//	SDL_DestroyTexture(texture);
-		cout << "Loaded" << endl;
 		texture = SDL_CreateTextureFromSurface(gRenderer, surface);
 
 		TTF_SizeText(font, content.c_str(), &rect.w, &rect.h);
@@ -1014,7 +1012,7 @@ int updateLoop()
 		// Calculate frame time
 		auto stopTime = std::chrono::high_resolution_clock::now();
 		dt = std::chrono::duration<float, std::chrono::milliseconds::period>(stopTime - startTime).count() / 1000.0f;
-
+		dt = clamp(dt, 0, 1000);
 	}
 	return 0;
 }

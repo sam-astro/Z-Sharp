@@ -1,4 +1,4 @@
-
+﻿
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -86,7 +86,7 @@ vector<boost::any> VarValues(const vector<string>& varNames, unordered_map<strin
 
 	for (int varIndex = 0; varIndex < varNames.size(); varIndex++)
 	{
-		string varName = trim(varNames[varIndex]);
+		string varName = trim(varNames.at(varIndex));
 
 		//realValues.push_back(EvalExpression(varName, variableValues));
 		auto iA = variableValues.find(varName);
@@ -116,7 +116,7 @@ bool IsFunction(const string& funcName)
 }
 bool IsSLBFunction(const string& funcName)
 {
-	if (funcName[0] == 'S' && funcName[1] == 'L' && funcName[2] == 'B' && funcName[2] == '.')
+	if (funcName[0] == 'S' && funcName[1] == 'L' && funcName[2] == 'B' && funcName[3] == '.')
 		return true;
 	else
 		return false;
@@ -128,7 +128,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 	bool inQuotes = false;
 
 #if DEVELOPER_MESSAGES == true
-	InterpreterLog("OLDEXPRESSION: |" + expression + "|");
+	InterpreterLog("	old expression: |" + expression + "|");
 #endif
 
 	bool isFunc = IsFunction(split(expression, '(')[0]);
@@ -229,7 +229,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 		}
 	}
 #if DEVELOPER_MESSAGES == true
-	InterpreterLog("NEW EXPRESSION: |" + newExpression + "|");
+	InterpreterLog("	new expression: |" + newExpression + "|");
 #endif
 
 	bool addStrings = false;
@@ -290,168 +290,168 @@ bool BooleanLogic(const string& valA, const string& determinant, const string& v
 
 int varOperation(const vector<string>& str, unordered_map<string, boost::any>& variableValues)
 {
-	if (IsVar(str[0], variableValues))
+	if (IsVar(str.at(0), variableValues))
 	{
 		// Checks if type is simple, like int or string
-		if (any_type(variableValues[str[0]]) <= 3)
+		if (any_type(variableValues[str.at(0)]) <= 3)
 		{
-			if (str[1] == "=")
-				variableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-			else if (str[1] == "+=")
-				variableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
-			else if (str[1] == "-=")
-				variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-			else if (str[1] == "*=")
-				variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-			else if (str[1] == "/=")
-				variableValues[str[0]] = AnyAsFloat(variableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			if (str.at(1) == "=")
+				variableValues[str.at(0)] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			else if (str.at(1) == "+=")
+				variableValues[str.at(0)] = EvalExpression(str.at(0) + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			else if (str.at(1) == "-=")
+				variableValues[str.at(0)] = AnyAsFloat(variableValues[str.at(0)]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else if (str.at(1) == "*=")
+				variableValues[str.at(0)] = AnyAsFloat(variableValues[str.at(0)]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else if (str.at(1) == "/=")
+				variableValues[str.at(0)] = AnyAsFloat(variableValues[str.at(0)]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
 			else
-				LogWarning("unrecognized operator \'" + str[1] + "\'");
+				LogWarning("unrecognized operator \'" + str.at(1) + "\'");
 		}
 		// Else it is a Vec2. No other complex class can be operated on it's base form (ex. you can't do: Sprite += Sprite)
-		else if (any_type(variableValues[str[0]]) == 5)
+		else if (any_type(variableValues[str.at(0)]) == 5)
 		{
 			boost::any otherExpression = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-			if (str[1] == "=")
-				variableValues[str[0]] = otherExpression;
-			else if (str[1] == "+=")
-				variableValues[str[0]] = AnyAsVec2(variableValues[str[0]]) + AnyAsVec2(otherExpression);
-			else if (str[1] == "-=")
-				variableValues[str[0]] = AnyAsVec2(variableValues[str[0]]) - AnyAsVec2(otherExpression);
-			else if (str[1] == "*=")
-				variableValues[str[0]] = AnyAsVec2(variableValues[str[0]]) * AnyAsFloat(otherExpression);
-			else if (str[1] == "/=")
-				variableValues[str[0]] = AnyAsVec2(variableValues[str[0]]) / AnyAsFloat(otherExpression);
+			if (str.at(1) == "=")
+				variableValues[str.at(0)] = otherExpression;
+			else if (str.at(1) == "+=")
+				variableValues[str.at(0)] = AnyAsVec2(variableValues[str.at(0)]) + AnyAsVec2(otherExpression);
+			else if (str.at(1) == "-=")
+				variableValues[str.at(0)] = AnyAsVec2(variableValues[str.at(0)]) - AnyAsVec2(otherExpression);
+			else if (str.at(1) == "*=")
+				variableValues[str.at(0)] = AnyAsVec2(variableValues[str.at(0)]) * AnyAsFloat(otherExpression);
+			else if (str.at(1) == "/=")
+				variableValues[str.at(0)] = AnyAsVec2(variableValues[str.at(0)]) / AnyAsFloat(otherExpression);
 			else
-				LogWarning("unrecognized operator \'" + str[1] + "\'");
+				LogWarning("unrecognized operator \'" + str.at(1) + "\'");
 		}
 		return 0;
 	}
-	else if (IsVar(str[0], globalVariableValues))
+	else if (IsVar(str.at(0), globalVariableValues))
 	{
 		// Checks if type is simple, like int or string
-		if (any_type(globalVariableValues[str[0]]) <= 3)
+		if (any_type(globalVariableValues[str.at(0)]) <= 3)
 		{
-			if (str[1] == "=")
-				globalVariableValues[str[0]] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-			else if (str[1] == "+=")
-				globalVariableValues[str[0]] = EvalExpression(str[0] + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
-			else if (str[1] == "-=")
-				globalVariableValues[str[0]] = AnyAsFloat(globalVariableValues[str[0]]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-			else if (str[1] == "*=")
-				globalVariableValues[str[0]] = AnyAsFloat(globalVariableValues[str[0]]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-			else if (str[1] == "/=")
-				globalVariableValues[str[0]] = AnyAsFloat(globalVariableValues[str[0]]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			if (str.at(1) == "=")
+				globalVariableValues[str.at(0)] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+			else if (str.at(1) == "+=")
+				globalVariableValues[str.at(0)] = EvalExpression(str.at(0) + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+			else if (str.at(1) == "-=")
+				globalVariableValues[str.at(0)] = AnyAsFloat(globalVariableValues[str.at(0)]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else if (str.at(1) == "*=")
+				globalVariableValues[str.at(0)] = AnyAsFloat(globalVariableValues[str.at(0)]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+			else if (str.at(1) == "/=")
+				globalVariableValues[str.at(0)] = AnyAsFloat(globalVariableValues[str.at(0)]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
 			else
-				LogWarning("unrecognized operator \'" + str[1] + "\'");
+				LogWarning("unrecognized operator \'" + str.at(1) + "\'");
 		}
 		// Else it is a Vec2. No other complex class can be operated on it's base form (ex. you can't do: Sprite += Sprite)
-		else if (any_type(globalVariableValues[str[0]]) == 5)
+		else if (any_type(globalVariableValues[str.at(0)]) == 5)
 		{
 			boost::any otherExpression = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-			if (str[1] == "=")
-				globalVariableValues[str[0]] = otherExpression;
-			else if (str[1] == "+=")
-				globalVariableValues[str[0]] = AnyAsVec2(globalVariableValues[str[0]]) + AnyAsVec2(otherExpression);
-			else if (str[1] == "-=")
-				globalVariableValues[str[0]] = AnyAsVec2(globalVariableValues[str[0]]) - AnyAsVec2(otherExpression);
-			else if (str[1] == "*=")
-				globalVariableValues[str[0]] = AnyAsVec2(globalVariableValues[str[0]]) * AnyAsFloat(otherExpression);
-			else if (str[1] == "/=")
-				globalVariableValues[str[0]] = AnyAsVec2(globalVariableValues[str[0]]) / AnyAsFloat(otherExpression);
+			if (str.at(1) == "=")
+				globalVariableValues[str.at(0)] = otherExpression;
+			else if (str.at(1) == "+=")
+				globalVariableValues[str.at(0)] = AnyAsVec2(globalVariableValues[str.at(0)]) + AnyAsVec2(otherExpression);
+			else if (str.at(1) == "-=")
+				globalVariableValues[str.at(0)] = AnyAsVec2(globalVariableValues[str.at(0)]) - AnyAsVec2(otherExpression);
+			else if (str.at(1) == "*=")
+				globalVariableValues[str.at(0)] = AnyAsVec2(globalVariableValues[str.at(0)]) * AnyAsFloat(otherExpression);
+			else if (str.at(1) == "/=")
+				globalVariableValues[str.at(0)] = AnyAsVec2(globalVariableValues[str.at(0)]) / AnyAsFloat(otherExpression);
 			else
-				LogWarning("unrecognized operator \'" + str[1] + "\'");
+				LogWarning("unrecognized operator \'" + str.at(1) + "\'");
 		}
 		return 0;
 	}
-	LogWarning("uninitialized variable or typo in \'" + str[0] + "\'");
+	LogWarning("uninitialized variable or typo in \'" + str.at(0) + "\'");
 	return 1;
 }
 
 boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<string, boost::any>& variableValues)
 {
-	if (words[lineNum][0][0] == '/' && words[lineNum][0][1] == '/')
+	if (words.at(lineNum).at(0)[0] == '/' && words.at(lineNum).at(0)[1] == '/')
 		return nullType;
 
 	// If print statement (deprecated, now use SLB.System.Print() function)
-	else if (words[lineNum][0] == "print")
+	else if (words.at(lineNum).at(0) == "print")
 	{
-		cout << StringRaw(AnyAsString(EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variableValues))) << endl;
+		cout << StringRaw(AnyAsString(EvalExpression(unWrapVec(vector<string>(words.at(lineNum).begin() + 1, words.at(lineNum).end())), variableValues))) << endl;
 		return nullType;
 	}
 
 	// Check if function return
-	else if (words[lineNum][0] == "return")
-		return EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 1, words[lineNum].end())), variableValues);
+	else if (words.at(lineNum).at(0) == "return")
+		return EvalExpression(unWrapVec(vector<string>(words.at(lineNum).begin() + 1, words.at(lineNum).end())), variableValues);
 
 	// Check if it is SLB Builtin function
-	else if (words[lineNum][0][0] == 'S' && words[lineNum][0][1] == 'L' && words[lineNum][0][2] == 'B' && words[lineNum][0][3] == '.')
-		return EvalExpression(unWrapVec(words[lineNum]), variableValues);
+	else if (words.at(lineNum).at(0)[0] == 'S' && words.at(lineNum).at(0)[1] == 'L' && words.at(lineNum).at(0)[2] == 'B' && words.at(lineNum).at(0)[3] == '.')
+		return EvalExpression(unWrapVec(words.at(lineNum)), variableValues);
 
 	// Check if it is function
-	else if (IsFunction(trim(split(words[lineNum][0], '(')[0])))
+	else if (IsFunction(trim(split(words.at(lineNum).at(0), '(')[0])))
 	{
-		if (count(words[lineNum][0], '(') > 0 && count(words[lineNum][0], ')') > 0)
-			ExecuteFunction(trim(split(words[lineNum][0], '(')[0]), vector<boost::any>());
+		if (count(words.at(lineNum).at(0), '(') > 0 && count(words.at(lineNum).at(0), ')') > 0)
+			ExecuteFunction(trim(split(words.at(lineNum).at(0), '(')[0]), vector<boost::any>());
 		else
-			ExecuteFunction(trim(split(words[lineNum][0], '(')[0]), VarValues(split(RMParenthesis("(" + split(unWrapVec(rangeInVec(words[lineNum], 0, (int)words[lineNum].size() - 1)), '(')[1]), ','), variableValues));
+			ExecuteFunction(trim(split(words.at(lineNum).at(0), '(')[0]), VarValues(split(RMParenthesis("(" + split(unWrapVec(rangeInVec(words.at(lineNum), 0, (int)words.at(lineNum).size() - 1)), '(')[1]), ','), variableValues));
 		return nullType;
 	}
 
 	// Check if global variable declaration
-	else if (trim(words[lineNum][0]) == "global")
+	else if (trim(words.at(lineNum).at(0)) == "global")
 	{
-		globalVariableValues[words[lineNum][2]] = EvalExpression(unWrapVec(slice(words[lineNum], 4, -1)), variableValues);
+		globalVariableValues[words.at(lineNum).at(2)] = EvalExpression(unWrapVec(slice(words.at(lineNum), 4, -1)), variableValues);
 		return nullType;
 	}
 
 	// Iterate through all types to see if line inits or
 	// re-inits a variable then store it with it's value
-	else if (countInVector(types, trim(words[lineNum][0])) > 0)
+	else if (countInVector(types, trim(words.at(lineNum).at(0))) > 0)
 	{
-		variableValues[words[lineNum][1]] = EvalExpression(unWrapVec(slice(words[lineNum], 3, -1)), variableValues);
+		variableValues[words.at(lineNum).at(1)] = EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), variableValues);
 		return nullType;
 	}
 
 	// Check existing variables: If matches, then it means
 	// the variables value is getting changed with an operator
-	else if (count(words[lineNum][0], '.') == 0 && (IsVar(words[lineNum][0], variableValues) || IsVar(words[lineNum][0], globalVariableValues)))
+	else if (count(words.at(lineNum).at(0), '.') == 0 && (IsVar(words.at(lineNum).at(0), variableValues) || IsVar(words.at(lineNum).at(0), globalVariableValues)))
 	{
 		// Evaluates what the operator (ex. '=', '+=') does to the value on the left by the value on the right
-		varOperation(vector<string>(words[lineNum].begin(), words[lineNum].end()), variableValues);
+		varOperation(vector<string>(words.at(lineNum).begin(), words.at(lineNum).end()), variableValues);
 		return nullType;
 	}
 
 	// Check existing variables: To see if class sub component matches
-	else if (count(words[lineNum][0], '.') > 0 && IsVar(split(words[lineNum][0], '.')[0], variableValues) || IsVar(split(words[lineNum][0], '.')[0], globalVariableValues))
+	else if (count(words.at(lineNum).at(0), '.') > 0 && IsVar(split(words.at(lineNum).at(0), '.')[0], variableValues) || IsVar(split(words.at(lineNum).at(0), '.')[0], globalVariableValues))
 	{
-		if (IsVar(split(words[lineNum][0], '.')[0], variableValues))
-			variableValues[split(words[lineNum][0], '.')[0]] = EditClassSubComponent(variableValues[split(words[lineNum][0], '.')[0]], words[lineNum][1], EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 2, words[lineNum].end())), variableValues), split(words[lineNum][0], '.')[1]);
-		else if (IsVar(split(words[lineNum][0], '.')[0], globalVariableValues))
-			globalVariableValues[split(words[lineNum][0], '.')[0]] = EditClassSubComponent(globalVariableValues[split(words[lineNum][0], '.')[0]], words[lineNum][1], EvalExpression(unWrapVec(vector<string>(words[lineNum].begin() + 2, words[lineNum].end())), variableValues), split(words[lineNum][0], '.')[1]);
+		if (IsVar(split(words.at(lineNum).at(0), '.')[0], variableValues))
+			variableValues[split(words.at(lineNum).at(0), '.')[0]] = EditClassSubComponent(variableValues[split(words.at(lineNum).at(0), '.')[0]], words.at(lineNum).at(1), EvalExpression(unWrapVec(vector<string>(words.at(lineNum).begin() + 2, words.at(lineNum).end())), variableValues), split(words.at(lineNum).at(0), '.')[1]);
+		else if (IsVar(split(words.at(lineNum).at(0), '.')[0], globalVariableValues))
+			globalVariableValues[split(words.at(lineNum).at(0), '.')[0]] = EditClassSubComponent(globalVariableValues[split(words.at(lineNum).at(0), '.')[0]], words.at(lineNum).at(1), EvalExpression(unWrapVec(vector<string>(words.at(lineNum).begin() + 2, words.at(lineNum).end())), variableValues), split(words.at(lineNum).at(0), '.')[1]);
 		return nullType;
 	}
 
 	// Gathers while loop contents
-	else if (words[lineNum][0] == "while")
+	else if (words.at(lineNum).at(0) == "while")
 	{
 		vector<vector<string>> whileContents;
 		vector<string> whileParameters;
 
-		for (int w = 1; w < (int)words[lineNum].size(); w++)
-			whileParameters.push_back(words[lineNum][w]);
+		for (int w = 1; w < (int)words.at(lineNum).size(); w++)
+			whileParameters.push_back(words.at(lineNum)[w]);
 
 		int numOfBrackets = 1;
 		for (int p = lineNum + 2; p < (int)words.size(); p++)
 		{
-			numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
+			numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
 			if (numOfBrackets == 0)
 				break;
-			whileContents.push_back(words[p]);
+			whileContents.push_back(words.at(p));
 		}
 		whileContents = removeTabsWdArry(whileContents, 1);
 
-		while (BooleanLogic(whileParameters[0], whileParameters[1], whileParameters[2], variableValues))
+		while (BooleanLogic(whileParameters.at(0), whileParameters.at(1), whileParameters.at(2), variableValues))
 		{
 			//Iterate through all lines in while loop
 			for (int lineNum = 0; lineNum < (int)whileContents.size(); lineNum++)
@@ -465,27 +465,27 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	}
 
 	// Gathers if statement contents
-	else if (words[lineNum][0] == "if")
+	else if (words.at(lineNum).at(0) == "if")
 	{
 		vector<vector<string>> ifContents;
 		vector<string> ifParameters;
 
-		for (int w = 1; w < (int)words[lineNum].size(); w++)
-			ifParameters.push_back(words[lineNum][w]);
+		for (int w = 1; w < (int)words.at(lineNum).size(); w++)
+			ifParameters.push_back(words.at(lineNum).at(w));
 
 		int numOfBrackets = 1;
 		lineNum += 2;
 		while (lineNum < (int)words.size())
 		{
-			numOfBrackets += countInVector(words[lineNum], "{") - countInVector(words[lineNum], "}");
+			numOfBrackets += countInVector(words.at(lineNum), "{") - countInVector(words.at(lineNum), "}");
 			if (numOfBrackets == 0)
 				break;
-			ifContents.push_back(words[lineNum]);
+			ifContents.push_back(words.at(lineNum));
 			lineNum++;
 		}
 		ifContents = removeTabsWdArry(ifContents, 1);
 
-		if (BooleanLogic(ifParameters[0], ifParameters[1], ifParameters[2], variableValues))
+		if (BooleanLogic(ifParameters.at(0), ifParameters.at(1), ifParameters.at(2), variableValues))
 		{
 			//Iterate through all lines in if statement
 			for (int l = 0; l < (int)ifContents.size(); l++)
@@ -546,7 +546,7 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 
 	unordered_map<string, boost::any> variableValues = {};
 	
-	std::vector<std::string> funcArgs = words[0]; // This causes problem in linux
+	std::vector<std::string> funcArgs = words.at(0);
 	
 	for (int i = 0; i < (int)inputVarVals.size(); i++)
 	{
@@ -570,7 +570,7 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 		}
 		catch (const std::exception&)
 		{
-			LogCriticalError("\'" + unWrapVec(words[lineNum]) + "\'\n                  In function: " + functionName + "\n                  Line: " + to_string(lineNum));
+			LogCriticalError("\'" + unWrapVec(words.at(lineNum)) + "\'\n                  In function: " + functionName + "\n                  Line: " + to_string(lineNum));
 		}
 	}
 	return nullType;
@@ -586,7 +586,7 @@ int parseSlang(string script)
 	vector<string> lines = split(script, '\n');
 	vector<vector<string>> words;
 	for (int i = 0; i < (int)lines.size(); i++)
-		words.push_back(split(lines[i], ' '));
+		words.push_back(split(lines.at(i), ' '));
 
 	#if DEVELOPER_MESSAGES
 	InterpreterLog("Gather variables & functions...");
@@ -596,20 +596,20 @@ int parseSlang(string script)
 	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
 	{
 		//Checks if it is function
-		if (words[lineNum][0] == "func")
+		if (words.at(lineNum).at(0) == "func")
 		{
 			vector<vector<string>> functionContents;
 
-			string functName = split(words[lineNum][1], '(')[0];
+			string functName = split(words.at(lineNum).at(1), '(')[0];
 #if DEVELOPER_MESSAGES == true
 			InterpreterLog("Load script function " + functName + "...");
 #endif
 
 			string args = "";
-			if (indexInStr(unWrapVec(words[lineNum]), ')') - indexInStr(unWrapVec(words[lineNum]), '(') > 1)
-				for (int w = 1; w < (int)words[lineNum].size(); w++) // Get all words from the instantiation line: these are the args
+			if (indexInStr(unWrapVec(words.at(lineNum)), ')') - indexInStr(unWrapVec(words.at(lineNum)), '(') > 1)
+				for (int w = 1; w < (int)words.at(lineNum).size(); w++) // Get all words from the instantiation line: these are the args
 				{
-					args += replace(replace(words[lineNum][w], "(", " "), ")", "");
+					args += replace(replace(words.at(lineNum).at(w), "(", " "), ")", "");
 				}
 
 			args = trim(replace(args, functName + " ", ""));
@@ -618,42 +618,41 @@ int parseSlang(string script)
 			int numOfBrackets = 1;
 			for (int p = lineNum + 2; p < (int)words.size(); p++)
 			{
-				numOfBrackets += countInVector(words[p], "{") - countInVector(words[p], "}");
+				numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
 				if (numOfBrackets == 0)
 					break;
-				functionContents.push_back(removeTabs(words[p], 1));
+				functionContents.push_back(removeTabs(words.at(p), 1));
 			}
 			functionValues[functName] = functionContents;
-			//cout << functName << " is \n" << Vec2Str(functionContents) << endl << endl;
 		}
 		else
 		{
-			if (words[lineNum][0] == "string"){
-				globalVariableValues[words[lineNum][1]] = StringRaw(words[lineNum][3]);
+			if (words.at(lineNum).at(0) == "string"){
+				globalVariableValues[words.at(lineNum).at(1)] = StringRaw(words.at(lineNum).at(3));
 #if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load script variable " + words[lineNum][1] + "...");
+				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
 #endif
 }
-			else if (words[lineNum][0] == "int"){
-				globalVariableValues[words[lineNum][1]] = stoi(words[lineNum][3]);
+			else if (words.at(lineNum).at(0) == "int"){
+				globalVariableValues[words.at(lineNum).at(1)] = stoi(words.at(lineNum).at(3));
 #if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load script variable " + words[lineNum][1] + "...");
+				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
 #endif
 }
-			else if (words[lineNum][0] == "float"){
-				globalVariableValues[words[lineNum][1]] = stof(words[lineNum][3]);
+			else if (words.at(lineNum).at(0) == "float"){
+				globalVariableValues[words.at(lineNum).at(1)] = stof(words.at(lineNum).at(3));
 #if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load script variable " + words[lineNum][1] + "...");
+				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
 #endif
 }
-			else if (words[lineNum][0] == "bool"){
-				globalVariableValues[words[lineNum][1]] = stob(words[lineNum][3]);
+			else if (words.at(lineNum).at(0) == "bool"){
+				globalVariableValues[words.at(lineNum).at(1)] = stob(words.at(lineNum).at(3));
 #if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load script variable " + words[lineNum][1] + "...");
+				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
 #endif
 }
-			//else
-			//	LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
+			/*else
+				LogWarning("unrecognized type \'" + words.at(lineNum).at(0) + "\' on line: " + to_string(lineNum));*/
 		}
 	}
 
@@ -724,7 +723,8 @@ int main(int argc, char* argv[])
 	else
 	{
 		LogWarning("No script provided! Please drag and drop .SLG file over interpreter executable file, or provide it's path as a command-line argument.");
-		//system("pause");
+		cout << "Press Enter to Continue";
+		cin.ignore();
 		exit(1);
 	}
 
