@@ -36,7 +36,7 @@
 #include "main.h"
 #include "anyops.h"
 
-#include "SLB.h"
+#include "ZS.h"
 
 using namespace std;
 using namespace boost;
@@ -74,7 +74,7 @@ boost::any GetVariableValue(const string& varName, const unordered_map<string, b
 
 bool IsVar(const string& varName, const unordered_map<string, boost::any>& variableValues)
 {
-	if (variableValues.find(split(varName, '.')[0]) != variableValues.end() && split(varName, '.')[0] != "SLB")
+	if (variableValues.find(split(varName, '.')[0]) != variableValues.end() && split(varName, '.')[0] != "ZS")
 		return true;
 	else
 		return false;
@@ -114,7 +114,7 @@ bool IsFunction(const string& funcName)
 	else
 		return false;
 }
-bool IsSLBFunction(const string& funcName)
+bool IsZSFunction(const string& funcName)
 {
 	if (funcName[0] == 'S' && funcName[1] == 'L' && funcName[2] == 'B' && funcName[3] == '.')
 		return true;
@@ -132,9 +132,9 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 #endif
 
 	bool isFunc = IsFunction(split(expression, '(')[0]);
-	bool isSLB = split(expression, '.')[0] == "SLB";
+	bool isZS = split(expression, '.')[0] == "ZS";
 	// If no operations are applied, then return self
-	if ((countOutsideParenthesis(expression, '+') == 0 && countOutsideParenthesis(expression, '-') == 0 && countOutsideParenthesis(expression, '*') == 0 && countOutsideParenthesis(expression, '/') == 0 && countOutsideParenthesis(expression, '^') == 0) || split(expression, '.')[0] == "SLB")
+	if ((countOutsideParenthesis(expression, '+') == 0 && countOutsideParenthesis(expression, '-') == 0 && countOutsideParenthesis(expression, '*') == 0 && countOutsideParenthesis(expression, '/') == 0 && countOutsideParenthesis(expression, '^') == 0) || split(expression, '.')[0] == "ZS")
 	{
 		bool isFunc = IsFunction(split(expression, '(')[0]);
 		if (isFunc && !inQuotes)
@@ -150,7 +150,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 			}
 			return ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
 		}
-		else if (split(expression, '.')[0] == "SLB" && !inQuotes)
+		else if (split(expression, '.')[0] == "ZS" && !inQuotes)
 		{
 			string argContents = "";
 			int y = indexInStr(expression, '(') + 1;
@@ -160,7 +160,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 
 				y++;
 			}
-			return SLBFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
+			return ZSFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
 		}
 		else
 			return GetVariableValue(expression, variableValues);
@@ -199,7 +199,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 				string returnVal = AnyAsString(ExecuteFunction(name, VarValues(split(argContents, ','), variableValues)));
 				newExpression += returnVal;
 			}
-			else if (split(name, '.')[0] == "SLB" && !inQuotes)
+			else if (split(name, '.')[0] == "ZS" && !inQuotes)
 			{
 				string argContents = "";
 				int y = indexInStr(expression, '(') + 1;
@@ -210,7 +210,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 					y++;
 				}
 				//cout << split(expression, '(')[0] << " " << argContents << endl;
-				string returnVal = AnyAsString(SLBFunction(split(name, '(')[0], VarValues(split(argContents, ','), variableValues)));
+				string returnVal = AnyAsString(ZSFunction(split(name, '(')[0], VarValues(split(argContents, ','), variableValues)));
 				newExpression += returnVal;
 			}
 			else
@@ -373,7 +373,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	if (words.at(lineNum).at(0)[0] == '/' && words.at(lineNum).at(0)[1] == '/')
 		return nullType;
 
-	// If print statement (deprecated, now use SLB.System.Print() function)
+	// If print statement (deprecated, now use ZS.System.Print() function)
 	else if (words.at(lineNum).at(0) == "print")
 	{
 		cout << StringRaw(AnyAsString(EvalExpression(unWrapVec(vector<string>(words.at(lineNum).begin() + 1, words.at(lineNum).end())), variableValues))) << endl;
@@ -384,7 +384,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	else if (words.at(lineNum).at(0) == "return")
 		return EvalExpression(unWrapVec(vector<string>(words.at(lineNum).begin() + 1, words.at(lineNum).end())), variableValues);
 
-	// Check if it is SLB Builtin function
+	// Check if it is ZS Builtin function
 	else if (words.at(lineNum).at(0)[0] == 'S' && words.at(lineNum).at(0)[1] == 'L' && words.at(lineNum).at(0)[2] == 'B' && words.at(lineNum).at(0)[3] == '.')
 		return EvalExpression(unWrapVec(words.at(lineNum)), variableValues);
 
@@ -576,7 +576,7 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 	return nullType;
 }
 
-int parseSlang(string script)
+int parseZSharp(string script)
 {
 	script = replace(script, "    ", "\t");
 	#if DEVELOPER_MESSAGES
@@ -668,7 +668,7 @@ int parseSlang(string script)
 int main(int argc, char* argv[])
 {
 	// Gathers builtin functions and variables
-	GetBuiltins(SLBContents);
+	GetBuiltins(ZSContents);
 	functionValues = builtinFunctionValues;
 	globalVariableValues = builtinVarVals;
 
@@ -722,7 +722,7 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		LogWarning("No script provided! Please drag and drop .SLG file over interpreter executable file, or provide it's path as a command-line argument.");
+		LogWarning("No script provided! Please drag and drop .ZS file over interpreter executable file, or provide it's path as a command-line argument.");
 		cout << "Press Enter to Continue";
 		cin.ignore();
 		exit(1);
@@ -733,7 +733,7 @@ int main(int argc, char* argv[])
 	#if DEVELOPER_MESSAGES
 	InterpreterLog("Parsing...");
 	#endif
-	parseSlang(scriptTextContents);
+	parseZSharp(scriptTextContents);
 
 	return 0;
 }

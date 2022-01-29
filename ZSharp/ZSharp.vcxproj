@@ -22,8 +22,9 @@
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{d5f150f8-1f83-41eb-a195-1b5c3ca9322a}</ProjectGuid>
-    <RootNamespace>Slang</RootNamespace>
+    <RootNamespace>ZSharp</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>ZSharp</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -166,14 +167,14 @@
     <ClInclude Include="graphics.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="SLB.h" />
+    <ClInclude Include="ZS.h" />
     <ClInclude Include="strops.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Slang.rc" />
+    <ResourceCompile Include="ZSharp.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

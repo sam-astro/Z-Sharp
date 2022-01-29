@@ -1,4 +1,4 @@
-// SLB program to evaluate a given expression
+// ZS program to evaluate a given expression
 #include <iostream>
 #include <fstream>
 #include <string>

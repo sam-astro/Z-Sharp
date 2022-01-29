@@ -3,7 +3,7 @@
 "VSVersion" = "3:800"
 "ProjectType" = "8:{978C614F-708E-4E1A-B201-565925725DBA}"
 "IsWebType" = "8:FALSE"
-"ProjectName" = "8:Slang-Installer"
+"ProjectName" = "8:ZSharp Installer"
 "LanguageId" = "3:1033"
 "CodePage" = "3:1252"
 "UILanguageId" = "3:1033"
@@ -93,7 +93,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:..\\Releases\\Slang-Installer\\Slang-Installer.msi"
+        "OutputFilename" = "8:..\\Releases\\ZSharp-Installer\\ZSharp-Installer.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -125,7 +125,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:..\\Releases\\Slang-Installer-Win-x64\\Slang-Installer.msi"
+        "OutputFilename" = "8:..\\Releases\\ZSharp-Installer-Win-x64\\ZSharp-Installer.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -174,7 +174,7 @@
         {
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_1BBDEA811E8A494DB30AB0E778BEF5B3"
             {
-            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\Pong-Example-Project\\square.png"
+            "SourcePath" = "8:..\\Releases\\ZSharp-Win-x64\\Pong-Example-Project\\square.png"
             "TargetName" = "8:square.png"
             "Tag" = "8:"
             "Folder" = "8:_AB72F4F4665144CA990532BBC3679E36"
@@ -194,7 +194,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_29CB0EFE95A142F4A149E51FAE871DDE"
             {
-            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\libtiff-5.dll"
+            "SourcePath" = "8:..\\Releases\\ZSharp-Win-x64\\libtiff-5.dll"
             "TargetName" = "8:libtiff-5.dll"
             "Tag" = "8:"
             "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
@@ -214,7 +214,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_38EBD2EEB8C34316A3249C9D9873B1C2"
             {
-            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\zlib1.dll"
+            "SourcePath" = "8:..\\Releases\\ZSharp-Win-x64\\zlib1.dll"
             "TargetName" = "8:zlib1.dll"
             "Tag" = "8:"
             "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
@@ -234,7 +234,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4B23F888FF8342319507C8AAA3334953"
             {
-            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\libpng16-16.dll"
+            "SourcePath" = "8:..\\Releases\\ZSharp-Win-x64\\libpng16-16.dll"
             "TargetName" = "8:libpng16-16.dll"
             "Tag" = "8:"
             "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
@@ -254,7 +254,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5F99C783A5A5405FAEED16B4899E66A3"
             {
-            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\Pong-Example-Project\\net.png"
+            "SourcePath" = "8:..\\Releases\\ZSharp-Win-x64\\Pong-Example-Project\\net.png"
             "TargetName" = "8:net.png"
             "Tag" = "8:"
             "Folder" = "8:_AB72F4F4665144CA990532BBC3679E36"
@@ -294,7 +294,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8116B924B2DC45BB901E89A2EEB674E6"
             {
-            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\libjpeg-9.dll"
+            "SourcePath" = "8:..\\Releases\\ZSharp-Win-x64\\libjpeg-9.dll"
             "TargetName" = "8:libjpeg-9.dll"
             "Tag" = "8:"
             "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
@@ -314,7 +314,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_84E97BEFD3C240DC822DAEF66BB20D79"
             {
-            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\Pong-Example-Project\\arial.ttf"
+            "SourcePath" = "8:..\\Releases\\ZSharp-Win-x64\\Pong-Example-Project\\arial.ttf"
             "TargetName" = "8:arial.ttf"
             "Tag" = "8:"
             "Folder" = "8:_AB72F4F4665144CA990532BBC3679E36"
@@ -334,7 +334,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8D4524D8D2654AF28CD2B8483A2B2505"
             {
-            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\libwebp-7.dll"
+            "SourcePath" = "8:..\\Releases\\ZSharp-Win-x64\\libwebp-7.dll"
             "TargetName" = "8:libwebp-7.dll"
             "Tag" = "8:"
             "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
@@ -354,7 +354,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F1964A3FC0114E58A81978C4C7107596"
             {
-            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\Pong-Example-Project\\script.slg"
+            "SourcePath" = "8:..\\Releases\\ZSharp-Win-x64\\Pong-Example-Project\\script.slg"
             "TargetName" = "8:script.slg"
             "Tag" = "8:"
             "Folder" = "8:_AB72F4F4665144CA990532BBC3679E36"
@@ -374,7 +374,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FEA298B841784CB2933DCEB504513792"
             {
-            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\libfreetype-6.dll"
+            "SourcePath" = "8:..\\Releases\\ZSharp-Win-x64\\libfreetype-6.dll"
             "TargetName" = "8:libfreetype-6.dll"
             "Tag" = "8:"
             "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
@@ -422,7 +422,7 @@
             }
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_BCDF457FF4564F7BBFD6AEF054FE16C2"
             {
-            "DefaultLocation" = "8:[ProgramFiles64Folder]\\Slang"
+            "DefaultLocation" = "8:[ProgramFiles64Folder]\\ZSharp"
             "Name" = "8:#1925"
             "AlwaysCreate" = "11:FALSE"
             "Condition" = "8:"
@@ -458,24 +458,24 @@
         "Product"
         {
         "Name" = "8:Microsoft Visual Studio"
-        "ProductName" = "8:Slang"
-        "ProductCode" = "8:{A5629CD2-46CB-4945-BBA2-BAC60F2DDFC4}"
-        "PackageCode" = "8:{DEE267E6-C968-4059-8F0F-4560CF270A35}"
+        "ProductName" = "8:ZSharp"
+        "ProductCode" = "8:{4E83312A-4C42-44BD-8604-E55F7D1B005B}"
+        "PackageCode" = "8:{A82E7BE4-0442-482B-A5CB-CC097C9915DF}"
         "UpgradeCode" = "8:{8ABDE53F-7FF9-455B-A777-B4C1C624FA13}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.2.2"
+        "ProductVersion" = "8:1.3.0"
         "Manufacturer" = "8:Sam-Astro"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
-        "Title" = "8:Slang"
+        "Title" = "8:ZSharp"
         "Subject" = "8:"
         "ARPCONTACT" = "8:Sam-Astro"
         "Keywords" = "8:"
-        "ARPCOMMENTS" = "8:Installer for Slang interpreter"
+        "ARPCOMMENTS" = "8:Installer for ZSharp interpreter"
         "ARPURLINFOABOUT" = "8:"
         "ARPPRODUCTICON" = "8:_7C9D3FE3584D494F807EBD12C93E2FC5"
         "ARPIconIndex" = "3:0"
@@ -981,7 +981,7 @@
         {
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_2441313DD4DA406BBC1915DDEE0AC74C"
             {
-            "SourcePath" = "8:..\\Releases\\Slang-Win-x64\\Slang.exe"
+            "SourcePath" = "8:..\\Releases\\ZSharp-Win-x64\\ZSharp.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"

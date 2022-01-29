@@ -41,7 +41,7 @@
     <ClInclude Include="main.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="SLB.h">
+    <ClInclude Include="ZS.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
@@ -54,7 +54,7 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="Slang.rc">
+    <ResourceCompile Include="ZSharp.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

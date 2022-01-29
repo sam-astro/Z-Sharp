@@ -73,7 +73,7 @@ int InterpreterLog(const string& logText)
 	bt = *localtime(&timer);
 #endif
 
-	cout << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mSlang: \x1B[32m" << logText << "\033[0m\t\t" << endl;
+	cout << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mZSharp: \x1B[32m" << logText << "\033[0m\t\t" << endl;
 	return 1;
 }
 
@@ -98,7 +98,7 @@ int LogCriticalError(const string& errorText)
 	bt = *localtime(&timer);
 #endif
 
-	cerr << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mSlang: \x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
+	cerr << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mZSharp: \x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
 	exit(EXIT_FAILURE);
 	return 2;
 }
@@ -255,62 +255,62 @@ int GetBuiltins(std::string s)
 }
 
 // Executes 
-boost::any SLBFunction(const string& name, const vector<boost::any>& args)
+boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 {
-	if (name == "SLB.Math.Sin")
+	if (name == "ZS.Math.Sin")
 		return sin(AnyAsFloat(args.at(0)));
-	else if (name == "SLB.Math.Cos")
+	else if (name == "ZS.Math.Cos")
 		return cos(AnyAsFloat(args.at(0)));
-	else if (name == "SLB.Math.Tan")
+	else if (name == "ZS.Math.Tan")
 		return tan(AnyAsFloat(args.at(0)));
-	else if (name == "SLB.Math.Round")
+	else if (name == "ZS.Math.Round")
 		return AnyAsInt(args.at(0));
-	else if (name == "SLB.Math.Lerp")
+	else if (name == "ZS.Math.Lerp")
 		return lerp(AnyAsFloat(args.at(0)), AnyAsFloat(args.at(1)), AnyAsFloat(args.at(2)));
-	else if (name == "SLB.Math.Abs")
+	else if (name == "ZS.Math.Abs")
 		return abs(AnyAsFloat(args.at(0)));
-	else if (name == "SLB.Graphics.Init")
+	else if (name == "ZS.Graphics.Init")
 	{
 #if DEVELOPER_MESSAGES == true
 		InterpreterLog("Init graphics");
 #endif
 		initGraphics(StringRaw(AnyAsString(args.at(0))), AnyAsInt(args.at(1)), AnyAsInt(args.at(2)));
 	}
-	else if (name == "SLB.Graphics.Sprite")
+	else if (name == "ZS.Graphics.Sprite")
 	{
 		Sprite s(StringRaw(AnyAsString(args.at(0))), any_cast<Vec2>(args.at(1)), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)));
 		return s;
 	}
-	else if (name == "SLB.Graphics.Draw")
+	else if (name == "ZS.Graphics.Draw")
 		any_cast<Sprite>(args.at(0)).Draw();
-	else if (name == "SLB.Graphics.Load")
+	else if (name == "ZS.Graphics.Load")
 		any_cast<Sprite>(args.at(0)).Load();
-	else if (name == "SLB.Graphics.Text")
+	else if (name == "ZS.Graphics.Text")
 	{
 		Text t(StringRaw(AnyAsString(args.at(0))), StringRaw(AnyAsString(args.at(1))), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)), AnyAsFloat(args.at(4)), (Uint8)AnyAsFloat(args.at(5)), (Uint8)AnyAsFloat(args.at(6)), (Uint8)AnyAsFloat(args.at(7)));
 		return t;
 	}
-	else if (name == "SLB.Graphics.DrawText")
+	else if (name == "ZS.Graphics.DrawText")
 		any_cast<Text>(args.at(0)).Draw();
-	else if (name == "SLB.Graphics.LoadText")
+	else if (name == "ZS.Graphics.LoadText")
 		any_cast<Text>(args.at(0)).Load();
-	else if (name == "SLB.Physics.AxisAlignedCollision")
+	else if (name == "ZS.Physics.AxisAlignedCollision")
 	{
 		return AxisAlignedCollision(any_cast<Sprite>(args.at(0)), any_cast<Sprite>(args.at(1)));
 	}
-	else if (name == "SLB.Input.GetKey")
+	else if (name == "ZS.Input.GetKey")
 		return KEYS[StringRaw(any_cast<string>(args.at(0)))] == 1;
-	else if (name == "SLB.System.Print")
+	else if (name == "ZS.System.Print")
 		cout << StringRaw(AnyAsString(args.at(0)));
-	else if (name == "SLB.System.PrintLine")
+	else if (name == "ZS.System.PrintLine")
 		cout << StringRaw(AnyAsString(args.at(0))) << endl;
-	else if (name == "SLB.System.Vec2")
+	else if (name == "ZS.System.Vec2")
 	{
 		Vec2 v(AnyAsFloat(args.at(0)), AnyAsFloat(args.at(1)));
 		return v;
 	}
 	else
-		LogWarning("SLB function \'" + name + "\' does not exist.");
+		LogWarning("ZS function \'" + name + "\' does not exist.");
 
 	return nullType;
 }
