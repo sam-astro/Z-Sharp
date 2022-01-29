@@ -57,7 +57,7 @@ func Main()
 {
     int screenWidth = 500
     int screenHeight = 500
-    CPP.Graphics.Init("Title of window", screenWidth, screenHeight)
+    ZS.Graphics.Init("Title of window", screenWidth, screenHeight)
     // After graphics are initialized, the main function will not finish.
     // Instead, Start() will be called a single time, then Update() every frame after that.
 }
@@ -71,13 +71,13 @@ func Start()
     float rotation = 0
 
     // Sprite object, stores (and loads from file) the texture, location, scale, and rotation
-    global Sprite exampleSprite = CPP.Graphics.Sprite("./square.png", position, scale, rotation)
+    global Sprite exampleSprite = ZS.Graphics.Sprite("./square.png", position, scale, rotation)
 }
 
 // Executes each frame
 func Update()
 {
     // Draws the image created in Start(). This is usually at the end of update.
-    CPP.Graphics.Draw(exampleSprite)   
+    ZS.Graphics.Draw(exampleSprite)   
 }
 ```
