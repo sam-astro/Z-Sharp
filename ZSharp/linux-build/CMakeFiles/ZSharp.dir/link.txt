@@ -1,0 +1,1 @@
+/usr/bin/c++  -O3 -DNDEBUG  -rdynamic CMakeFiles/ZSharp.dir/Main.cpp.o CMakeFiles/ZSharp.dir/strops.cpp.o CMakeFiles/ZSharp.dir/eval.cpp.o  -o ZSharp  -lm /usr/lib/x86_64-linux-gnu/libboost_system.so.1.71.0 -lSDL2 -lSDL2_image -lSDL2_ttf 

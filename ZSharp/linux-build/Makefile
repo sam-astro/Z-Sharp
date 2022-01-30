@@ -48,10 +48,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/sam/StuLang/Slang
+CMAKE_SOURCE_DIR = /home/sam/Z-Sharp/ZSharp
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/sam/StuLang/Slang/linux-build
+CMAKE_BINARY_DIR = /home/sam/Z-Sharp/ZSharp/linux-build
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -80,9 +80,9 @@ edit_cache/fast: edit_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/sam/StuLang/Slang/linux-build/CMakeFiles /home/sam/StuLang/Slang/linux-build/CMakeFiles/progress.marks
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sam/Z-Sharp/ZSharp/linux-build/CMakeFiles /home/sam/Z-Sharp/ZSharp/linux-build/CMakeFiles/progress.marks
 	$(MAKE) -f CMakeFiles/Makefile2 all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/sam/StuLang/Slang/linux-build/CMakeFiles 0
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sam/Z-Sharp/ZSharp/linux-build/CMakeFiles 0
 .PHONY : all
 
 # The main clean target
@@ -111,17 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named Slang
+# Target rules for targets named ZSharp
 
 # Build rule for target.
-Slang: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 Slang
-.PHONY : Slang
+ZSharp: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ZSharp
+.PHONY : ZSharp
 
 # fast build rule for target.
-Slang/fast:
-	$(MAKE) -f CMakeFiles/Slang.dir/build.make CMakeFiles/Slang.dir/build
-.PHONY : Slang/fast
+ZSharp/fast:
+	$(MAKE) -f CMakeFiles/ZSharp.dir/build.make CMakeFiles/ZSharp.dir/build
+.PHONY : ZSharp/fast
 
 Main.o: Main.cpp.o
 
@@ -129,7 +129,7 @@ Main.o: Main.cpp.o
 
 # target to build an object file
 Main.cpp.o:
-	$(MAKE) -f CMakeFiles/Slang.dir/build.make CMakeFiles/Slang.dir/Main.cpp.o
+	$(MAKE) -f CMakeFiles/ZSharp.dir/build.make CMakeFiles/ZSharp.dir/Main.cpp.o
 .PHONY : Main.cpp.o
 
 Main.i: Main.cpp.i
@@ -138,7 +138,7 @@ Main.i: Main.cpp.i
 
 # target to preprocess a source file
 Main.cpp.i:
-	$(MAKE) -f CMakeFiles/Slang.dir/build.make CMakeFiles/Slang.dir/Main.cpp.i
+	$(MAKE) -f CMakeFiles/ZSharp.dir/build.make CMakeFiles/ZSharp.dir/Main.cpp.i
 .PHONY : Main.cpp.i
 
 Main.s: Main.cpp.s
@@ -147,7 +147,7 @@ Main.s: Main.cpp.s
 
 # target to generate assembly for a file
 Main.cpp.s:
-	$(MAKE) -f CMakeFiles/Slang.dir/build.make CMakeFiles/Slang.dir/Main.cpp.s
+	$(MAKE) -f CMakeFiles/ZSharp.dir/build.make CMakeFiles/ZSharp.dir/Main.cpp.s
 .PHONY : Main.cpp.s
 
 eval.o: eval.cpp.o
@@ -156,7 +156,7 @@ eval.o: eval.cpp.o
 
 # target to build an object file
 eval.cpp.o:
-	$(MAKE) -f CMakeFiles/Slang.dir/build.make CMakeFiles/Slang.dir/eval.cpp.o
+	$(MAKE) -f CMakeFiles/ZSharp.dir/build.make CMakeFiles/ZSharp.dir/eval.cpp.o
 .PHONY : eval.cpp.o
 
 eval.i: eval.cpp.i
@@ -165,7 +165,7 @@ eval.i: eval.cpp.i
 
 # target to preprocess a source file
 eval.cpp.i:
-	$(MAKE) -f CMakeFiles/Slang.dir/build.make CMakeFiles/Slang.dir/eval.cpp.i
+	$(MAKE) -f CMakeFiles/ZSharp.dir/build.make CMakeFiles/ZSharp.dir/eval.cpp.i
 .PHONY : eval.cpp.i
 
 eval.s: eval.cpp.s
@@ -174,7 +174,7 @@ eval.s: eval.cpp.s
 
 # target to generate assembly for a file
 eval.cpp.s:
-	$(MAKE) -f CMakeFiles/Slang.dir/build.make CMakeFiles/Slang.dir/eval.cpp.s
+	$(MAKE) -f CMakeFiles/ZSharp.dir/build.make CMakeFiles/ZSharp.dir/eval.cpp.s
 .PHONY : eval.cpp.s
 
 strops.o: strops.cpp.o
@@ -183,7 +183,7 @@ strops.o: strops.cpp.o
 
 # target to build an object file
 strops.cpp.o:
-	$(MAKE) -f CMakeFiles/Slang.dir/build.make CMakeFiles/Slang.dir/strops.cpp.o
+	$(MAKE) -f CMakeFiles/ZSharp.dir/build.make CMakeFiles/ZSharp.dir/strops.cpp.o
 .PHONY : strops.cpp.o
 
 strops.i: strops.cpp.i
@@ -192,7 +192,7 @@ strops.i: strops.cpp.i
 
 # target to preprocess a source file
 strops.cpp.i:
-	$(MAKE) -f CMakeFiles/Slang.dir/build.make CMakeFiles/Slang.dir/strops.cpp.i
+	$(MAKE) -f CMakeFiles/ZSharp.dir/build.make CMakeFiles/ZSharp.dir/strops.cpp.i
 .PHONY : strops.cpp.i
 
 strops.s: strops.cpp.s
@@ -201,7 +201,7 @@ strops.s: strops.cpp.s
 
 # target to generate assembly for a file
 strops.cpp.s:
-	$(MAKE) -f CMakeFiles/Slang.dir/build.make CMakeFiles/Slang.dir/strops.cpp.s
+	$(MAKE) -f CMakeFiles/ZSharp.dir/build.make CMakeFiles/ZSharp.dir/strops.cpp.s
 .PHONY : strops.cpp.s
 
 # Help Target
@@ -212,7 +212,7 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... Slang"
+	@echo "... ZSharp"
 	@echo "... Main.o"
 	@echo "... Main.i"
 	@echo "... Main.s"

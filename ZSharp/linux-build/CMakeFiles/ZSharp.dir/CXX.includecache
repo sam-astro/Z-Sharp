@@ -6,7 +6,7 @@
 
 #IncludeRegexTransform: 
 
-/home/sam/StuLang/Slang/Main.cpp
+/home/sam/Z-Sharp/ZSharp/Main.cpp
 iostream
 -
 fstream
@@ -38,29 +38,29 @@ filesystem
 windows.h
 -
 eval.h
-/home/sam/StuLang/Slang/eval.h
+/home/sam/Z-Sharp/ZSharp/eval.h
 strops.h
-/home/sam/StuLang/Slang/strops.h
+/home/sam/Z-Sharp/ZSharp/strops.h
 builtin.h
-/home/sam/StuLang/Slang/builtin.h
+/home/sam/Z-Sharp/ZSharp/builtin.h
 main.h
-/home/sam/StuLang/Slang/main.h
+/home/sam/Z-Sharp/ZSharp/main.h
 anyops.h
-/home/sam/StuLang/Slang/anyops.h
-SLB.h
-/home/sam/StuLang/Slang/SLB.h
+/home/sam/Z-Sharp/ZSharp/anyops.h
+ZS.h
+/home/sam/Z-Sharp/ZSharp/ZS.h
 
-/home/sam/StuLang/Slang/SLB.h
+/home/sam/Z-Sharp/ZSharp/ZS.h
 string
 -
 
-/home/sam/StuLang/Slang/anyops.h
+/home/sam/Z-Sharp/ZSharp/anyops.h
 builtin.h
-/home/sam/StuLang/Slang/builtin.h
+/home/sam/Z-Sharp/ZSharp/builtin.h
 boost/any.hpp
 -
 
-/home/sam/StuLang/Slang/builtin.h
+/home/sam/Z-Sharp/ZSharp/builtin.h
 iostream
 -
 fstream
@@ -76,11 +76,11 @@ algorithm
 unordered_map
 -
 strops.h
-/home/sam/StuLang/Slang/strops.h
+/home/sam/Z-Sharp/ZSharp/strops.h
 graphics.h
-/home/sam/StuLang/Slang/graphics.h
+/home/sam/Z-Sharp/ZSharp/graphics.h
 anyops.h
-/home/sam/StuLang/Slang/anyops.h
+/home/sam/Z-Sharp/ZSharp/anyops.h
 boost/any.hpp
 -
 SDL.h
@@ -90,7 +90,7 @@ ctime
 math.h
 -
 
-/home/sam/StuLang/Slang/eval.cpp
+/home/sam/Z-Sharp/ZSharp/eval.cpp
 iostream
 -
 fstream
@@ -104,15 +104,15 @@ limits
 stack
 -
 eval.h
-/home/sam/StuLang/Slang/eval.h
+/home/sam/Z-Sharp/ZSharp/eval.h
 strops.h
-/home/sam/StuLang/Slang/strops.h
+/home/sam/Z-Sharp/ZSharp/strops.h
 math.h
 -
 
-/home/sam/StuLang/Slang/eval.h
+/home/sam/Z-Sharp/ZSharp/eval.h
 
-/home/sam/StuLang/Slang/graphics.h
+/home/sam/Z-Sharp/ZSharp/graphics.h
 iostream
 -
 fstream
@@ -128,9 +128,9 @@ algorithm
 boost/any.hpp
 -
 strops.h
-/home/sam/StuLang/Slang/strops.h
+/home/sam/Z-Sharp/ZSharp/strops.h
 main.h
-/home/sam/StuLang/Slang/main.h
+/home/sam/Z-Sharp/ZSharp/main.h
 SDL.h
 -
 SDL_image.h
@@ -150,9 +150,9 @@ string
 any
 -
 
-/home/sam/StuLang/Slang/main.h
+/home/sam/Z-Sharp/ZSharp/main.h
 
-/home/sam/StuLang/Slang/strops.cpp
+/home/sam/Z-Sharp/ZSharp/strops.cpp
 iostream
 -
 fstream
@@ -166,9 +166,9 @@ limits
 boost/any.hpp
 -
 strops.h
-/home/sam/StuLang/Slang/strops.h
+/home/sam/Z-Sharp/ZSharp/strops.h
 
-/home/sam/StuLang/Slang/strops.h
+/home/sam/Z-Sharp/ZSharp/strops.h
 boost/any.hpp
 -
 

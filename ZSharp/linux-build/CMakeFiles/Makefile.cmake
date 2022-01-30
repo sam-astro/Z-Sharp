@@ -131,5 +131,5 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/Slang.dir/DependInfo.cmake"
+  "CMakeFiles/ZSharp.dir/DependInfo.cmake"
   )

@@ -44,16 +44,16 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/sam/StuLang/Slang
+CMAKE_SOURCE_DIR = /home/sam/Z-Sharp/ZSharp
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/sam/StuLang/Slang/linux-build
+CMAKE_BINARY_DIR = /home/sam/Z-Sharp/ZSharp/linux-build
 
 #=============================================================================
 # Directory level rules for the build root directory
 
 # The main recursive "all" target.
-all: CMakeFiles/Slang.dir/all
+all: CMakeFiles/ZSharp.dir/all
 
 .PHONY : all
 
@@ -63,36 +63,36 @@ preinstall:
 .PHONY : preinstall
 
 # The main recursive "clean" target.
-clean: CMakeFiles/Slang.dir/clean
+clean: CMakeFiles/ZSharp.dir/clean
 
 .PHONY : clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/Slang.dir
+# Target rules for target CMakeFiles/ZSharp.dir
 
 # All Build rule for target.
-CMakeFiles/Slang.dir/all:
-	$(MAKE) -f CMakeFiles/Slang.dir/build.make CMakeFiles/Slang.dir/depend
-	$(MAKE) -f CMakeFiles/Slang.dir/build.make CMakeFiles/Slang.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sam/StuLang/Slang/linux-build/CMakeFiles --progress-num=1,2,3,4 "Built target Slang"
-.PHONY : CMakeFiles/Slang.dir/all
+CMakeFiles/ZSharp.dir/all:
+	$(MAKE) -f CMakeFiles/ZSharp.dir/build.make CMakeFiles/ZSharp.dir/depend
+	$(MAKE) -f CMakeFiles/ZSharp.dir/build.make CMakeFiles/ZSharp.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/sam/Z-Sharp/ZSharp/linux-build/CMakeFiles --progress-num=1,2,3,4 "Built target ZSharp"
+.PHONY : CMakeFiles/ZSharp.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/Slang.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/sam/StuLang/Slang/linux-build/CMakeFiles 4
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/Slang.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/sam/StuLang/Slang/linux-build/CMakeFiles 0
-.PHONY : CMakeFiles/Slang.dir/rule
+CMakeFiles/ZSharp.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sam/Z-Sharp/ZSharp/linux-build/CMakeFiles 4
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/ZSharp.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/sam/Z-Sharp/ZSharp/linux-build/CMakeFiles 0
+.PHONY : CMakeFiles/ZSharp.dir/rule
 
 # Convenience name for target.
-Slang: CMakeFiles/Slang.dir/rule
+ZSharp: CMakeFiles/ZSharp.dir/rule
 
-.PHONY : Slang
+.PHONY : ZSharp
 
 # clean rule for target.
-CMakeFiles/Slang.dir/clean:
-	$(MAKE) -f CMakeFiles/Slang.dir/build.make CMakeFiles/Slang.dir/clean
-.PHONY : CMakeFiles/Slang.dir/clean
+CMakeFiles/ZSharp.dir/clean:
+	$(MAKE) -f CMakeFiles/ZSharp.dir/build.make CMakeFiles/ZSharp.dir/clean
+.PHONY : CMakeFiles/ZSharp.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

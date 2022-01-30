@@ -4,9 +4,9 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
-  "/home/sam/StuLang/Slang/Main.cpp" "/home/sam/StuLang/Slang/linux-build/CMakeFiles/Slang.dir/Main.cpp.o"
-  "/home/sam/StuLang/Slang/eval.cpp" "/home/sam/StuLang/Slang/linux-build/CMakeFiles/Slang.dir/eval.cpp.o"
-  "/home/sam/StuLang/Slang/strops.cpp" "/home/sam/StuLang/Slang/linux-build/CMakeFiles/Slang.dir/strops.cpp.o"
+  "/home/sam/Z-Sharp/ZSharp/Main.cpp" "/home/sam/Z-Sharp/ZSharp/linux-build/CMakeFiles/ZSharp.dir/Main.cpp.o"
+  "/home/sam/Z-Sharp/ZSharp/eval.cpp" "/home/sam/Z-Sharp/ZSharp/linux-build/CMakeFiles/ZSharp.dir/eval.cpp.o"
+  "/home/sam/Z-Sharp/ZSharp/strops.cpp" "/home/sam/Z-Sharp/ZSharp/linux-build/CMakeFiles/ZSharp.dir/strops.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
