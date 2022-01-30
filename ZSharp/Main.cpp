@@ -116,7 +116,7 @@ bool IsFunction(const string& funcName)
 }
 bool IsZSFunction(const string& funcName)
 {
-	if (funcName[0] == 'S' && funcName[1] == 'L' && funcName[2] == 'B' && funcName[3] == '.')
+	if (funcName[0] == 'Z' && funcName[1] == 'S' && funcName[2] == '.')
 		return true;
 	else
 		return false;
@@ -385,7 +385,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 		return EvalExpression(unWrapVec(vector<string>(words.at(lineNum).begin() + 1, words.at(lineNum).end())), variableValues);
 
 	// Check if it is ZS Builtin function
-	else if (words.at(lineNum).at(0)[0] == 'S' && words.at(lineNum).at(0)[1] == 'L' && words.at(lineNum).at(0)[2] == 'B' && words.at(lineNum).at(0)[3] == '.')
+	else if (words.at(lineNum).at(0)[0] == 'Z' && words.at(lineNum).at(0)[1] == 'S' && words.at(lineNum).at(0)[2] == '.')
 		return EvalExpression(unWrapVec(words.at(lineNum)), variableValues);
 
 	// Check if it is function
@@ -735,5 +735,11 @@ int main(int argc, char* argv[])
 	#endif
 	parseZSharp(scriptTextContents);
 
+
+#if DEVELOPER_MESSAGES
+	cout << "Press Enter to Continue";
+	cin.ignore();
+	exit(1);
+#endif
 	return 0;
 }

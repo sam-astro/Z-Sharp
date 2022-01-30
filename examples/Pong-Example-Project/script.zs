@@ -13,11 +13,11 @@ float lerpSpeed = 14
 bool aiOn = false
 
 // Main is always run at the VERY BEGINNING. Start() is the start of GRAPHICS
-// so if you never call SLB.Grapgics.Init, then Start won't run
+// so if you never call ZS.Grapgics.Init, then Start won't run
 func Main()
 {
 	// Immediately creates the window, then Start(), then the game loop. The game loop calls Update() every frame
-	SLB.Graphics.Init("This is a pong game", SCREENW, SCREENH)
+	ZS.Graphics.Init("This is a pong game", SCREENW, SCREENH)
 }
 
 func Start()
@@ -39,22 +39,22 @@ func Start()
 	Vec2 rPaddlePosition = NVec2(rOffset, yPosPaddle)
 	global Vec2 rPaddleTargetPosition = NVec2(rOffset, yPosPaddle)
 	
-	global Sprite ballSpr = SLB.Graphics.Sprite("./square.png", ballPos, ballScale, 0)
-	global Sprite lPaddle = SLB.Graphics.Sprite("./square.png", lPaddlePosition, paddleScale, 0)
-	global Sprite rPaddle = SLB.Graphics.Sprite("./square.png", rPaddlePosition, paddleScale, 0)
+	global Sprite ballSpr = ZS.Graphics.Sprite("./square.png", ballPos, ballScale, 0)
+	global Sprite lPaddle = ZS.Graphics.Sprite("./square.png", lPaddlePosition, paddleScale, 0)
+	global Sprite rPaddle = ZS.Graphics.Sprite("./square.png", rPaddlePosition, paddleScale, 0)
 	
 	Vec2 netScale = NVec2(1, SCREENH)
-	global Sprite net = SLB.Graphics.Sprite("./net.png", centerOfScreen, netScale, 0)
+	global Sprite net = ZS.Graphics.Sprite("./net.png", centerOfScreen, netScale, 0)
 	
 	float leftOffset = SCREENW / 4
 	Vec2 scoreOnePos = NVec2(leftOffset, 30)
-	global Text scoreTextOne = SLB.Graphics.Text("0", "./arial.ttf", scoreOnePos, 60, 0, 255, 255, 255)
+	global Text scoreTextOne = ZS.Graphics.Text("0", "./arial.ttf", scoreOnePos, 60, 0, 255, 255, 255)
 	float rightOffset = SCREENW - (SCREENW / 4)
 	Vec2 scoreTwoPos = NVec2(rightOffset, 30)
-	global Text scoreTextTwo = SLB.Graphics.Text("0", "./arial.ttf", scoreTwoPos, 60, 0, 255, 255, 255)
+	global Text scoreTextTwo = ZS.Graphics.Text("0", "./arial.ttf", scoreTwoPos, 60, 0, 255, 255, 255)
 	
 	Vec2 instructionsPos = NVec2(centerOfScreen.x, SCREENH - 60)
-	global Text instructionsText = SLB.Graphics.Text("Use 'W' and 'S' or 'UP' and 'DOWN' arrows to control or press 'ENTER' to toggle AI", "./arial.ttf", instructionsPos, 20, 0, 255, 255, 255)
+	global Text instructionsText = ZS.Graphics.Text("Use 'W' and 'S' or 'UP' and 'DOWN' arrows to control or press 'ENTER' to toggle AI", "./arial.ttf", instructionsPos, 20, 0, 255, 255, 255)
 	
 	global Vec2 ballVelocity = NVec2(ballSpeed, ballSpeed)
 }
@@ -156,16 +156,16 @@ func Update(deltaTime)
 	ballSpr.position += scaledVelocity
 	
 	// Finally draws all of the sprites
-	SLB.Graphics.Draw(ballSpr)
-	SLB.Graphics.Draw(lPaddle)
-	SLB.Graphics.Draw(rPaddle)
+	ZS.Graphics.Draw(ballSpr)
+	ZS.Graphics.Draw(lPaddle)
+	ZS.Graphics.Draw(rPaddle)
 	
-	SLB.Graphics.Draw(net)
+	ZS.Graphics.Draw(net)
 	
-	SLB.Graphics.DrawText(scoreTextOne)
-	SLB.Graphics.DrawText(scoreTextTwo)
+	ZS.Graphics.DrawText(scoreTextOne)
+	ZS.Graphics.DrawText(scoreTextTwo)
 	
-	SLB.Graphics.DrawText(instructionsText)
+	ZS.Graphics.DrawText(instructionsText)
 	
 	HandleBallBounce()
 }
@@ -256,6 +256,6 @@ func HandleBallBounce()
 
 func Colliding(a, b)
 {
-	bool b = SLB.Physics.AxisAlignedCollision(a, b)
+	bool b = ZS.Physics.AxisAlignedCollision(a, b)
 	return b
 }
