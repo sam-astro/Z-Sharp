@@ -34,7 +34,7 @@ Downloading or installing is very simple. I recommend the regular version if you
 5. Feel free to use and edit the included `Pong-Example-Project`. It is a single script called `script.zs`, and you can open it with any of the methods above.
 
 ## Here is some example code:
-```c#
+```c++
 // Comments are indicated by two forward slashes
 // They can only be on their own line
 //    int j = 4 // <- This is invalid comment placement
@@ -86,7 +86,7 @@ func GlobalFunction()
 }
 ```
 Here is how to use graphics:
-```c#
+```c++
 func Main()
 {
     int screenWidth = 500
@@ -115,3 +115,22 @@ func Update()
     ZS.Graphics.Draw(exampleSprite)   
 }
 ```
+Currently, ZSharp is ***VERY*** strict with formatting, and can throw an error if you forget to put a space somewhere.
+Also, speaking of errors, if your code has any it will show in the console. Errors are colored red, and warnings are colored yellow. A line number will also usually be provided. This is ***Not*** the line relative to the *documents* beginning, but rather the *functions* beginning.
+Example:
+```
+ERROR: line 5 in function Main
+```
+This is the 5th line *inside of Main*.
+```c++
+func Main()
+{
+   // line 1
+   // line 2
+   // line 3
+   // line 4
+   int g = "s"
+   // ^ above line is the error, since it is line 5
+}
+```
+I am planning to change how error reporting works to report the document line number as well, but this is how it is for now.
