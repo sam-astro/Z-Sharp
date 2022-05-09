@@ -5,6 +5,7 @@ CMakeFiles/ZSharp.dir/Main.cpp.o: ../Main.cpp
 CMakeFiles/ZSharp.dir/Main.cpp.o: ../ZS.h
 CMakeFiles/ZSharp.dir/Main.cpp.o: ../anyops.h
 CMakeFiles/ZSharp.dir/Main.cpp.o: ../builtin.h
+CMakeFiles/ZSharp.dir/Main.cpp.o: ../color.hpp
 CMakeFiles/ZSharp.dir/Main.cpp.o: ../eval.h
 CMakeFiles/ZSharp.dir/Main.cpp.o: ../graphics.h
 CMakeFiles/ZSharp.dir/Main.cpp.o: ../main.h
