@@ -4,6 +4,7 @@
 #include <string>
 #define DEVELOPER_MESSAGES false
 #define EXAMPLE_PROJECT false
+#define NAMEVERSION "ZSharp v2.0.1"
 
 #if defined(__unix__)
 #define UNIX true
@@ -667,6 +668,9 @@ int parseZSharp(string script)
 
 int main(int argc, char* argv[])
 {
+	PrintColored(NAMEVERSION, blackFGColor, whiteBGColor, false);
+	cout << endl << endl;
+
 	// Gathers builtin functions and variables
 	GetBuiltins(ZSContents);
 	functionValues = builtinFunctionValues;

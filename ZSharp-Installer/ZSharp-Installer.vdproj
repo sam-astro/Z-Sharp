@@ -39,6 +39,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_46D1C7842E24CD892F141F606320254D"
+        "OwnerKey" = "8:_2441313DD4DA406BBC1915DDEE0AC74C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_4B23F888FF8342319507C8AAA3334953"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -75,8 +81,20 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_B45D1C0CAD47E39747A5D61CA224DD63"
+        "OwnerKey" = "8:_2441313DD4DA406BBC1915DDEE0AC74C"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_EF059CAB8D2A4444B8233E61C53F3349"
         "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_FE3DC1C6AB05AF8BE37B122F3511FF54"
+        "OwnerKey" = "8:_2441313DD4DA406BBC1915DDEE0AC74C"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -232,6 +250,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_46D1C7842E24CD892F141F606320254D"
+            {
+            "SourcePath" = "8:VCRUNTIME140.dll"
+            "TargetName" = "8:VCRUNTIME140.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_4B23F888FF8342319507C8AAA3334953"
             {
             "SourcePath" = "8:..\\Releases\\ZSharp-Win-x64\\libpng16-16.dll"
@@ -352,6 +390,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_B45D1C0CAD47E39747A5D61CA224DD63"
+            {
+            "SourcePath" = "8:MSVCP140.dll"
+            "TargetName" = "8:MSVCP140.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_EF059CAB8D2A4444B8233E61C53F3349"
             {
             "SourcePath" = "8:..\\Releases\\ZSharp-Win-x64\\Pong-Example-Project\\script.zs"
@@ -370,6 +428,26 @@
             "Register" = "3:1"
             "Exclude" = "11:FALSE"
             "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FE3DC1C6AB05AF8BE37B122F3511FF54"
+            {
+            "SourcePath" = "8:VCRUNTIME140_1.dll"
+            "TargetName" = "8:VCRUNTIME140_1.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_BCDF457FF4564F7BBFD6AEF054FE16C2"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:TRUE"
             "IsolateTo" = "8:"
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FEA298B841784CB2933DCEB504513792"
@@ -459,15 +537,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:ZSharp"
-        "ProductCode" = "8:{B75754F2-622A-4EEE-9B96-1D044E1D851A}"
-        "PackageCode" = "8:{43E9A0EA-2D92-4C19-B840-BADB645A9016}"
+        "ProductCode" = "8:{627A4201-79CB-478F-8428-14290415EB37}"
+        "PackageCode" = "8:{CC2CE192-0CB8-470F-A41F-324CE6C0C71E}"
         "UpgradeCode" = "8:{8ABDE53F-7FF9-455B-A777-B4C1C624FA13}"
         "AspNetVersion" = "8:2.0.50727.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:2.0.0"
+        "ProductVersion" = "8:2.0.1"
         "Manufacturer" = "8:Sam-Astro"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"

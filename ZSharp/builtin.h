@@ -16,7 +16,9 @@
 #include "strops.h"
 #include "graphics.h"
 #include "anyops.h"
+#if WINDOWS
 #include "color.hpp"
+#endif
 
 //#define DEVELOPER_MESSAGES false
 
@@ -28,41 +30,42 @@ vector<string> types = { "int", "float", "string", "bool", "void", "null", "Spri
 unordered_map<string, vector<vector<string>>> builtinFunctionValues;
 unordered_map<string, boost::any> builtinVarVals;
 
-	// Foreground colors
-	const std::string blackFGColor = "\x1B[30m";
-	const std::string redFGColor = "\x1B[31m";
-	const std::string greenFGColor = "\x1B[32m";
-	const std::string yellowFGColor = "\x1B[33m";
-	const std::string blueFGColor = "\x1B[34m";
-	const std::string magentaFGColor = "\x1B[35m";
-	const std::string cyanFGColor = "\x1B[36m";
-	const std::string whiteFGColor = "\x1B[37m";
-	const std::string brightBlackFGColor = "\x1B[90m";
-	const std::string brightRedFGColor = "\x1B[91m";
-	const std::string brightGreenFGColor = "\x1B[92m";
-	const std::string brightYellowFGColor = "\x1B[93m";
-	const std::string brightBlueFGColor = "\x1B[94m";
-	const std::string brightMagentaFGColor = "\x1B[95m";
-	const std::string brightCyanFGColor = "\x1B[96m";
-	const std::string brightWhiteFGColor = "\x1B[97m";
-
-	//Background colors
-	const std::string blackBGColor = "\x1B[40m";
-	const std::string redBGColor = "\x1B[41m";
-	const std::string greenBGColor = "\x1B[42m";
-	const std::string yellowBGColor = "\x1B[43m";
-	const std::string blueBGColor = "\x1B[44m";
-	const std::string magentaBGColor = "\x1B[45m";
-	const std::string cyanBGColor = "\x1B[46m";
-	const std::string whiteBGColor = "\x1B[47m";
-	const std::string brightBlackBGColor = "\x1B[100m";
-	const std::string brightRedBGColor = "\x1B[101m";
-	const std::string brightGreenBGColor = "\x1B[102m";
-	const std::string brightYellowBGColor = "\x1B[103m";
-	const std::string brightBlueBGColor = "\x1B[104m";
-	const std::string brightMagentaBGColor = "\x1B[105m";
-	const std::string brightCyanBGColor = "\x1B[106m";
-	const std::string brightWhiteBGColor = "\x1B[107m";
+// Foreground colors
+const std::string blackFGColor = "\x1B[30m";
+const std::string redFGColor = "\x1B[31m";
+const std::string greenFGColor = "\x1B[32m";
+const std::string yellowFGColor = "\x1B[33m";
+const std::string blueFGColor = "\x1B[34m";
+const std::string magentaFGColor = "\x1B[35m";
+const std::string cyanFGColor = "\x1B[36m";
+const std::string whiteFGColor = "\x1B[37m";
+const std::string brightBlackFGColor = "\x1B[90m";
+const std::string brightRedFGColor = "\x1B[91m";
+const std::string brightGreenFGColor = "\x1B[92m";
+const std::string brightYellowFGColor = "\x1B[93m";
+const std::string brightBlueFGColor = "\x1B[94m";
+const std::string brightMagentaFGColor = "\x1B[95m";
+const std::string brightCyanFGColor = "\x1B[96m";
+const std::string brightWhiteFGColor = "\x1B[97m";
+//Background colors
+const std::string blackBGColor = "\x1B[40m";
+const std::string redBGColor = "\x1B[41m";
+const std::string greenBGColor = "\x1B[42m";
+const std::string yellowBGColor = "\x1B[43m";
+const std::string blueBGColor = "\x1B[44m";
+const std::string magentaBGColor = "\x1B[45m";
+const std::string cyanBGColor = "\x1B[46m";
+const std::string whiteBGColor = "\x1B[47m";
+const std::string brightBlackBGColor = "\x1B[100m";
+const std::string brightRedBGColor = "\x1B[101m";
+const std::string brightGreenBGColor = "\x1B[102m";
+const std::string brightYellowBGColor = "\x1B[103m";
+const std::string brightBlueBGColor = "\x1B[104m";
+const std::string brightMagentaBGColor = "\x1B[105m";
+const std::string brightCyanBGColor = "\x1B[106m";
+const std::string brightWhiteBGColor = "\x1B[107m";
+// Reset color
+const std::string resetColor = "\033[0m";
 
 class NullType {
 public:
@@ -87,32 +90,46 @@ float lerp(float a, float b, float f)
 void PrintColored(std::string text, std::string fgColor, std::string bgColor, bool isError)
 {
 #if WINDOWS
-	auto fg = dye::white(text);
 	if (fgColor == blackFGColor)
-		fg = dye::black(text);
+		cerr << hue::black;
 	else if (fgColor == redFGColor)
-		fg = dye::red(text);
+		cerr << hue::red;
 	else if (fgColor == greenFGColor)
-		fg = dye::green(text);
+		cerr << hue::green;
 	else if (fgColor == yellowFGColor)
-		fg = dye::yellow(text);
+		cerr << hue::yellow;
 	else if (fgColor == blueFGColor)
-		fg = dye::blue(text);
+		cerr << hue::blue;
 	else if (fgColor == magentaFGColor)
-		fg = dye::purple(text);
+		cerr << hue::purple;
 	else if (fgColor == cyanFGColor)
-		fg = dye::aqua(text);
+		cerr << hue::aqua;
 	else if (fgColor == whiteFGColor)
-		fg = dye::white(text);
-	if(!isError)
-		std::cout << fg;
-	else
-		std::cerr << fg;
+		cerr << hue::white;
+
+	if (bgColor == blackBGColor)
+		cerr << hue::on_black;
+	else if (bgColor == redBGColor)
+		cerr << hue::on_red;
+	else if (bgColor == greenBGColor)
+		cerr << hue::on_green;
+	else if (bgColor == yellowBGColor)
+		cerr << hue::on_yellow;
+	else if (bgColor == blueBGColor)
+		cerr << hue::on_blue;
+	else if (bgColor == magentaBGColor)
+		cerr << hue::on_purple;
+	else if (bgColor == cyanBGColor)
+		cerr << hue::on_aqua;
+	else if (bgColor == whiteBGColor)
+		cerr << hue::on_white;
+
+	std::cerr << text << hue::reset;
 #else
-	if(!isError)
-		cout << fgColor + bgColor + name + resetColor;
+	if (!isError)
+		cout << fgColor + bgColor + text + resetColor;
 	else
-		cerr << fgColor + bgColor + name + resetColor;
+		cerr << fgColor + bgColor + text + resetColor;
 #endif
 }
 
@@ -134,9 +151,9 @@ int InterpreterLog(const string& logText)
 	time_t timer = time(0);
 
 	tm bt{};
-#if defined(__unix__)
+#if UNIX
 	//localtime_r(&timer, &bt);
-#elif defined(_MSC_VER)
+#elif WINDOWS
 	localtime_s(&bt, &timer);
 	Hour = bt.tm_hour;
 	Min = bt.tm_min;
@@ -147,9 +164,9 @@ int InterpreterLog(const string& logText)
 	bt = *localtime(&timer);
 #endif
 
-	PrintColored("[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] ", blueFGColor, "");
-	PrintColored("ZSharp: ", yellowFGColor, "");
-	PrintColored(logText, greenFGColor, "");
+	PrintColored("[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] ", blueFGColor, "", true);
+	PrintColored("ZSharp: ", yellowFGColor, "", true);
+	PrintColored(logText, greenFGColor, "", true);
 	cout << std::endl;
 	//cout << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mZSharp: \x1B[32m" << logText << "\033[0m\t\t" << endl;
 	return 1;
@@ -176,9 +193,9 @@ int LogCriticalError(const string& errorText)
 	bt = *localtime(&timer);
 #endif
 
-	PrintColoredErr("[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] ", blueFGColor, "", true);
-	PrintColoredErr("ZSharp: ", yellowFGColor, "", true);
-	PrintColoredErr(errorText, redFGColor, "", true);
+	PrintColored("[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] ", blueFGColor, "", true);
+	PrintColored("ZSharp: ", yellowFGColor, "", true);
+	PrintColored(errorText, redFGColor, "", true);
 	cerr << std::endl;
 	//cerr << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mZSharp: \x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
 	exit(EXIT_FAILURE);
@@ -297,7 +314,7 @@ int GetBuiltins(std::string s)
 			}
 			builtinFunctionValues[functName] = functionContents;
 			//cout << functName << " is \n" << Vec2Str(functionContents) << endl << endl;
-		}
+			}
 		else
 		{
 			if (words.at(lineNum).at(0) == "string")
@@ -334,7 +351,7 @@ int GetBuiltins(std::string s)
 	}
 
 	return 0;
-}
+		}
 
 // Executes 
 boost::any ZSFunction(const string& name, const vector<boost::any>& args)
