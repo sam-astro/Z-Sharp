@@ -8,13 +8,15 @@
 #include <limits>
 #include <algorithm>
 #include <unordered_map>
-#include "strops.h"
-#include "graphics.h"
-#include "anyops.h"
 #include <boost/any.hpp>
 #include <SDL.h>
 #include <ctime>
 #include <math.h>
+
+#include "strops.h"
+#include "graphics.h"
+#include "anyops.h"
+#include "color.hpp"
 
 //#define DEVELOPER_MESSAGES false
 
@@ -25,6 +27,42 @@ vector<string> types = { "int", "float", "string", "bool", "void", "null", "Spri
 
 unordered_map<string, vector<vector<string>>> builtinFunctionValues;
 unordered_map<string, boost::any> builtinVarVals;
+
+	// Foreground colors
+	const std::string blackFGColor = "\x1B[30m";
+	const std::string redFGColor = "\x1B[31m";
+	const std::string greenFGColor = "\x1B[32m";
+	const std::string yellowFGColor = "\x1B[33m";
+	const std::string blueFGColor = "\x1B[34m";
+	const std::string magentaFGColor = "\x1B[35m";
+	const std::string cyanFGColor = "\x1B[36m";
+	const std::string whiteFGColor = "\x1B[37m";
+	const std::string brightBlackFGColor = "\x1B[90m";
+	const std::string brightRedFGColor = "\x1B[91m";
+	const std::string brightGreenFGColor = "\x1B[92m";
+	const std::string brightYellowFGColor = "\x1B[93m";
+	const std::string brightBlueFGColor = "\x1B[94m";
+	const std::string brightMagentaFGColor = "\x1B[95m";
+	const std::string brightCyanFGColor = "\x1B[96m";
+	const std::string brightWhiteFGColor = "\x1B[97m";
+
+	//Background colors
+	const std::string blackBGColor = "\x1B[40m";
+	const std::string redBGColor = "\x1B[41m";
+	const std::string greenBGColor = "\x1B[42m";
+	const std::string yellowBGColor = "\x1B[43m";
+	const std::string blueBGColor = "\x1B[44m";
+	const std::string magentaBGColor = "\x1B[45m";
+	const std::string cyanBGColor = "\x1B[46m";
+	const std::string whiteBGColor = "\x1B[47m";
+	const std::string brightBlackBGColor = "\x1B[100m";
+	const std::string brightRedBGColor = "\x1B[101m";
+	const std::string brightGreenBGColor = "\x1B[102m";
+	const std::string brightYellowBGColor = "\x1B[103m";
+	const std::string brightBlueBGColor = "\x1B[104m";
+	const std::string brightMagentaBGColor = "\x1B[105m";
+	const std::string brightCyanBGColor = "\x1B[106m";
+	const std::string brightWhiteBGColor = "\x1B[107m";
 
 class NullType {
 public:
@@ -45,9 +83,45 @@ float lerp(float a, float b, float f)
 	return a + f * (b - a);
 }
 
+
+void PrintColored(std::string text, std::string fgColor, std::string bgColor, bool isError)
+{
+#if WINDOWS
+	auto fg = dye::white(text);
+	if (fgColor == blackFGColor)
+		fg = dye::black(text);
+	else if (fgColor == redFGColor)
+		fg = dye::red(text);
+	else if (fgColor == greenFGColor)
+		fg = dye::green(text);
+	else if (fgColor == yellowFGColor)
+		fg = dye::yellow(text);
+	else if (fgColor == blueFGColor)
+		fg = dye::blue(text);
+	else if (fgColor == magentaFGColor)
+		fg = dye::purple(text);
+	else if (fgColor == cyanFGColor)
+		fg = dye::aqua(text);
+	else if (fgColor == whiteFGColor)
+		fg = dye::white(text);
+	if(!isError)
+		std::cout << fg;
+	else
+		std::cerr << fg;
+#else
+	if(!isError)
+		cout << fgColor + bgColor + name + resetColor;
+	else
+		cerr << fgColor + bgColor + name + resetColor;
+#endif
+}
+
 int LogWarning(const string& warningText)
 {
-	cout << "\x1B[33mWARNING: " << warningText << "\033[0m\t\t" << endl;
+	PrintColored("WARNING: ", yellowFGColor, "", true);
+	PrintColored(warningText, yellowFGColor, "", true);
+	cerr << std::endl;
+	//cout << "\x1B[33mWARNING: " << warningText << "\033[0m\t\t" << endl;
 	return 1;
 }
 
@@ -73,7 +147,11 @@ int InterpreterLog(const string& logText)
 	bt = *localtime(&timer);
 #endif
 
-	cout << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mZSharp: \x1B[32m" << logText << "\033[0m\t\t" << endl;
+	PrintColored("[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] ", blueFGColor, "");
+	PrintColored("ZSharp: ", yellowFGColor, "");
+	PrintColored(logText, greenFGColor, "");
+	cout << std::endl;
+	//cout << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mZSharp: \x1B[32m" << logText << "\033[0m\t\t" << endl;
 	return 1;
 }
 
@@ -98,7 +176,11 @@ int LogCriticalError(const string& errorText)
 	bt = *localtime(&timer);
 #endif
 
-	cerr << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mZSharp: \x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
+	PrintColoredErr("[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] ", blueFGColor, "", true);
+	PrintColoredErr("ZSharp: ", yellowFGColor, "", true);
+	PrintColoredErr(errorText, redFGColor, "", true);
+	cerr << std::endl;
+	//cerr << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mZSharp: \x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
 	exit(EXIT_FAILURE);
 	return 2;
 }
