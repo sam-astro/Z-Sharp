@@ -7,7 +7,7 @@ project(ZSharp)
 SET(programName Slang)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMakeFiles/")
 
-add_executable (ZSharp Main.cpp main.h anyops.h builtin.h strops.cpp strops.h eval.cpp eval.h graphics.h ZS.h)
+add_executable (ZSharp Main.cpp main.h anyops.h builtin.h strops.cpp strops.h eval.cpp eval.h graphics.h ZS.h color.hpp)
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
