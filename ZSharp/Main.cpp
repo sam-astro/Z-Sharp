@@ -172,7 +172,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 
 	for (int i = 0; i < expression.size(); i++)
 	{
-		if (expression[i] == '\"')
+		if (expression[i] == '\"' && expression[i-1] != '\\')
 			inQuotes = !inQuotes;
 
 		if (isalpha(expression[i]))
@@ -235,7 +235,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 
 	bool addStrings = false;
 	for (int i = 0; i < (int)newExpression.size(); i++)
-		if (isalpha(newExpression[i]) || newExpression[i] == '\"')
+		if (isalpha(newExpression[i]) || (newExpression[i] == '\"' && expression[i-1] != '\\'))
 		{
 			addStrings = true;
 			break;
@@ -246,7 +246,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 		string withoutParenthesis = "";
 		for (int i = 0; i < (int)newExpression.size(); i++)
 		{
-			if (newExpression[i] == '\"')
+			if (newExpression[i] == '\"' && expression[i-1] != '\\')
 			{
 				inQuotes = !inQuotes;
 				continue;
@@ -571,7 +571,6 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 		}
 		catch (const std::exception&)
 		{
-			LogCriticalError("\'" + unWrapVec(words.at(lineNum)) + "\'\n                  In function: " + functionName + "\n                  Line: " + to_string(lineNum));
 		}
 	}
 	return nullType;
@@ -584,7 +583,7 @@ int parseZSharp(string script)
 	InterpreterLog("Contents:\n" + script);
 	#endif
 
-	vector<string> lines = split(script, '\n');
+	vector<string> lines = split(script, ';');
 	vector<vector<string>> words;
 	for (int i = 0; i < (int)lines.size(); i++)
 		words.push_back(split(lines.at(i), ' '));
