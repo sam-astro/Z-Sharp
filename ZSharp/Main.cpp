@@ -371,6 +371,7 @@ int varOperation(const vector<string>& str, unordered_map<string, boost::any>& v
 
 boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<string, boost::any>& variableValues)
 {
+	// Check if the first two chars are '//', which would make it a comment
 	if (words.at(lineNum).at(0)[0] == '/' && words.at(lineNum).at(0)[1] == '/')
 		return nullType;
 
@@ -381,7 +382,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 		return nullType;
 	}
 
-	// Check if function return
+	// Check if it is a function return
 	else if (words.at(lineNum).at(0) == "return")
 		return EvalExpression(unWrapVec(vector<string>(words.at(lineNum).begin() + 1, words.at(lineNum).end())), variableValues);
 
@@ -423,7 +424,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 		return nullType;
 	}
 
-	// Check existing variables: To see if class sub component matches
+	// Check existing variables: To see if accessign class sub component
 	else if (count(words.at(lineNum).at(0), '.') > 0 && IsVar(split(words.at(lineNum).at(0), '.')[0], variableValues) || IsVar(split(words.at(lineNum).at(0), '.')[0], globalVariableValues))
 	{
 		if (IsVar(split(words.at(lineNum).at(0), '.')[0], variableValues))
@@ -433,7 +434,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 		return nullType;
 	}
 
-	// Gathers while loop contents
+	// If declaring a while loop, loop until false
 	else if (words.at(lineNum).at(0) == "while")
 	{
 		vector<vector<string>> whileContents;
@@ -465,7 +466,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 		return nullType;
 	}
 
-	// Gathers if statement contents
+	// If declaring an if statement, only execute if true
 	else if (words.at(lineNum).at(0) == "if")
 	{
 		vector<vector<string>> ifContents;
@@ -542,13 +543,13 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 
 boost::any ExecuteFunction(const string& functionName, const vector<boost::any>& inputVarVals)
 {
-	// Get contents of function
+	// Get contents of function from global function map
 	std::vector<std::vector<std::string>> words = functionValues[functionName];
 
 	unordered_map<string, boost::any> variableValues = {};
 	
 	std::vector<std::string> funcArgs = words.at(0);
-	
+	// Set function variables equal to whatever inputs were provided
 	for (int i = 0; i < (int)inputVarVals.size(); i++)
 	{
 		if(i < funcArgs.size())
@@ -578,14 +579,15 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 
 int parseZSharp(string script)
 {
-	script = replace(script, "    ", "\t");
+	script = replace(script, "    ", "\t"); // Replace spaces with tabs (not really required, and will break purposefull whitespace in strings etc.)
 	#if DEVELOPER_MESSAGES
 	InterpreterLog("Contents:\n" + script);
 	#endif
 
+	// Split the script by ;, signifying a line ending
 	vector<string> lines = split(script, ';');
 	vector<vector<string>> words;
-	for (int i = 0; i < (int)lines.size(); i++)
+	for (int i = 0; i < (int)lines.size(); i++) // Then split said lines into indiviual words
 		words.push_back(split(lines.at(i), ' '));
 
 	#if DEVELOPER_MESSAGES
@@ -659,7 +661,7 @@ int parseZSharp(string script)
 	#if DEVELOPER_MESSAGES
 	InterpreterLog("Start Main()");
 	#endif
-	// Executes main, which is the starting function
+	// Executes main, which is the entry point function
 	ExecuteFunction("Main", vector<boost::any> {});
 
 	return 0;
@@ -667,6 +669,7 @@ int parseZSharp(string script)
 
 int main(int argc, char* argv[])
 {
+	// Print the name of the interpreter and it's version in inverted black on white text
 	PrintColored(NAMEVERSION, blackFGColor, whiteBGColor, false);
 	cout << endl << endl;
 
@@ -677,7 +680,7 @@ int main(int argc, char* argv[])
 
 	std::string scriptTextContents;
 
-	// If scriptname is supplied and not in developer mode
+	// If scriptname is supplied
 	if (argc > 1)
 	{
 		std::string scriptPath = argv[1];
@@ -687,7 +690,7 @@ int main(int argc, char* argv[])
 
 		std::string projectDirectory = scriptPath.substr(0, scriptPath.find_last_of("/\\"));
 #if UNIX
-		// Get script contents
+		// Get script contents as single string
 		auto ss = ostringstream{};
 		ifstream input_file(scriptPath);
 		ss << input_file.rdbuf();
@@ -696,6 +699,7 @@ int main(int argc, char* argv[])
 		InterpreterLog("Gather script contents...");
 		#endif
 		
+		// Change the current working directory to that of the script
 		chdir(projectDirectory.c_str());
 		#if DEVELOPER_MESSAGES
 		InterpreterLog("Change directory to " + projectDirectory + "...");
@@ -705,7 +709,7 @@ int main(int argc, char* argv[])
 		InterpreterLog("Current working directory is " + newPath);
 		#endif
 #elif WINDOWS
-		// Get script contents
+		// Get script contents as single string
 		ifstream script(scriptPath);
 		stringstream scriptString;
 		scriptString << script.rdbuf();
@@ -714,6 +718,7 @@ int main(int argc, char* argv[])
 		InterpreterLog("Gather script contents...");
 		#endif
 		
+		// Change the current working directory to that of the script
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		std::wstring wide = converter.from_bytes(projectDirectory);
 		LPCWSTR s = wide.c_str();
@@ -724,25 +729,39 @@ int main(int argc, char* argv[])
 #endif
 	}
 	else
-	{
+	{ // If no script is provided as an argument then throw error
 		LogWarning("No script provided! Please drag and drop .ZS file over interpreter executable file, or provide it's path as a command-line argument.");
 		cout << "Press Enter to Continue";
 		cin.ignore();
 		exit(1);
 	}
 
-	//system("pause");
-
 	#if DEVELOPER_MESSAGES
 	InterpreterLog("Parsing...");
 	#endif
+	// Start running the script
 	parseZSharp(scriptTextContents);
-
-
-#if DEVELOPER_MESSAGES
+	
+	// Entire script has been run, exit.
+	
+#if DEVELOPER_MESSAGES // If built with developer messages, then verify exit
 	cout << "Press Enter to Continue";
 	cin.ignore();
 	exit(1);
-#endif
+#else
+	if(argc > 2)
+	{
+		string a = argv[2];
+		std::transform(a.begin(), a.end(), a.begin(),
+    			[](unsigned char c){ return std::tolower(c); });
+		
+		if(a == "-ve") // If the '-ve' (verify exit) option is used, ask for verification on exit
+		{
+			cout << "Press Enter to Continue";
+			cin.ignore();
+			exit(1);	
+		}
+	}
+#endif // Else exit automatically
 	return 0;
 }
