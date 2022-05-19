@@ -73,6 +73,7 @@ boost::any GetVariableValue(const string& varName, const unordered_map<string, b
 		return outputValue;
 }
 
+// Check if there is a variable with the specified name
 bool IsVar(const string& varName, const unordered_map<string, boost::any>& variableValues)
 {
 	if (variableValues.find(split(varName, '.')[0]) != variableValues.end() && split(varName, '.')[0] != "ZS")
@@ -81,6 +82,7 @@ bool IsVar(const string& varName, const unordered_map<string, boost::any>& varia
 		return false;
 }
 
+// Return a vector of values that correspond to a vector of input variable names
 vector<boost::any> VarValues(const vector<string>& varNames, unordered_map<string, boost::any>& variableValues)
 {
 	vector<boost::any> realValues;
