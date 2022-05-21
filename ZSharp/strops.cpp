@@ -342,3 +342,12 @@ string replace(const string& str, const string& strToReplace, const string& repl
 
 	return newStr;
 }
+
+bool isEscaped(const string& str, int curChar)
+{
+	if (curChar > 0)
+		if (str[curChar - 1] == '\\')
+			return true;
+
+	return false;
+}

@@ -131,7 +131,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 	bool inQuotes = false;
 
 #if DEVELOPER_MESSAGES == true
-	InterpreterLog("	old expression: |" + expression + "|");
+	//InterpreterLog("	old expression: |" + expression + "|");
 #endif
 
 	bool isFunc = IsFunction(split(expression, '(')[0]);
@@ -174,7 +174,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 
 	for (int i = 0; i < expression.size(); i++)
 	{
-		if (expression[i] == '\"' && expression[i-1] != '\\')
+		if (expression[i] == '\"' && !isEscaped(newExpression, i))
 			inQuotes = !inQuotes;
 
 		if (isalpha(expression[i]))
@@ -232,12 +232,12 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 		}
 	}
 #if DEVELOPER_MESSAGES == true
-	InterpreterLog("	new expression: |" + newExpression + "|");
+	//InterpreterLog("	new expression: |" + newExpression + "|");
 #endif
 
 	bool addStrings = false;
 	for (int i = 0; i < (int)newExpression.size(); i++)
-		if (isalpha(newExpression[i]) || (newExpression[i] == '\"' && expression[i-1] != '\\'))
+		if (isalpha(newExpression[i]) || (newExpression[i] == '\"' && !isEscaped(newExpression, i)))
 		{
 			addStrings = true;
 			break;
@@ -248,7 +248,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 		string withoutParenthesis = "";
 		for (int i = 0; i < (int)newExpression.size(); i++)
 		{
-			if (newExpression[i] == '\"' && expression[i-1] != '\\')
+			if (newExpression[i] == '\"' && !isEscaped(newExpression, i))
 			{
 				inQuotes = !inQuotes;
 				continue;
@@ -548,12 +548,12 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 	std::vector<std::vector<std::string>> words = functionValues[functionName];
 
 	unordered_map<string, boost::any> variableValues = {};
-	
+
 	std::vector<std::string> funcArgs = words.at(0);
-	
+
 	for (int i = 0; i < (int)inputVarVals.size(); i++)
 	{
-		if(i < funcArgs.size())
+		if (i < funcArgs.size())
 		{
 			variableValues[funcArgs[i]] = inputVarVals[i];
 #if DEVELOPER_MESSAGES == true
@@ -581,18 +581,18 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 int parseZSharp(string script)
 {
 	script = replace(script, "    ", "\t");
-	#if DEVELOPER_MESSAGES
+#if DEVELOPER_MESSAGES
 	InterpreterLog("Contents:\n" + script);
-	#endif
+#endif
 
-	vector<string> lines = split(script, ';');
+	vector<string> lines = split(script, '\n');
 	vector<vector<string>> words;
 	for (int i = 0; i < (int)lines.size(); i++)
 		words.push_back(split(lines.at(i), ' '));
 
-	#if DEVELOPER_MESSAGES
+#if DEVELOPER_MESSAGES
 	InterpreterLog("Gather variables & functions...");
-	#endif
+#endif
 	// First go through entire script and iterate through all types to see if line is a variable
 	// or function declaration, then store it with it's value
 	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
@@ -629,38 +629,38 @@ int parseZSharp(string script)
 		}
 		else
 		{
-			if (words.at(lineNum).at(0) == "string"){
+			if (words.at(lineNum).at(0) == "string") {
 				globalVariableValues[words.at(lineNum).at(1)] = StringRaw(words.at(lineNum).at(3));
 #if DEVELOPER_MESSAGES == true
 				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
 #endif
-}
-			else if (words.at(lineNum).at(0) == "int"){
+			}
+			else if (words.at(lineNum).at(0) == "int") {
 				globalVariableValues[words.at(lineNum).at(1)] = stoi(words.at(lineNum).at(3));
 #if DEVELOPER_MESSAGES == true
 				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
 #endif
-}
-			else if (words.at(lineNum).at(0) == "float"){
+			}
+			else if (words.at(lineNum).at(0) == "float") {
 				globalVariableValues[words.at(lineNum).at(1)] = stof(words.at(lineNum).at(3));
 #if DEVELOPER_MESSAGES == true
 				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
 #endif
-}
-			else if (words.at(lineNum).at(0) == "bool"){
+			}
+			else if (words.at(lineNum).at(0) == "bool") {
 				globalVariableValues[words.at(lineNum).at(1)] = stob(words.at(lineNum).at(3));
 #if DEVELOPER_MESSAGES == true
 				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
 #endif
-}
+			}
 			/*else
 				LogWarning("unrecognized type \'" + words.at(lineNum).at(0) + "\' on line: " + to_string(lineNum));*/
 		}
 	}
 
-	#if DEVELOPER_MESSAGES
+#if DEVELOPER_MESSAGES
 	InterpreterLog("Start Main()");
-	#endif
+#endif
 	// Executes main, which is the starting function
 	ExecuteFunction("Main", vector<boost::any> {});
 
@@ -680,9 +680,13 @@ int main(int argc, char* argv[])
 	std::string scriptTextContents;
 
 	// If scriptname is supplied and not in developer mode
-	if (argc > 1)
+	if (argc > 1 || EXAMPLE_PROJECT)
 	{
-		std::string scriptPath = argv[1];
+		std::string scriptPath;
+		if (EXAMPLE_PROJECT)
+			scriptPath = "D:\\Code\\Z-Sharp\\Releases\\ZS-Win-x64-Base\\Pong-Example-Project\\script.zs";
+		else
+			scriptPath = argv[1];
 #if DEVELOPER_MESSAGES
 		cout << scriptPath << endl;
 #endif
@@ -694,35 +698,35 @@ int main(int argc, char* argv[])
 		ifstream input_file(scriptPath);
 		ss << input_file.rdbuf();
 		scriptTextContents = ss.str();
-		#if DEVELOPER_MESSAGES
+#if DEVELOPER_MESSAGES
 		InterpreterLog("Gather script contents...");
-		#endif
-		
+#endif
+
 		chdir(projectDirectory.c_str());
-		#if DEVELOPER_MESSAGES
+#if DEVELOPER_MESSAGES
 		InterpreterLog("Change directory to " + projectDirectory + "...");
-		#endif
-		#if DEVELOPER_MESSAGES
+#endif
+#if DEVELOPER_MESSAGES
 		string newPath = filesystem::current_path();
 		InterpreterLog("Current working directory is " + newPath);
-		#endif
+#endif
 #elif WINDOWS
 		// Get script contents
 		ifstream script(scriptPath);
 		stringstream scriptString;
 		scriptString << script.rdbuf();
 		scriptTextContents = scriptString.str();
-		#if DEVELOPER_MESSAGES
+#if DEVELOPER_MESSAGES
 		InterpreterLog("Gather script contents...");
-		#endif
-		
+#endif
+
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		std::wstring wide = converter.from_bytes(projectDirectory);
 		LPCWSTR s = wide.c_str();
 		SetCurrentDirectory(s);
-		#if DEVELOPER_MESSAGES
+#if DEVELOPER_MESSAGES
 		InterpreterLog("Change directory to " + projectDirectory + "...");
-		#endif
+#endif
 #endif
 	}
 	else
@@ -735,9 +739,9 @@ int main(int argc, char* argv[])
 
 	//system("pause");
 
-	#if DEVELOPER_MESSAGES
+#if DEVELOPER_MESSAGES
 	InterpreterLog("Parsing...");
-	#endif
+#endif
 	parseZSharp(scriptTextContents);
 
 

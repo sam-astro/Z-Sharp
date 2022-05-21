@@ -60,4 +60,6 @@ float floatval(const string& s);
 
 string replace(const string& str, const string& strToReplace, const string& replaceWith);
 
+bool isEscaped(const string& str, int curChar);
+
 #endif
