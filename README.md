@@ -15,7 +15,7 @@ Downloading or installing is very simple, here is how depending on your version 
     * Use command line, providing path to interpreter and then to script like so:
     `> ./ZSharp.exe ./Pong-Example-Project/script.zs`
 5. Feel free to use and edit the `Pong-Example-Project`. It is a single script called `script.zs`, and you can open it with any of the methods above. It is also located on the releases page.
-> If you don't want to install ZSharp on your device, or you want easier acces to the executable and .DLLs, another version is provided called `ZS-Win-x64-Base.zip`. This just contains all of the files the installer puts on your computer.
+> If you don't want to install ZSharp on your device, or you want easier acces to the executable and .DLLs, another version is provided called `ZS_Win_Base_Raw.zip`. This just contains all of the files the installer puts on your computer.
 ### Linux
 1. Navigate to [the most recent release](https://github.com/sam-astro/Z-Sharp/releases) and download `ZSharp-Linux.zip`.
 2. Unzip `ZSharp-Linux.zip` and open the unzipped folder.
