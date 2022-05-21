@@ -4,7 +4,7 @@
 #include <string>
 #define DEVELOPER_MESSAGES false
 #define EXAMPLE_PROJECT false
-#define NAMEVERSION "ZSharp v2.0.1"
+#define NAMEVERSION "ZSharp v2.0.2"
 
 #if defined(__unix__)
 #define UNIX true
@@ -727,7 +727,7 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		LogWarning("No script provided! Please drag and drop .ZS file over interpreter executable file, or provide it's path as a command-line argument.");
+		LogWarning("No script provided! Please drag and drop .ZS file over interpreter executable file, or provide it's path as a command-line argument. If you are on Windows, just double-click any .ZS file, and it will automatically be opened with ZSharp.");
 		cout << "Press Enter to Continue";
 		cin.ignore();
 		exit(1);

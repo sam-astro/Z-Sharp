@@ -89,7 +89,7 @@
     <LinkIncremental>false</LinkIncremental>
     <IncludePath>D:\Code\SDL2-2.0.18\include;D:\Code\SDL2_image-2.0.5\include;D:\Code\SDL2_ttf-2.0.15\include;$(IncludePath)</IncludePath>
     <LibraryPath>D:\Code\SDL2_ttf-2.0.15\lib\x64;D:\Code\SDL2-2.0.18\lib\x64;D:\Code\SDL2_image-2.0.5\lib\x64;$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)\Releases\$(ProjectName)-Win-$(Platform)</OutDir>
+    <OutDir>$(SolutionDir)\Releases\ZS-Win-x64-Base</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
