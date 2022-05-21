@@ -109,7 +109,7 @@ func Start()
 }
 
 // Executes each frame
-func Update()
+func Update(deltaTime)
 {
     // Draws the image created in Start(). This is usually at the end of update.
     ZS.Graphics.Draw(exampleSprite)   
