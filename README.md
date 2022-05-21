@@ -11,11 +11,11 @@ Downloading or installing is very simple, and you don't need to build it yoursel
 2. Unzip `ZSharp-Win-x64.zip` and open the unzipped folder.
 3. You will see many files. The Z# interpreter is `ZSharp.exe` and has a Z# icon. Any time you want to execute a script, this is the program that will be used. There are a few ways to use it:
     * Drag and drop any .ZS script directly onto the executable.
-    * Use a command line, providing path to executable and then to script like so:
-    `> .\ZSharp.exe .\Pong-Example-Project\script.zs`
-    * Right-click on your .ZS script file, then select `'Open with...'`. Click `'More Apps'`, scroll down, and select `'Look for another app on this PC'`. Navigate to the `ZSharp.exe` executable and select it. Now whenever you double-click any .ZS file, it will automatically open with the interpreter.
-4. Feel free to use and edit the included `Pong-Example-Project`. It is a single script called `script.zs`, and you can open it with any of the methods above.
-### ZSharp Linux
+    * Use command line, providing path to interpreter and then to script like so:
+    `> ./ZSharp.exe ./Pong-Example-Project/script.zs`
+5. Feel free to use and edit the `Pong-Example-Project`. It is a single script called `script.zs`, and you can open it with any of the methods above. It is also located on the releases page.
+> If you don't want to install ZSharp on your device, or you want easier acces to the executable and .DLLs, another version is provided called `ZS_Win_Base_Raw.zip`. This just contains all of the files the installer puts on your computer.
+### Linux
 1. Navigate to [the most recent release](https://github.com/sam-astro/Z-Sharp/releases) and download `ZSharp-Linux.zip`.
 2. Unzip `ZSharp-Linux.zip` and open the unzipped folder.
 3. You will see some files. The Z# interpreter is `ZSharp`. Any time you want to execute a script, this is the program that will be used. You can use it like so:
