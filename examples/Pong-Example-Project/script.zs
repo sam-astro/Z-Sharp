@@ -13,7 +13,7 @@ float lerpSpeed = 14
 bool aiOn = false
 
 // Main is always run at the VERY BEGINNING. Start() is the start of GRAPHICS
-// so if you never call ZS.Grapgics.Init, then Start won't run
+// so if you never call ZS.Graphics.Init, then Start won't run
 func Main()
 {
 	// Immediately creates the window, then Start(), then the game loop. The game loop calls Update() every frame
