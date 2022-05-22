@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/sam-astro/Z-Sharp/master/ExtraResources/ZS-Gem-Icon-Small.png"/><img src="https://raw.githubusercontent.com/sam-astro/Z-Sharp/master/ExtraResources/ZS-Logo-Light-Small.png"/>
+<img style="height: 150px; width: 150px;" src="https://user-images.githubusercontent.com/63855221/169703190-0215bfe4-a2a8-4fe0-9970-1fc6c83bc550.png"/><img src="https://raw.githubusercontent.com/sam-astro/Z-Sharp/master/ExtraResources/ZS-Logo-Light-Small.png"/>
 
 ## Introduction
 Z-Sharp is a custom programming language I made because I don't like c++ very much (Z-Sharp's interpreter is written in c++ though). It used to be called Slang, standing for "Stupid Lang", but another programming language called Slang already exists :(. Z-Sharp scripts have the file extension .zs. The base syntax and formatting I would say is quite similar to C#, but differs as task complexity increases. It has support for graphics using SDL2, and by default is not enabled.
