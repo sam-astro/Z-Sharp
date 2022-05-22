@@ -12,6 +12,7 @@
 #include <SDL.h>
 #include <ctime>
 #include <math.h>
+#include <sys/stat.h>
 
 #include "strops.h"
 #include "graphics.h"
@@ -86,6 +87,10 @@ float lerp(float a, float b, float f)
 	return a + f * (b - a);
 }
 
+inline bool fileExists(const std::string& name) {
+	struct stat buffer;
+	return (stat(name.c_str(), &buffer) == 0);
+}
 
 void PrintColored(std::string text, std::string fgColor, std::string bgColor, bool isError)
 {
@@ -197,8 +202,11 @@ int LogCriticalError(const string& errorText)
 	PrintColored("ZSharp: ", yellowFGColor, "", true);
 	PrintColored(errorText, redFGColor, "", true);
 	cerr << std::endl;
+	cout << "Press Enter to Continue";
+	cin.ignore();
+	exit(1);
 	//cerr << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mZSharp: \x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
-	exit(EXIT_FAILURE);
+	//exit(EXIT_FAILURE);
 	return 2;
 }
 
@@ -314,7 +322,7 @@ int GetBuiltins(std::string s)
 			}
 			builtinFunctionValues[functName] = functionContents;
 			//cout << functName << " is \n" << Vec2Str(functionContents) << endl << endl;
-			}
+		}
 		else
 		{
 			if (words.at(lineNum).at(0) == "string")
@@ -351,7 +359,7 @@ int GetBuiltins(std::string s)
 	}
 
 	return 0;
-		}
+}
 
 // Executes 
 boost::any ZSFunction(const string& name, const vector<boost::any>& args)
@@ -373,10 +381,16 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 #if DEVELOPER_MESSAGES == true
 		InterpreterLog("Init graphics");
 #endif
-		initGraphics(StringRaw(AnyAsString(args.at(0))), AnyAsInt(args.at(1)), AnyAsInt(args.at(2)));
+		if (args.size() <= 3)
+			initGraphics(StringRaw(AnyAsString(args.at(0))), AnyAsInt(args.at(1)), AnyAsInt(args.at(2)), 1);
+		else
+			initGraphics(StringRaw(AnyAsString(args.at(0))), AnyAsInt(args.at(1)), AnyAsInt(args.at(2)), AnyAsInt(args.at(3)));
 	}
 	else if (name == "ZS.Graphics.Sprite")
 	{
+		if (!fileExists(StringRaw(AnyAsString(args.at(0)))))
+			LogCriticalError("Failed to create 'Sprite' object: \"" + StringRaw(AnyAsString(args.at(0))) + "\"");
+
 		Sprite s(StringRaw(AnyAsString(args.at(0))), any_cast<Vec2>(args.at(1)), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)));
 		return s;
 	}
@@ -386,6 +400,9 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 		any_cast<Sprite>(args.at(0)).Load();
 	else if (name == "ZS.Graphics.Text")
 	{
+		if (!fileExists(StringRaw(AnyAsString(args.at(1)))))
+			LogCriticalError("Failed to create 'Text' object: \"" + StringRaw(AnyAsString(args.at(1))) + "\"");
+
 		Text t(StringRaw(AnyAsString(args.at(0))), StringRaw(AnyAsString(args.at(1))), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)), AnyAsFloat(args.at(4)), (Uint8)AnyAsFloat(args.at(5)), (Uint8)AnyAsFloat(args.at(6)), (Uint8)AnyAsFloat(args.at(7)));
 		return t;
 	}

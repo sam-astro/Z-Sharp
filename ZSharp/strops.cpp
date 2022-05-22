@@ -150,6 +150,40 @@ int countNoOverlap(const string& str, const char& searchFor, const char& ch1, co
 	return cnt;
 }
 
+string betweenChars(const string& str, const char& openChar, const char& closeChar)
+{
+	string content = "";
+
+	int waitingForClose = 0;
+
+	for (int i = 0; i < (int)str.size(); i++)
+	{
+		if (waitingForClose > 0 && !(str[i] == closeChar && waitingForClose == 1))
+			content += str[i];
+
+		if (str[i] == openChar)
+			waitingForClose++;
+		else if (str[i] == closeChar)
+			waitingForClose--;
+	}
+
+	return content;
+}
+
+bool startsWith(const string& str, const string& lookFor)
+{
+	if (str.empty() || lookFor.size() > str.size())
+		return false;
+
+	for (int i = 0; i < (int)lookFor.size(); i++)
+	{
+		if (str[i] != lookFor[i])
+			return false;
+	}
+
+	return true;
+}
+
 int countOutsideParenthesis(const string& str, const char& searchFor)
 {
 	int cnt = 0;

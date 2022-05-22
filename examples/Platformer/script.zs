@@ -1,5 +1,6 @@
-int g_screenw = 900
-int g_screenh = 600
+int g_screenw = 256
+int g_screenh = 224
+int g_resolutionScale = 3
 
 float g_playerWalkSpeed = 400
 float g_playerRunSpeed = 700
@@ -14,8 +15,15 @@ include "./extra-include.zs"
 
 func Main()
 {
+	//SplitThread(ThreadedFunction())
+	
 	// Immediately creates the window, then Start(), then the game loop. The game loop calls Update() every frame
-	ZS.Graphics.Init("Platformer game", g_screenw, g_screenh)
+	ZS.Graphics.Init("Platformer game", g_screenw, g_screenh, g_resolutionScale)
+}
+
+func ThreadedFunction()
+{
+	print "threaded:"
 }
 
 func Start()
@@ -25,14 +33,14 @@ func Start()
 	global Vec2 g_screencenter = NVec2(centerX, centerY)
 	
 	Vec2 playerPos = g_screencenter
-	Vec2 playerScale = NVec2(40, 40)
-	global Sprite g_playerSprite = ZS.Graphics.Sprite("./square.png", playerPos, playerScale, 0)
+	Vec2 playerScale = NVec2(16, 16)
+	global Sprite g_playerSprite = ZS.Graphics.Sprite("./mariostill.png", playerPos, playerScale, 0)
 	
-	Vec2 groundPos = NVec2(g_screencenter.x, 500)
+	Vec2 groundPos = NVec2(g_screencenter.x, 192)
 	Vec2 groundScale = NVec2(256, 16)
 	global Sprite g_groundSprite = ZS.Graphics.Sprite("./square.png", groundPos, groundScale, 0)
 	
-	Vec2 instructionsPos = NVec2(centerOfScreen.x, g_screenh - 60)
+	Vec2 instructionsPos = NVec2(centerOfScreen.x, centerOfScreen.y)
 	global Text g_instructionsText = ZS.Graphics.Text("Use Arrow Keys or WASD to Move, and Spacebar to Jump", "./arial.ttf", instructionsPos, 20, 0, 255, 255, 255)
 	
 	global Vec2 g_playerTargetPosition = playerPos
@@ -47,7 +55,7 @@ func Start()
 func Update(deltaTime) {
 	float fps = 1 / deltaTime
 	print "FPS: " + fps
-	TestInclude()
+	//TestInclude()
 	
 	//// Test automatic conversion from bool to int
 	//int c = GetKey("A")

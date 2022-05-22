@@ -23,6 +23,7 @@
 #include <unordered_map>
 #include <stdio.h>
 #include <codecvt>
+#include <thread>
 
 #if UNIX
 #include <unistd.h>
@@ -398,6 +399,22 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 			ExecuteFunction(trim(split(words.at(lineNum).at(0), '(')[0]), vector<boost::any>());
 		else
 			ExecuteFunction(trim(split(words.at(lineNum).at(0), '(')[0]), VarValues(split(RMParenthesis("(" + split(unWrapVec(rangeInVec(words.at(lineNum), 0, (int)words.at(lineNum).size() - 1)), '(')[1]), ','), variableValues));
+		return nullType;
+	}
+
+	// Check if it is a SplitThread call
+	else if (startsWith(words.at(lineNum).at(0), "SplitThread"))
+	{
+		vector<string> lineContents = removeTabs(words.at(lineNum), 10);
+		cout << "debug: " << words.at(lineNum).at(0) << endl;
+		//lineContents.at(0) = betweenChars(lineContents.at(0), '(', ')');
+
+		//cout << "debug: " << lineContents.at(0) << endl;
+
+		//if (betweenChars(lineContents.at(0), '(', ')') == "")
+		//	std::thread thread_obj(ExecuteFunction, trim(split(lineContents.at(0), '(')[0]), vector<boost::any>());
+		//else
+		//	std::thread thread_obj(ExecuteFunction, trim(split(lineContents.at(0), '(')[0]), VarValues(split(RMParenthesis("(" + split(unWrapVec(rangeInVec(lineContents, 0, (int)lineContents.size() - 2)), '(')[1]), ','), variableValues));
 		return nullType;
 	}
 
