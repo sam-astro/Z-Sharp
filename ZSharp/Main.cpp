@@ -139,7 +139,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 	// If no operations are applied, then return self
 	if ((countOutsideParenthesis(expression, '+') == 0 && countOutsideParenthesis(expression, '-') == 0 && countOutsideParenthesis(expression, '*') == 0 && countOutsideParenthesis(expression, '/') == 0 && countOutsideParenthesis(expression, '^') == 0) || split(expression, '.')[0] == "ZS")
 	{
-		bool isFunc = IsFunction(split(expression, '(')[0]);
+		//bool isFunc = IsFunction(split(expression, '(')[0]);
 		if (isFunc && !inQuotes)
 		{
 			//cout << split(expression, '(')[0] << endl;
@@ -148,12 +148,11 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 			while (y < expression.size() && expression[y] != ')')
 			{
 				argContents += expression[y];
-
 				y++;
 			}
 			return ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
 		}
-		else if (split(expression, '.')[0] == "ZS" && !inQuotes)
+		else if (isZS && !inQuotes)
 		{
 			string argContents = "";
 			int y = indexInStr(expression, '(') + 1;
@@ -177,11 +176,11 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 		if (expression[i] == '\"' && !isEscaped(newExpression, i))
 			inQuotes = !inQuotes;
 
-		if (isalpha(expression[i]))
+		if (isalpha(expression[i]) || expression[i] == '_')
 		{
 			string name = "";
 
-			while (i < expression.size() && (isalpha(expression[i]) || expression[i] == '.'))
+			while (i < expression.size() && (isalpha(expression[i]) || expression[i] == '.' || expression[i] == '_'))
 			{
 				name += expression[i];
 				i++;
@@ -426,7 +425,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 		return nullType;
 	}
 
-	// Check existing variables: To see if accessign class sub component
+	// Check existing variables: To see if accessing class sub component
 	else if (count(words.at(lineNum).at(0), '.') > 0 && IsVar(split(words.at(lineNum).at(0), '.')[0], variableValues) || IsVar(split(words.at(lineNum).at(0), '.')[0], globalVariableValues))
 	{
 		if (IsVar(split(words.at(lineNum).at(0), '.')[0], variableValues))
@@ -582,7 +581,7 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 int parseZSharp(string script)
 {
 	script = replace(script, "    ", "\t"); // Replace spaces with tabs (not really required, and will break purposefull whitespace in strings etc.)
-	#if DEVELOPER_MESSAGES
+#if DEVELOPER_MESSAGES
 	InterpreterLog("Contents:\n" + script);
 #endif
 
@@ -631,7 +630,37 @@ int parseZSharp(string script)
 		}
 		else
 		{
-			if (words.at(lineNum).at(0) == "string") {
+			if (words.at(lineNum).at(0) == "include")
+			{
+				string scriptPath = StringRaw(words.at(lineNum).at(1));
+				string scriptTextContents;
+#if DEVELOPER_MESSAGES == true
+				InterpreterLog("Including from " + words.at(lineNum).at(1) + "...");
+#endif
+#if UNIX
+				// Get script contents as single string
+				auto ss = ostringstream{};
+				ifstream input_file(scriptPath);
+				ss << input_file.rdbuf();
+				scriptTextContents = ss.str();
+#if DEVELOPER_MESSAGES
+				InterpreterLog("Gather script contents...");
+#endif
+#elif WINDOWS
+				// Get script contents as single string
+				ifstream script(scriptPath);
+				stringstream scriptString;
+				scriptString << script.rdbuf();
+				scriptTextContents = scriptString.str();
+#if DEVELOPER_MESSAGES
+				InterpreterLog("Gather script contents...");
+#endif
+#endif
+				parseZSharp(scriptTextContents);
+			}
+
+
+			else if (words.at(lineNum).at(0) == "string") {
 				globalVariableValues[words.at(lineNum).at(1)] = StringRaw(words.at(lineNum).at(3));
 #if DEVELOPER_MESSAGES == true
 				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
@@ -659,12 +688,6 @@ int parseZSharp(string script)
 				LogWarning("unrecognized type \'" + words.at(lineNum).at(0) + "\' on line: " + to_string(lineNum));*/
 		}
 	}
-
-#if DEVELOPER_MESSAGES
-	InterpreterLog("Start Main()");
-	#endif
-	// Executes main, which is the entry point function
-	ExecuteFunction("Main", vector<boost::any> {});
 
 	return 0;
 }
@@ -703,8 +726,8 @@ int main(int argc, char* argv[])
 		scriptTextContents = ss.str();
 #if DEVELOPER_MESSAGES
 		InterpreterLog("Gather script contents...");
-		#endif
-		
+#endif
+
 		// Change the current working directory to that of the script
 		chdir(projectDirectory.c_str());
 #if DEVELOPER_MESSAGES
@@ -722,8 +745,8 @@ int main(int argc, char* argv[])
 		scriptTextContents = scriptString.str();
 #if DEVELOPER_MESSAGES
 		InterpreterLog("Gather script contents...");
-		#endif
-		
+#endif
+
 		// Change the current working directory to that of the script
 		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
 		std::wstring wide = converter.from_bytes(projectDirectory);
@@ -742,30 +765,41 @@ int main(int argc, char* argv[])
 		exit(1);
 	}
 
-	#if DEVELOPER_MESSAGES
+#if DEVELOPER_MESSAGES
 	InterpreterLog("Parsing...");
-	#endif
-	// Start running the script
+#endif
+	// Parse the script
 	parseZSharp(scriptTextContents);
-	
+#if DEVELOPER_MESSAGES
+	InterpreterLog("Start Main()");
+#endif
+	try
+	{
+		// Executes main, which is the entry point function
+		ExecuteFunction("Main", vector<boost::any> {});
+	}
+	catch (const std::exception&)
+	{
+		//Failed with error
+	}
+
 	// Entire script has been run, exit.
-	
 #if DEVELOPER_MESSAGES // If built with developer messages, then verify exit
 	cout << "Press Enter to Continue";
 	cin.ignore();
 	exit(1);
 #else
-	if(argc > 2)
+	if (argc > 2)
 	{
 		string a = argv[2];
 		std::transform(a.begin(), a.end(), a.begin(),
-    			[](unsigned char c){ return std::tolower(c); });
-		
-		if(a == "-ve") // If the '-ve' (verify exit) option is used, ask for verification on exit
+			[](unsigned char c) { return std::tolower(c); });
+
+		if (a == "-ve") // If the '-ve' (verify exit) option is used, ask for verification on exit
 		{
 			cout << "Press Enter to Continue";
 			cin.ignore();
-			exit(1);	
+			exit(1);
 		}
 	}
 #endif // Else exit automatically

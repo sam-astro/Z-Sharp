@@ -1,10 +1,16 @@
 int g_screenw = 900
 int g_screenh = 600
 
-float g_playerMoveSpeed = 400
+float g_playerWalkSpeed = 400
+float g_playerRunSpeed = 700
 float g_jumpHeight = 20
+float g_currPlayerSpeed = 400
 
 bool g_running = false
+
+float g_gravitySpeed = -86
+
+include "./extra-include.zs"
 
 func Main()
 {
@@ -18,11 +24,11 @@ func Start()
 	float centerY = g_screenh / 2
 	global Vec2 g_screencenter = NVec2(centerX, centerY)
 	
-	Vec2 playerPos = NVec2(0, 0)
-	Vec2 playerScale = NVec2(16, 16)
+	Vec2 playerPos = g_screencenter
+	Vec2 playerScale = NVec2(40, 40)
 	global Sprite g_playerSprite = ZS.Graphics.Sprite("./square.png", playerPos, playerScale, 0)
 	
-	Vec2 groundPos = NVec2(0, -17)
+	Vec2 groundPos = NVec2(g_screencenter.x, 500)
 	Vec2 groundScale = NVec2(256, 16)
 	global Sprite g_groundSprite = ZS.Graphics.Sprite("./square.png", groundPos, groundScale, 0)
 	
@@ -36,42 +42,52 @@ func Update(deltaTime)
 {
 	float fps = 1 / deltaTime
 	print "FPS: " + fps
+	TestInclude()
 	
-	// Test automatic conversion from bool to int
-	int c = 0 + GetKey("A")
-	print "Test: " + 0 + c
+	//// Test automatic conversion from bool to int
+	//int c = GetKey("A")
+	//print "Test: " + c
+
+	// Shift key lets you sprint
+	g_running = GetKey("SHIFT_L")
+	
+	if g_running == true
+	{
+		g_currPlayerSpeed = g_playerRunSpeed
+	}
+	if g_running == false
+	{
+		g_currPlayerSpeed = g_playerWalkSpeed
+	}
 
 	// Move Left And Right
-	//
 	if GetKey("A") == true
 	{
 		float newY = g_playerSprite.position.y
 		
-		float newX = g_playerTargetPosition.x - g_playerMoveSpeed * deltaTime
+		float newX = g_playerTargetPosition.x - g_currPlayerSpeed * deltaTime
 		g_playerTargetPosition = NVec2(newX, newY)
 	}
 	if GetKey("D") == true
 	{
 		float newY = g_playerSprite.position.y
 		
-		float newX = g_playerTargetPosition.x + g_playerMoveSpeed * deltaTime
+		float newX = g_playerTargetPosition.x + g_currPlayerSpeed * deltaTime
 		g_playerTargetPosition = NVec2(newX, newY)
 	}
 	// Lerps from old position to destination smoothly
 	float oldX = g_playerSprite.position.x
 	float newX = g_playerTargetPosition.x
-	float stopSpeed = deltaTime * lerpSpeed
+	float stopSpeed = deltaTime * 7
 	float lerpedX = Lerp(oldX, newX, stopSpeed)
 	g_playerSprite.position = NVec2(lerpedX, newY)
 	
 	
 	// Finally draws all of the sprites
-	ZS.Graphics.Draw(playerSprite)
-	ZS.Graphics.Draw(groundSprite)
+	ZS.Graphics.Draw(g_playerSprite)
+	ZS.Graphics.Draw(g_groundSprite)
 	
-	ZS.Graphics.DrawText(instructionsText)
-	
-	HandleBallBounce()
+	ZS.Graphics.DrawText(g_instructionsText)
 }
 
 func Colliding(a, b)
