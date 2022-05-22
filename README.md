@@ -17,12 +17,23 @@ Downloading or installing is very simple, here is how depending on your version 
 5. Feel free to use and edit the `Pong-Example-Project`. It is a single script called `script.zs`, and you can open it with any of the methods above. It is also located on the releases page.
 > If you don't want to install ZSharp on your device, or you want easier acces to the executable and .DLLs, another version is provided called `ZS_Win_Base_Raw.zip`. This just contains all of the files the installer puts on your computer.
 ### Linux
-1. Navigate to [the most recent release](https://github.com/sam-astro/Z-Sharp/releases) and download `ZSharp-Linux.zip`.
-2. Unzip `ZSharp-Linux.zip` and open the unzipped folder.
-3. You will see some files. The Z# interpreter is `ZSharp`. Any time you want to execute a script, this is the program that will be used. You can use it like so:
+1. Install requirements:
+   * You need the package ***libsdl2-dev***. For Debian based operating systems you can install it with
+   
+      ```$ sudo apt install libsdl2-dev```
+   * You also need the package ***libsdl2-image-dev***. For Debian based operating systems you can install it with
+   
+      ```$ sudo apt install libsdl2-image-dev```
+   * You also need the package ***libsdl2-ttf-dev***. For Debian based operating systems you can install it with
+   
+      ```$ sudo apt install libsdl2-ttf-dev```
+
+2. Navigate to [the most recent release](https://github.com/sam-astro/Z-Sharp/releases) and download `ZSharp-Linux.zip`.
+3. Unzip `ZSharp-Linux.zip` and open the unzipped folder.
+4. You will see some files. The Z# interpreter is `ZSharp`. Any time you want to execute a script, this is the program that will be used. You can use it like so:
     * Use terminal, providing path to executable and then to script like so:
     `$ ./ZSharp ./Pong-Example-Project/script.zs`
-4. Feel free to use and edit the included `Pong-Example-Project`. It is a single script called `script.zs`, and you can open it with any of the methods above.
+5. Feel free to use and edit the included `Pong-Example-Project`. It is a single script called `script.zs`, and you can open it with any of the methods above.
 
 
 ## Here is some example code:
