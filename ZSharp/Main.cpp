@@ -587,7 +587,7 @@ int parseZSharp(string script)
 #endif
 
 	// Split the script by ;, signifying a line ending
-	vector<string> lines = split(script, ';');
+	vector<string> lines = split(script, '\n');
 	vector<vector<string>> words;
 	for (int i = 0; i < (int)lines.size(); i++) // Then split said lines into indiviual words
 		words.push_back(split(lines.at(i), ' '));
