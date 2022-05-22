@@ -36,10 +36,15 @@ func Start()
 	global Text g_instructionsText = ZS.Graphics.Text("Use Arrow Keys or WASD to Move, and Spacebar to Jump", "./arial.ttf", instructionsPos, 20, 0, 255, 255, 255)
 	
 	global Vec2 g_playerTargetPosition = playerPos
+	
+	int i = 0
+	while i < 10 {
+		i += 1
+		print "while iter : " + i
+	}
 }
 
-func Update(deltaTime)
-{
+func Update(deltaTime) {
 	float fps = 1 / deltaTime
 	print "FPS: " + fps
 	TestInclude()
@@ -51,8 +56,7 @@ func Update(deltaTime)
 	// Shift key lets you sprint
 	g_running = GetKey("SHIFT_L")
 	
-	if g_running == true
-	{
+	if g_running == true{
 		g_currPlayerSpeed = g_playerRunSpeed
 	}
 	if g_running == false

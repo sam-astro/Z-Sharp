@@ -441,11 +441,19 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 		vector<vector<string>> whileContents;
 		vector<string> whileParameters;
 
-		for (int w = 1; w < (int)words.at(lineNum).size(); w++)
-			whileParameters.push_back(words.at(lineNum)[w]);
+		int numOfBrackets = 0;
+		for (int w = 1; w < (int)words.at(lineNum).size(); w++) {
+			if (count(words.at(lineNum).at(w), '{') == 0)
+				whileParameters.push_back(words.at(lineNum)[w]);
+			else
+			{
+				whileParameters.push_back(replace(words.at(lineNum)[w], "{", ""));
+				numOfBrackets = 1;
+				break;
+			}
+		}
 
-		int numOfBrackets = 1;
-		for (int p = lineNum + 2; p < (int)words.size(); p++)
+		for (int p = lineNum + 1; p < (int)words.size(); p++)
 		{
 			numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
 			if (numOfBrackets == 0)
@@ -473,18 +481,24 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 		vector<vector<string>> ifContents;
 		vector<string> ifParameters;
 
-		for (int w = 1; w < (int)words.at(lineNum).size(); w++)
-			ifParameters.push_back(words.at(lineNum).at(w));
+		int numOfBrackets = 0;
+		for (int w = 1; w < (int)words.at(lineNum).size(); w++) {
+			if (count(words.at(lineNum).at(w), '{') == 0)
+				ifParameters.push_back(words.at(lineNum)[w]);
+			else
+			{
+				ifParameters.push_back(replace(words.at(lineNum)[w], "{", ""));
+				numOfBrackets = 1;
+				break;
+			}
+		}
 
-		int numOfBrackets = 1;
-		lineNum += 2;
-		while (lineNum < (int)words.size())
+		for (int p = lineNum + 1; p < (int)words.size(); p++)
 		{
-			numOfBrackets += countInVector(words.at(lineNum), "{") - countInVector(words.at(lineNum), "}");
+			numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
 			if (numOfBrackets == 0)
 				break;
-			ifContents.push_back(words.at(lineNum));
-			lineNum++;
+			ifContents.push_back(words.at(p));
 		}
 		ifContents = removeTabsWdArry(ifContents, 1);
 
@@ -612,14 +626,22 @@ int parseZSharp(string script)
 			if (indexInStr(unWrapVec(words.at(lineNum)), ')') - indexInStr(unWrapVec(words.at(lineNum)), '(') > 1)
 				for (int w = 1; w < (int)words.at(lineNum).size(); w++) // Get all words from the instantiation line: these are the args
 				{
-					args += replace(replace(words.at(lineNum).at(w), "(", " "), ")", "");
+					if (count(words.at(lineNum).at(w), '{') == 0)
+						args += replace(replace(words.at(lineNum).at(w), "(", " "), ")", "");
 				}
 
 			args = trim(replace(args, functName + " ", ""));
 			functionContents.push_back(split(args, ','));
 
-			int numOfBrackets = 1;
-			for (int p = lineNum + 2; p < (int)words.size(); p++)
+			int numOfBrackets = 0;
+			for (int w = 1; w < (int)words.at(lineNum).size(); w++) {
+				if (count(words.at(lineNum).at(w), '{') != 0) {
+					numOfBrackets = 1;
+					break;
+				}
+			}
+
+			for (int p = lineNum + 1; p < (int)words.size(); p++)
 			{
 				numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
 				if (numOfBrackets == 0)
