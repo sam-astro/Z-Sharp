@@ -110,6 +110,26 @@ utility
 windows.h
 -
 
+/home/sam/Z-Sharp/ZSharp/eval.cpp
+iostream
+-
+fstream
+-
+string
+-
+regex
+-
+limits
+-
+stack
+-
+eval.h
+/home/sam/Z-Sharp/ZSharp/eval.h
+strops.h
+/home/sam/Z-Sharp/ZSharp/strops.h
+math.h
+-
+
 /home/sam/Z-Sharp/ZSharp/eval.h
 
 /home/sam/Z-Sharp/ZSharp/graphics.h
@@ -151,6 +171,22 @@ any
 -
 
 /home/sam/Z-Sharp/ZSharp/main.h
+
+/home/sam/Z-Sharp/ZSharp/strops.cpp
+iostream
+-
+fstream
+-
+string
+-
+regex
+-
+limits
+-
+boost/any.hpp
+-
+strops.h
+/home/sam/Z-Sharp/ZSharp/strops.h
 
 /home/sam/Z-Sharp/ZSharp/strops.h
 boost/any.hpp
