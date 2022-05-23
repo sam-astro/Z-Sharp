@@ -64,16 +64,16 @@ Name: "turkish"; MessagesFile: "compiler:Languages\Turkish.isl"
 Name: "ukrainian"; MessagesFile: "compiler:Languages\Ukrainian.isl"
 
 [Files]
-Source: "D:\Code\Z-Sharp\Releases\ZSharp-Win-x64\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Code\Z-Sharp\Releases\ZSharp-Win-x64\libfreetype-6.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Code\Z-Sharp\Releases\ZSharp-Win-x64\libjpeg-9.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Code\Z-Sharp\Releases\ZSharp-Win-x64\libpng16-16.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Code\Z-Sharp\Releases\ZSharp-Win-x64\libtiff-5.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Code\Z-Sharp\Releases\ZSharp-Win-x64\libwebp-7.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Code\Z-Sharp\Releases\ZSharp-Win-x64\SDL2.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Code\Z-Sharp\Releases\ZSharp-Win-x64\SDL2_image.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Code\Z-Sharp\Releases\ZSharp-Win-x64\SDL2_ttf.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\Code\Z-Sharp\Releases\ZSharp-Win-x64\zlib1.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Code\Z-Sharp\Releases\ZS_Win_Base_Raw\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Code\Z-Sharp\Releases\ZS_Win_Base_Raw\libfreetype-6.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Code\Z-Sharp\Releases\ZS_Win_Base_Raw\libjpeg-9.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Code\Z-Sharp\Releases\ZS_Win_Base_Raw\libpng16-16.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Code\Z-Sharp\Releases\ZS_Win_Base_Raw\libtiff-5.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Code\Z-Sharp\Releases\ZS_Win_Base_Raw\libwebp-7.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Code\Z-Sharp\Releases\ZS_Win_Base_Raw\SDL2.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Code\Z-Sharp\Releases\ZS_Win_Base_Raw\SDL2_image.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Code\Z-Sharp\Releases\ZS_Win_Base_Raw\SDL2_ttf.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\Code\Z-Sharp\Releases\ZS_Win_Base_Raw\zlib1.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Registry]
