@@ -66,4 +66,6 @@ bool isEscaped(const string& str, int curChar);
 
 bool startsWith(const string& str, const string& lookFor);
 
+vector<string> splitNoOverlap(const string& str, const char& splitBy, const char& openChar, const char& closeChar);
+
 #endif
