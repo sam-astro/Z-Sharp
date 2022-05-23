@@ -144,14 +144,21 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 		if (isFunc && !inQuotes)
 		{
 			//cout << split(expression, '(')[0] << endl;
-			string argContents = "";
-			int y = indexInStr(expression, '(') + 1;
-			while (y < expression.size() && expression[y] != ')')
-			{
-				argContents += expression[y];
-				y++;
-			}
-			return ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
+			//string argContents = "";
+			//int y = indexInStr(expression, '(') + 1;
+			//while (y < expression.size() && expression[y] != ')')
+			//{
+			//	argContents += expression[y];
+			//	y++;
+			//}
+			//return ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
+			
+			// start -> FuncCall(0, x, OtherFunc(a))
+			// changeto -> 0, x, OtherFunc(a)
+			string insideFunArgs = unWrapVec(rangeInVec(expression, 0, (int)expression.size() - 1));
+			vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
+			vector<boost::any> funcArgs = VarValues(argList, variableValues);
+			return ExecuteFunction(trim(split(expression, '(')[0]), funcArgs);
 		}
 		else if (isZS && !inQuotes)
 		{
@@ -191,15 +198,24 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 			bool isFunc = IsFunction(name);
 			if (isFunc && !inQuotes)
 			{
-				string argContents = "";
-				i++;
-				while (i < expression.size() && expression[i] != ')')
-				{
-					argContents += expression[i];
+				//string argContents = "";
+				//i++;
+				//while (i < expression.size() && expression[i] != ')')
+				//{
+				//	argContents += expression[i];
 
-					i++;
-				}
-				string returnVal = AnyAsString(ExecuteFunction(name, VarValues(split(argContents, ','), variableValues)));
+				//	i++;
+				//}
+				//string returnVal = AnyAsString(ExecuteFunction(name, VarValues(split(argContents, ','), variableValues)));
+				//newExpression += returnVal;
+				
+				
+				// start -> FuncCall(0, x, OtherFunc(a))
+				// changeto -> 0, x, OtherFunc(a)
+				string insideFunArgs = unWrapVec(rangeInVec(expression, 0, (int)expression.size() - 1));
+				vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
+				vector<boost::any> funcArgs = VarValues(argList, variableValues);
+				string returnVal =  ExecuteFunction(trim(split(expression, '(')[0]), funcArgs);
 				newExpression += returnVal;
 			}
 			else if (split(name, '.')[0] == "ZS" && !inQuotes)
@@ -395,10 +411,18 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	// Check if it is function
 	else if (IsFunction(trim(split(words.at(lineNum).at(0), '(')[0])))
 	{
+		// No args provided
 		if (count(words.at(lineNum).at(0), '(') > 0 && count(words.at(lineNum).at(0), ')') > 0)
 			ExecuteFunction(trim(split(words.at(lineNum).at(0), '(')[0]), vector<boost::any>());
 		else
-			ExecuteFunction(trim(split(words.at(lineNum).at(0), '(')[0]), VarValues(split(RMParenthesis("(" + split(unWrapVec(rangeInVec(words.at(lineNum), 0, (int)words.at(lineNum).size() - 1)), '(')[1]), ','), variableValues));
+		{ // Args provided, parse them first
+			// start -> FuncCall(0, x, OtherFunc(a))
+			// changeto -> 0, x, OtherFunc(a)
+			string insideFunArgs = unWrapVec(rangeInVec(words.at(lineNum), 0, (int)words.at(lineNum).size() - 1));
+			vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
+			vector<boost::any> funcArgs = VarValues(argList, variableValues);
+			ExecuteFunction(trim(split(words.at(lineNum).at(0), '(')[0]), funcArgs);
+		}
 		return nullType;
 	}
 
@@ -406,7 +430,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 	else if (startsWith(words.at(lineNum).at(0), "SplitThread"))
 	{
 		vector<string> lineContents = removeTabs(words.at(lineNum), 10);
-		cout << "debug: " << words.at(lineNum).at(0) << endl;
+		cout << "New Thread: " << words.at(lineNum).at(0) << endl;
 		//lineContents.at(0) = betweenChars(lineContents.at(0), '(', ')');
 
 		//cout << "debug: " << lineContents.at(0) << endl;
