@@ -150,6 +150,32 @@ int countNoOverlap(const string& str, const char& searchFor, const char& ch1, co
 	return cnt;
 }
 
+vector<string> splitNoOverlap(const string& str, const char& splitBy, const char& openChar, const char& closeChar)
+{
+	vector<string> newStr;
+
+	int openCount = 0;
+
+	string tmpStr = "";
+	for (int i = 0; i < (int)str.size(); i++)
+	{
+		if (str[i] == splitBy && openCount == 0)
+		{
+			newStr.push_back(tmpStr);
+			tmpStr = "";
+			continue;
+		}
+		else if (str[i] == openChar)
+			openCount += 1;
+		else if (str[i] == closeChar)
+			openCount -= 1;
+		else
+			tmpStr += str[i];
+	}
+
+	return newStr;
+}
+
 string betweenChars(const string& str, const char& openChar, const char& closeChar)
 {
 	string content = "";
