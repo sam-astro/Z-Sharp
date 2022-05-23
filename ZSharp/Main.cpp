@@ -477,6 +477,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 				break;
 			whileContents.push_back(words.at(p));
 		}
+		lineNum = p;
 		whileContents = removeTabsWdArry(whileContents, 1);
 
 		while (BooleanLogic(whileParameters.at(0), whileParameters.at(1), whileParameters.at(2), variableValues))
@@ -517,6 +518,8 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 				break;
 			ifContents.push_back(words.at(p));
 		}
+		lineNum = p;
+		
 		ifContents = removeTabsWdArry(ifContents, 1);
 
 		if (BooleanLogic(ifParameters.at(0), ifParameters.at(1), ifParameters.at(2), variableValues))
@@ -529,39 +532,43 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 					return returnVal;
 			}
 		}
-		//else if (words.size() > lineNum + 1)
-		//	if (words[lineNum + 1][0] == "else")
-		//	{
-		//		lineNum += 1;
-
-		//		vector<string> elseContents;
-
-		//		int numOfBrackets = 1;
-		//		while (lineNum < (int)words.size())
-		//		{
-		//			numOfBrackets += countInVector(words[lineNum], "{") - countInVector(words[lineNum], "}");
-		//			if (numOfBrackets == 0)
-		//				break;
-		//			elseContents.push_back("");
-		//			for (int w = 0; w < (int)words[lineNum].size(); w++)
-		//			{
-		//				elseContents[(int)elseContents.size() - 1] += words[lineNum][w] + " ";
-		//			}
-		//			lineNum++;
-		//		}
-		//		elseContents = removeTabs(elseContents, 2);
-
-		//		vector<vector<string>> innerWords;
-		//		for (int i = 0; i < (int)elseContents.size(); i++)
-		//			innerWords.push_back(split(elseContents[i], ' '));
-
-		//		//Iterate through all lines in else statement
-		//		for (int lineNum = 0; lineNum < (int)elseContents.size(); lineNum++)
-		//		{
-		//			ProcessLine(innerWords, lineNum, variableValues);
-		//		}
-		//		return nullType;
-		//	}
+		else if (words.size() > lineNum + 1)
+		{
+			if (words[lineNum + 1].at(0) == "else")
+			{
+				vector<vector<string>> elseContents;
+				vector<string> elseParameters;
+	
+				int numOfBrackets = 0;
+				for (int w = 1; w < (int)words.at(lineNum).size(); w++) {
+					if (count(words.at(lineNum).at(w), '{') != 0)
+					{
+						numOfBrackets = 1;
+						break;
+					}
+				}
+	
+				for (int p = lineNum + 1; p < (int)words.size(); p++)
+				{
+					numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
+					if (numOfBrackets == 0)
+						break;
+					elseContents.push_back(words.at(p));
+				}
+				lineNum = p;
+				
+				elseContents = removeTabsWdArry(elseContents, 1);
+		
+				//Iterate through all lines in if statement
+				for (int l = 0; l < (int)elseContents.size(); l++)
+				{
+					boost::any returnVal = ProcessLine(elseContents, l, variableValues);
+					if (!returnVal.empty())
+						return returnVal;
+				}
+			
+			}
+		}
 		return nullType;
 	}
 	//// Gathers else statement contents
