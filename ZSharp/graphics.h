@@ -394,6 +394,8 @@ public:
 		// Centers
 		rect.x = position.x - (rect.w / 2);
 		rect.y = position.y - (rect.h / 2);
+		rect.w = scale.x;
+		rect.h = scale.y;
 		return 0;
 	}
 
