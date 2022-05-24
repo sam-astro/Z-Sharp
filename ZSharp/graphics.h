@@ -1032,7 +1032,7 @@ int initGraphics(std::string windowTitle, int width, int height, int pixelScale)
 
 	gWindow = SDL_CreateWindow(windowTitle.c_str(), 40, 40, WINDOW_WIDTH * PIXEL_SCALE, WINDOW_HEIGHT * PIXEL_SCALE, SDL_WINDOW_SHOWN | SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	gRenderer = SDL_CreateRenderer(gWindow, -1, 0);
-	SDL_RenderSetLogicalSize(gRenderer, 256 * PIXEL_SCALE, 224 * PIXEL_SCALE);
+	SDL_RenderSetLogicalSize(gRenderer, WINDOW_WIDTH * PIXEL_SCALE, WINDOW_HEIGHT * PIXEL_SCALE);
 	SDL_RenderSetScale(gRenderer, PIXEL_SCALE, PIXEL_SCALE);
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, 0);
 
