@@ -3,7 +3,9 @@
 ## Introduction
 Z-Sharp is a custom programming language I made because I don't like c++ very much (Z-Sharp's interpreter is written in c++ though). Z-Sharp scripts have the file extension .ZS. The base syntax and formatting I would say is quite similar to C# or Python, but differs as task complexity increases. It has support for graphics using SDL2, and by default is not enabled.
 
-So before you try to use anything you could normally find in a programming language, ask yourself this: Is this feature required to play pong? If not, then most likely that feature has not been implemented yet. I initially only made the language so I could create pong and make a video about it, so it really is the bare minimum.
+Before using Z#:
+There is ***no documentation***, ***strings*** barely work, ***performance*** isn't great, the syntax is ***very specific***, and most errors just cause it to ***crash without warning***. I am just a *single developer* working on this during my free time; between school, other projects, and YouTube. Z-Sharp will most likely never be finished, since it was really supposed to end when the video was published about it.
+If you are trying to use a common programming language feature, ask yourself this: ***Is this feature required to play pong?*** If not, then most likely that feature ***has not been implemented yet***. I initially only made the language so I could create pong and make a video about it, so it really is the ***bare minimum***.
 
 ## Installation
 Downloading or installing is very simple, here is how depending on your version and operating system:
