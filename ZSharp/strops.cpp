@@ -159,16 +159,26 @@ vector<string> splitNoOverlap(const string& str, const char& splitBy, const char
 	string tmpStr = "";
 	for (int i = 0; i < (int)str.size(); i++)
 	{
+		if (i == (int)str.size() - 1)
+		{
+			newStr.push_back(tmpStr+ str[i]);
+			break;
+		}
+
 		if (str[i] == splitBy && openCount == 0)
 		{
 			newStr.push_back(tmpStr);
 			tmpStr = "";
 			continue;
 		}
-		else if (str[i] == openChar)
+		else if (str[i] == openChar) {
+			tmpStr += str[i];
 			openCount += 1;
-		else if (str[i] == closeChar)
+		}
+		else if (str[i] == closeChar) {
+			tmpStr += str[i];
 			openCount -= 1;
+		}
 		else
 			tmpStr += str[i];
 	}

@@ -143,34 +143,33 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 		//bool isFunc = IsFunction(split(expression, '(')[0]);
 		if (isFunc && !inQuotes)
 		{
-			//cout << split(expression, '(')[0] << endl;
-			//string argContents = "";
-			//int y = indexInStr(expression, '(') + 1;
-			//while (y < expression.size() && expression[y] != ')')
-			//{
-			//	argContents += expression[y];
-			//	y++;
-			//}
-			//return ExecuteFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
-			
 			// start -> FuncCall(0, x, OtherFunc(a))
 			// changeto -> 0, x, OtherFunc(a)
 			string insideFunArgs = betweenChars(expression, '(', ')');
+#if DEVELOPER_MESSAGES == true
+			cout << insideFunArgs << endl;
+#endif
 			vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
+#if DEVELOPER_MESSAGES == true
+			cout << "["<<unWrapVec(argList) <<"]" << endl;
+#endif
 			vector<boost::any> funcArgs = VarValues(argList, variableValues);
 			return ExecuteFunction(trim(split(expression, '(')[0]), funcArgs);
 		}
 		else if (isZS && !inQuotes)
 		{
-			string argContents = "";
-			int y = indexInStr(expression, '(') + 1;
-			while (y < expression.size() && expression[y] != ')')
-			{
-				argContents += expression[y];
-
-				y++;
-			}
-			return ZSFunction(split(expression, '(')[0], VarValues(split(argContents, ','), variableValues));
+			// start -> FuncCall(0, x, OtherFunc(a))
+			// changeto -> 0, x, OtherFunc(a)
+			string insideFunArgs = betweenChars(expression, '(', ')');
+#if DEVELOPER_MESSAGES == true
+			cout << insideFunArgs << endl;
+#endif
+			vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
+#if DEVELOPER_MESSAGES == true
+			cout << "[" << unWrapVec(argList) << "]" << endl;
+#endif
+			vector<boost::any> funcArgs = VarValues(argList, variableValues);
+			return ZSFunction(trim(split(expression, '(')[0]), funcArgs);
 		}
 		else
 			return GetVariableValue(expression, variableValues);
@@ -198,38 +197,34 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 			bool isFunc = IsFunction(name);
 			if (isFunc && !inQuotes)
 			{
-				//string argContents = "";
-				//i++;
-				//while (i < expression.size() && expression[i] != ')')
-				//{
-				//	argContents += expression[i];
-
-				//	i++;
-				//}
-				//string returnVal = AnyAsString(ExecuteFunction(name, VarValues(split(argContents, ','), variableValues)));
-				//newExpression += returnVal;
-				
-				
 				// start -> FuncCall(0, x, OtherFunc(a))
 				// changeto -> 0, x, OtherFunc(a)
 				string insideFunArgs = betweenChars(expression, '(', ')');
+#if DEVELOPER_MESSAGES == true
+				cout << insideFunArgs << endl;
+#endif
 				vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
+#if DEVELOPER_MESSAGES == true
+				cout << unWrapVec(argList) << endl;
+#endif
 				vector<boost::any> funcArgs = VarValues(argList, variableValues);
 				string returnVal = AnyAsString(ExecuteFunction(trim(split(expression, '(')[0]), funcArgs));
 				newExpression += returnVal;
 			}
 			else if (split(name, '.')[0] == "ZS" && !inQuotes)
 			{
-				string argContents = "";
-				int y = indexInStr(expression, '(') + 1;
-				while (y < expression.size() && expression[y] != ')')
-				{
-					argContents += expression[y];
-
-					y++;
-				}
-				//cout << split(expression, '(')[0] << " " << argContents << endl;
-				string returnVal = AnyAsString(ZSFunction(split(name, '(')[0], VarValues(split(argContents, ','), variableValues)));
+				// start -> FuncCall(0, x, OtherFunc(a))
+				// changeto -> 0, x, OtherFunc(a)
+				string insideFunArgs = betweenChars(expression, '(', ')');
+#if DEVELOPER_MESSAGES == true
+				cout << insideFunArgs << endl;
+#endif
+				vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
+#if DEVELOPER_MESSAGES == true
+				cout << unWrapVec(argList) << endl;
+#endif
+				vector<boost::any> funcArgs = VarValues(argList, variableValues);
+				string returnVal = AnyAsString(ExecuteFunction(trim(split(expression, '(')[0]), funcArgs));
 				newExpression += returnVal;
 			}
 			else
@@ -245,8 +240,8 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 		else
 		{
 			newExpression += expression[i];
-		}
 	}
+}
 #if DEVELOPER_MESSAGES == true
 	//InterpreterLog("	new expression: |" + newExpression + "|");
 #endif
@@ -546,7 +541,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 			ifContents.push_back(words.at(lineNum));
 			lineNum++;
 		}
-		
+
 		ifContents = removeTabsWdArry(ifContents, 1);
 
 		if (BooleanLogic(ifParameters.at(0), ifParameters.at(1), ifParameters.at(2), variableValues))
@@ -565,7 +560,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 			{
 				vector<vector<string>> elseContents;
 				vector<string> elseParameters;
-	
+
 				int numOfBrackets = 0;
 				for (int w = 1; w < (int)words.at(lineNum).size(); w++) {
 					if (count(words.at(lineNum).at(w), '{') != 0)
@@ -574,7 +569,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 						break;
 					}
 				}
-	
+
 				lineNum++;
 				while (lineNum < (int)words.size())
 				{
@@ -584,9 +579,9 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 					elseContents.push_back(words.at(lineNum));
 					lineNum++;
 				}
-				
+
 				elseContents = removeTabsWdArry(elseContents, 1);
-		
+
 				//Iterate through all lines in if statement
 				for (int l = 0; l < (int)elseContents.size(); l++)
 				{
@@ -594,7 +589,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 					if (!returnVal.empty())
 						return returnVal;
 				}
-			
+
 			}
 		}
 		return nullType;
@@ -626,7 +621,7 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 			cout << functionName + "  \x1B[33m" << funcArgs[i] << " == " << AnyAsString(inputVarVals[i]) << "\033[0m\t\t" << endl;
 #endif
 		}
-	}
+}
 
 	//Iterate through all lines in function
 	for (int lineNum = 1; lineNum < (int)words.size(); lineNum++)
@@ -701,7 +696,7 @@ int parseZSharp(string script)
 				functionContents.push_back(removeTabs(words.at(p), 1));
 			}
 			functionValues[functName] = functionContents;
-		}
+	}
 		else
 		{
 			if (words.at(lineNum).at(0) == "include")
@@ -760,8 +755,8 @@ int parseZSharp(string script)
 			}
 			/*else
 				LogWarning("unrecognized type \'" + words.at(lineNum).at(0) + "\' on line: " + to_string(lineNum));*/
-		}
-	}
+			}
+}
 
 	return 0;
 }
@@ -790,7 +785,7 @@ int main(int argc, char* argv[])
 #if DEVELOPER_MESSAGES
 		cout << scriptPath << endl;
 #endif
-		if (!fileExists(scriptPath)
+		if (!fileExists(scriptPath))
 			LogCriticalError("Failed to load script from path: \"" + scriptPath + "\"");
 
 		std::string projectDirectory = scriptPath.substr(0, scriptPath.find_last_of("/\\"));
@@ -806,7 +801,7 @@ int main(int argc, char* argv[])
 
 		// Change the current working directory to that of the script
 		int chErr = chdir(projectDirectory.c_str());
-		if(chErr < 0)
+		if (chErr < 0)
 			LogCriticalError("Failed to change directory to: \"" + projectDirectory.c_str() + "\", error num: " + chErr);
 #if DEVELOPER_MESSAGES
 		InterpreterLog("Changed directory to " + projectDirectory + "...");
