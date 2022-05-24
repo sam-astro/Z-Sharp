@@ -61,75 +61,66 @@ func Start()
 
 func Update(deltaTime)
 {
-	float FPS = 1 / deltaTime
-	print "FPS: " + FPS
+	//float FPS = 1 / deltaTime
+	//print "FPS: " + FPS
 
 	// Handles Left Paddle Movement
 	//
 	if GetKey("W") == true
 	{
-		float newX = lPaddle.position.x
 		// Subtract from Y to move up, because vertical coordinates are reversed
 		float newY = lPaddleTargetPosition.y - paddleMoveSpeed * deltaTime
 		newY = Clamp(newY, 0 + lPaddle.scale.y / 2, SCREENH - lPaddle.scale.y / 2)
-		lPaddleTargetPosition = NVec2(newX, newY)
+		lPaddleTargetPosition.y = newY
 	}
 	if GetKey("S") == true
 	{
-		float newX = lPaddle.position.x
 		// Add to Y to move down, because vertical coordinates are reversed
 		float newY = lPaddleTargetPosition.y + paddleMoveSpeed * deltaTime
 		newY = Clamp(newY, 0 + lPaddle.scale.y / 2, SCREENH - lPaddle.scale.y / 2)
-		lPaddleTargetPosition = NVec2(newX, newY)
+		lPaddleTargetPosition.y = newY
 	}
 	// Lerps from old position to destination smoothly
 	float oldY = lPaddle.position.y
 	float stopSpeed = deltaTime * lerpSpeed
 	float newY = lPaddleTargetPosition.y
 	float lerpedY = Lerp(oldY, newY, stopSpeed)
-	lPaddle.position = NVec2(newX, lerpedY)
+	lPaddle.position = NVec2(lPaddle.position.x, lerpedY)
 	
 	// Handles Right Paddle Movement
 	//
-	if GetKey("UP") == true
+	if aiOn == false
 	{
-		if aiOn == false
+		if GetKey("UP") == true
 		{
-			float newX = rPaddle.position.x
 			// Subtract from Y to move up, because vertical coordinates are reversed
 			float newY = rPaddleTargetPosition.y - paddleMoveSpeed * deltaTime
 			newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
-			rPaddleTargetPosition = NVec2(newX, newY)
+			rPaddleTargetPosition.y = newY
 		}
-	}
-	if GetKey("DOWN") == true
-	{
-		if aiOn == false
+		if GetKey("DOWN") == true
 		{
-			float newX = rPaddle.position.x
 			// Add to Y to move down, because vertical coordinates are reversed
 			float newY = rPaddleTargetPosition.y + paddleMoveSpeed * deltaTime
 			newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
-			rPaddleTargetPosition = NVec2(newX, newY)
+			rPaddleTargetPosition.y = newY
 		}
 	}
 	if aiOn == true
 	{
 		if rPaddle.position.y < ballSpr.position.y
 		{
-			float newX = rPaddle.position.x
 			// Add to Y to move down, because vertical coordinates are reversed
 			float newY = rPaddleTargetPosition.y + paddleMoveSpeed * deltaTime
 			newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
-			rPaddleTargetPosition = NVec2(newX, newY)
+			rPaddleTargetPosition.y = newY
 		}
 		if rPaddle.position.y > ballSpr.position.y
 		{
-			float newX = rPaddle.position.x
 			// Subtract from Y to move up, because vertical coordinates are reversed
 			float newY = rPaddleTargetPosition.y - paddleMoveSpeed * deltaTime
 			newY = Clamp(newY, 0 + rPaddle.scale.y / 2, SCREENH - rPaddle.scale.y / 2)
-			rPaddleTargetPosition = NVec2(newX, newY)
+			rPaddleTargetPosition.y = newY
 		}
 	}
 	// Lerps from old position to destination smoothly
@@ -137,18 +128,20 @@ func Update(deltaTime)
 	float stopSpeed = deltaTime * lerpSpeed
 	float newY = rPaddleTargetPosition.y
 	float lerpedY = Lerp(oldY, newY, stopSpeed)
-	rPaddle.position = NVec2(newX, lerpedY)
+	rPaddle.position = NVec2(rPaddle.position.x, lerpedY)
 	
 	if GetKey("ENTER") == true
 	{
+		bool changeTo = false
 		if aiOn == true
 		{
-			aiOn = false
+			changeTo = false
 		}
 		if aiOn == false
 		{
-			aiOn = true
+			changeTo = true
 		}
+		aiOn = changeTo
 	}
 	
 	Vec2 scaledVelocity = ballVelocity
