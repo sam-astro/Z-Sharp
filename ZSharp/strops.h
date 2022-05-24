@@ -34,6 +34,8 @@ int count(const string& str, const char& ch);
 
 int countNoOverlap(const string& str, const char& searchFor, const char& ch1, const char& ch2);
 
+string betweenChars(const string& str, const char& openChar, const char& closeChar);
+
 int countOutsideParenthesis(const string& str, const char& searchFor);
 
 int indexInStr(const string& str, const char& ch);
@@ -61,5 +63,9 @@ float floatval(const string& s);
 string replace(const string& str, const string& strToReplace, const string& replaceWith);
 
 bool isEscaped(const string& str, int curChar);
+
+bool startsWith(const string& str, const string& lookFor);
+
+vector<string> splitNoOverlap(const string& str, const char& splitBy, const char& openChar, const char& closeChar);
 
 #endif

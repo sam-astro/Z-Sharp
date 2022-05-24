@@ -137,5 +137,10 @@ func GetKey(keyName)
 	bool b = ZS.Input.GetKey(keyName)
 	return b
 }
+
+//func SplitThread(function)
+//{
+//	ZS.System.SplitThread(function)
+//}
 )"
 ;

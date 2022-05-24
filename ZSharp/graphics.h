@@ -26,6 +26,7 @@ using namespace boost;
 
 int WINDOW_WIDTH = 1280;
 int WINDOW_HEIGHT = 720;
+int PIXEL_SCALE = 1;
 
 unordered_map<string, int> KEYS =
 {
@@ -191,7 +192,7 @@ public:
 	{
 		x *= rhs;
 		y *= rhs;
-		
+
 		return *this;
 	}
 
@@ -391,6 +392,8 @@ public:
 	{
 		SDL_RenderCopy(gRenderer, texture, NULL, &rect);
 		// Centers
+		rect.w = scale.x;
+		rect.h = scale.y;
 		rect.x = position.x - (rect.w / 2);
 		rect.y = position.y - (rect.h / 2);
 		return 0;
@@ -501,6 +504,8 @@ public:
 				scale.y /= AnyAsFloat(otherVal);
 		}
 		// Centers
+		rect.w = scale.x;
+		rect.h = scale.y;
 		rect.x = position.x - (rect.w / 2);
 		rect.y = position.y - (rect.h / 2);
 		return *this;
@@ -523,7 +528,7 @@ public:
 	{
 		rect.x = position.x;
 		rect.y = position.y;
-		
+
 		font = TTF_OpenFont(pathToFont.c_str(), fontSize);
 
 		Load();
@@ -1017,17 +1022,21 @@ int updateLoop()
 	return 0;
 }
 
-int initGraphics(std::string windowTitle, int width, int height)
+int initGraphics(std::string windowTitle, int width, int height, int pixelScale)
 {
 	WINDOW_WIDTH = width;
 	WINDOW_HEIGHT = height;
+	PIXEL_SCALE = pixelScale;
 
 	// Initialize SDL components
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 
-	gWindow = SDL_CreateWindow(windowTitle.c_str(), 40, 40, WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_SHOWN | SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+	gWindow = SDL_CreateWindow(windowTitle.c_str(), 40, 40, WINDOW_WIDTH * PIXEL_SCALE, WINDOW_HEIGHT * PIXEL_SCALE, SDL_WINDOW_SHOWN | SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
 	gRenderer = SDL_CreateRenderer(gWindow, -1, 0);
+	SDL_RenderSetLogicalSize(gRenderer, WINDOW_WIDTH * PIXEL_SCALE, WINDOW_HEIGHT * PIXEL_SCALE);
+	SDL_RenderSetScale(gRenderer, PIXEL_SCALE, PIXEL_SCALE);
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, 0);
 
 	//Get window surface
 	gScreenSurface = SDL_GetWindowSurface(gWindow);
