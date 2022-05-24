@@ -155,7 +155,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 			
 			// start -> FuncCall(0, x, OtherFunc(a))
 			// changeto -> 0, x, OtherFunc(a)
-			string insideFunArgs = unWrapVec(rangeInVec(expression, 0, (int)expression.size() - 1));
+			string insideFunArgs = betweenChars(expression, '(', ')');
 			vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
 			vector<boost::any> funcArgs = VarValues(argList, variableValues);
 			return ExecuteFunction(trim(split(expression, '(')[0]), funcArgs);
@@ -212,10 +212,10 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 				
 				// start -> FuncCall(0, x, OtherFunc(a))
 				// changeto -> 0, x, OtherFunc(a)
-				string insideFunArgs = unWrapVec(rangeInVec(expression, 0, (int)expression.size() - 1));
+				string insideFunArgs = betweenChars(expression, '(', ')');
 				vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
 				vector<boost::any> funcArgs = VarValues(argList, variableValues);
-				string returnVal =  ExecuteFunction(trim(split(expression, '(')[0]), funcArgs);
+				string returnVal = AnyAsString(ExecuteFunction(trim(split(expression, '(')[0]), funcArgs));
 				newExpression += returnVal;
 			}
 			else if (split(name, '.')[0] == "ZS" && !inQuotes)
@@ -387,7 +387,7 @@ int varOperation(const vector<string>& str, unordered_map<string, boost::any>& v
 	return 1;
 }
 
-boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unordered_map<string, boost::any>& variableValues)
+boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unordered_map<string, boost::any>& variableValues)
 {
 	// Check if the first two chars are '//', which would make it a comment
 	if (words.at(lineNum).at(0)[0] == '/' && words.at(lineNum).at(0)[1] == '/')
@@ -418,7 +418,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 		{ // Args provided, parse them first
 			// start -> FuncCall(0, x, OtherFunc(a))
 			// changeto -> 0, x, OtherFunc(a)
-			string insideFunArgs = unWrapVec(rangeInVec(words.at(lineNum), 0, (int)words.at(lineNum).size() - 1));
+			string insideFunArgs = betweenChars(unWrapVec(words.at(lineNum)), '(', ')');
 			vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
 			vector<boost::any> funcArgs = VarValues(argList, variableValues);
 			ExecuteFunction(trim(split(words.at(lineNum).at(0), '(')[0]), funcArgs);
@@ -494,14 +494,16 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 			}
 		}
 
-		for (int p = lineNum + 1; p < (int)words.size(); p++)
+		lineNum += 1;
+		while (lineNum < (int)words.size())
 		{
-			numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
+			numOfBrackets += countInVector(words.at(lineNum), "{") - countInVector(words.at(lineNum), "}");
 			if (numOfBrackets == 0)
 				break;
-			whileContents.push_back(words.at(p));
+			whileContents.push_back(words.at(lineNum));
+			lineNum++;
 		}
-		lineNum = p;
+
 		whileContents = removeTabsWdArry(whileContents, 1);
 
 		while (BooleanLogic(whileParameters.at(0), whileParameters.at(1), whileParameters.at(2), variableValues))
@@ -535,14 +537,15 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 			}
 		}
 
-		for (int p = lineNum + 1; p < (int)words.size(); p++)
+		lineNum++;
+		while (lineNum < (int)words.size())
 		{
-			numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
+			numOfBrackets += countInVector(words.at(lineNum), "{") - countInVector(words.at(lineNum), "}");
 			if (numOfBrackets == 0)
 				break;
-			ifContents.push_back(words.at(p));
+			ifContents.push_back(words.at(lineNum));
+			lineNum++;
 		}
-		lineNum = p;
 		
 		ifContents = removeTabsWdArry(ifContents, 1);
 
@@ -572,14 +575,15 @@ boost::any ProcessLine(const vector<vector<string>>& words, int lineNum, unorder
 					}
 				}
 	
-				for (int p = lineNum + 1; p < (int)words.size(); p++)
+				lineNum++;
+				while (lineNum < (int)words.size())
 				{
-					numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
+					numOfBrackets += countInVector(words.at(lineNum), "{") - countInVector(words.at(lineNum), "}");
 					if (numOfBrackets == 0)
 						break;
-					elseContents.push_back(words.at(p));
+					elseContents.push_back(words.at(lineNum));
+					lineNum++;
 				}
-				lineNum = p;
 				
 				elseContents = removeTabsWdArry(elseContents, 1);
 		
