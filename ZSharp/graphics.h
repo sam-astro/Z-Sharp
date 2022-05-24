@@ -538,8 +538,8 @@ public:
 	{
 		SDL_Color color = { r, g, b };
 
-		SDL_Surface* surface = TTF_RenderText_Solid(font, content.c_str(), color);
-
+		SDL_Surface* surface = TTF_RenderText_Blended(font, content.c_str(), color);
+		
 		texture = SDL_CreateTextureFromSurface(gRenderer, surface);
 
 		TTF_SizeText(font, content.c_str(), &rect.w, &rect.h);
@@ -559,7 +559,7 @@ public:
 	{
 		SDL_Color color = { r, g, b };
 
-		SDL_Surface* surface = TTF_RenderText_Solid(font, content.c_str(), color);
+		SDL_Surface* surface = TTF_RenderText_Blended(font, content.c_str(), color);
 
 		SDL_DestroyTexture(texture);
 		texture = SDL_CreateTextureFromSurface(gRenderer, surface);
