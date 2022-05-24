@@ -786,6 +786,8 @@ int main(int argc, char* argv[])
 #if DEVELOPER_MESSAGES
 		cout << scriptPath << endl;
 #endif
+		if (!fileExists(scriptPath)
+			LogCriticalError("Failed to load script from path: \"" + scriptPath + "\"");
 
 		std::string projectDirectory = scriptPath.substr(0, scriptPath.find_last_of("/\\"));
 #if UNIX
@@ -799,13 +801,14 @@ int main(int argc, char* argv[])
 #endif
 
 		// Change the current working directory to that of the script
-		chdir(projectDirectory.c_str());
+		int chErr = chdir(projectDirectory.c_str());
+		if(chErr < 0)
+			LogCriticalError("Failed to change directory to: \"" + projectDirectory.c_str() + "\", error num: " + chErr);
 #if DEVELOPER_MESSAGES
-		InterpreterLog("Change directory to " + projectDirectory + "...");
+		InterpreterLog("Changed directory to " + projectDirectory + "...");
 #endif
 #if DEVELOPER_MESSAGES
 		string newPath = filesystem::current_path();
-		InterpreterLog("Current working directory is " + newPath);
 #endif
 #elif WINDOWS
 		// Get script contents as single string
@@ -823,7 +826,7 @@ int main(int argc, char* argv[])
 		LPCWSTR s = wide.c_str();
 		SetCurrentDirectory(s);
 #if DEVELOPER_MESSAGES
-		InterpreterLog("Change directory to " + projectDirectory + "...");
+		InterpreterLog("Changed directory to " + projectDirectory + "...");
 #endif
 #endif
 	}
