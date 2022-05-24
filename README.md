@@ -1,7 +1,11 @@
 <img src="https://raw.githubusercontent.com/sam-astro/Z-Sharp/master/ExtraResources/ZS-Gem-Icon-Small.png"/><img src="https://raw.githubusercontent.com/sam-astro/Z-Sharp/master/ExtraResources/ZS-Logo-Light-Small.png"/>
 
 ## Introduction
-Z-Sharp is a custom programming language I made because I don't like c++ very much (Z-Sharp's interpreter is written in c++ though). It used to be called Slang, standing for "Stupid Lang", but another programming language called Slang already exists :(. Z-Sharp scripts have the file extension .zs. The base syntax and formatting I would say is quite similar to C#, but differs as task complexity increases. It has support for graphics using SDL2, and by default is not enabled.
+Z-Sharp is a custom programming language I made because I don't like c++ very much (Z-Sharp's interpreter is written in c++ though). Z-Sharp scripts have the file extension .ZS. The base syntax and formatting I would say is quite similar to C# or Python, but differs as task complexity increases. It has support for graphics using SDL2, and by default is not enabled.
+
+Before using Z#:
+There is ***no documentation***, ***strings*** barely work, ***performance*** isn't great, the syntax is ***very specific***, and most errors just cause it to ***crash without warning***. I am just a *single developer* working on this during my free time; between school, other projects, and YouTube. Z-Sharp will most likely never be finished, since it was really supposed to end when the video was published about it.
+If you are trying to use a common programming language feature, ask yourself this: ***Is this feature required to play pong?*** If not, then most likely that feature ***has not been implemented yet***. I initially only made the language so I could create pong and make a video about it, so it really is the ***bare minimum***.
 
 ## Installation
 Downloading or installing is very simple, here is how depending on your version and operating system:
@@ -18,15 +22,35 @@ Downloading or installing is very simple, here is how depending on your version 
 > If you don't want to install ZSharp on your device, or you want easier acces to the executable and .DLLs, another version is provided called `ZS_Win_Base_Raw.zip`. This just contains all of the files the installer puts on your computer.
 ### Linux
 1. Install requirements:
-   * You need the package ***libsdl2-dev***. For Debian based operating systems you can install it with
+   * You need the package ***libsdl2-dev***. 
+
+   For Debian based operating systems you can install it with
    
       ```$ sudo apt install libsdl2-dev```
-   * You also need the package ***libsdl2-image-dev***. For Debian based operating systems you can install it with
+
+   For Arch based operating systems you can install it with
+
+   	  ```$ sudo pacman -S sdl2```
+      
+   * You also need the package ***libsdl2-image-dev***. 
+
+   For Debian based operating systems you can install it with
    
       ```$ sudo apt install libsdl2-image-dev```
-   * You also need the package ***libsdl2-ttf-dev***. For Debian based operating systems you can install it with
+
+   For Arch based operating systems you can install it with
+
+   	  ```$ sudo pacman -S sdl2_image```
+      
+   * You also need the package ***libsdl2-ttf-dev***. 
+
+   For Debian based operating systems you can install it with
    
       ```$ sudo apt install libsdl2-ttf-dev```
+
+   For Arch based operating systems you can install it with
+
+   	  ```$ sudo pacman -S sdl2_ttf```
 
 2. Navigate to [the most recent release](https://github.com/sam-astro/Z-Sharp/releases) and download `ZSharp-Linux.zip`.
 3. Unzip `ZSharp-Linux.zip` and open the unzipped folder.
