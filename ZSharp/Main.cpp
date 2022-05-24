@@ -4,7 +4,7 @@
 #include <string>
 #define DEVELOPER_MESSAGES false
 #define EXAMPLE_PROJECT false
-#define NAMEVERSION "ZSharp v2.1.0"
+#define NAMEVERSION "ZSharp v2.1.0-alpha"
 
 #if defined(__unix__)
 #define UNIX true
