@@ -392,10 +392,10 @@ public:
 	{
 		SDL_RenderCopy(gRenderer, texture, NULL, &rect);
 		// Centers
-		rect.x = position.x - (rect.w / 2);
-		rect.y = position.y - (rect.h / 2);
 		rect.w = scale.x;
 		rect.h = scale.y;
+		rect.x = position.x - (rect.w / 2);
+		rect.y = position.y - (rect.h / 2);
 		return 0;
 	}
 
@@ -504,6 +504,8 @@ public:
 				scale.y /= AnyAsFloat(otherVal);
 		}
 		// Centers
+		rect.w = scale.x;
+		rect.h = scale.y;
 		rect.x = position.x - (rect.w / 2);
 		rect.y = position.y - (rect.h / 2);
 		return *this;

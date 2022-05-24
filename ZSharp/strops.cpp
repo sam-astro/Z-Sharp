@@ -161,13 +161,13 @@ vector<string> splitNoOverlap(const string& str, const char& splitBy, const char
 	{
 		if (i == (int)str.size() - 1)
 		{
-			newStr.push_back(tmpStr+ str[i]);
+			newStr.push_back(trim(tmpStr + str[i]));
 			break;
 		}
 
 		if (str[i] == splitBy && openCount == 0)
 		{
-			newStr.push_back(tmpStr);
+			newStr.push_back(trim(tmpStr));
 			tmpStr = "";
 			continue;
 		}

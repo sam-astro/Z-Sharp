@@ -151,7 +151,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 #endif
 			vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
 #if DEVELOPER_MESSAGES == true
-			cout << "["<<unWrapVec(argList) <<"]" << endl;
+			cout << "[" << unWrapVec(argList) << "]" << endl;
 #endif
 			vector<boost::any> funcArgs = VarValues(argList, variableValues);
 			return ExecuteFunction(trim(split(expression, '(')[0]), funcArgs);
@@ -240,8 +240,8 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 		else
 		{
 			newExpression += expression[i];
+		}
 	}
-}
 #if DEVELOPER_MESSAGES == true
 	//InterpreterLog("	new expression: |" + newExpression + "|");
 #endif
@@ -448,6 +448,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 	// re-inits a variable then store it with it's value
 	else if (countInVector(types, trim(words.at(lineNum).at(0))) > 0)
 	{
+		//cout << words.at(lineNum).at(1) << "=" << unWrapVec(slice(words.at(lineNum), 3, -1)) << "=" << AnyAsString(EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), variableValues)) << endl;
 		variableValues[words.at(lineNum).at(1)] = EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), variableValues);
 		return nullType;
 	}
@@ -621,7 +622,7 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 			cout << functionName + "  \x1B[33m" << funcArgs[i] << " == " << AnyAsString(inputVarVals[i]) << "\033[0m\t\t" << endl;
 #endif
 		}
-}
+	}
 
 	//Iterate through all lines in function
 	for (int lineNum = 1; lineNum < (int)words.size(); lineNum++)
@@ -696,7 +697,7 @@ int parseZSharp(string script)
 				functionContents.push_back(removeTabs(words.at(p), 1));
 			}
 			functionValues[functName] = functionContents;
-	}
+		}
 		else
 		{
 			if (words.at(lineNum).at(0) == "include")
@@ -755,8 +756,8 @@ int parseZSharp(string script)
 			}
 			/*else
 				LogWarning("unrecognized type \'" + words.at(lineNum).at(0) + "\' on line: " + to_string(lineNum));*/
-			}
-}
+		}
+	}
 
 	return 0;
 }
