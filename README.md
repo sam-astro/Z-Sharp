@@ -13,12 +13,13 @@ Downloading or installing is very simple, here is how depending on your version 
 1. Navigate to [the most recent release](https://github.com/sam-astro/Z-Sharp/releases) and download `ZSharp-Win-Installer.zip`.
 2. Unzip `ZSharp-Win-Installer.zip` and open the unzipped folder.
 3. Inside is a single file titled `ZSharp-Setup.exe`. Run it, and follow the setup instructions.
-4. Now that it is installed, there are a few ways to use it:
+4. If it fails to run, make sure the `MS Visual Runtime and MSVC C++ Redistribute` are installed. You can download them [here from Microsoft](https://docs.microsoft.com/en-us/cpp/windows/latest-supported-vc-redist)
+5. Now that it is installed, there are a few ways to use it:
     * (recommended) Any ZSharp file that ends with .ZS will automatically be associated with the interpreter. Just double-click it, and the interpreter will run.
     * Drag and drop any .ZS script directly onto the executable.
     * Use command line, providing path to interpreter and then to script like so:
     `> ./ZSharp.exe ./Pong-Example-Project/script.zs`
-5. Feel free to use and edit the `Pong-Example-Project`. It is a single script called `script.zs`, and you can open it with any of the methods above. It is also located on the releases page.
+6. Feel free to use and edit the `Pong-Example-Project`. It is a single script called `script.zs`, and you can open it with any of the methods above. It is also located on the releases page.
 > If you don't want to install ZSharp on your device, or you want easier acces to the executable and .DLLs, another version is provided called `ZS_Win_Base_Raw.zip`. This just contains all of the files the installer puts on your computer.
 ### Linux
 1. Install requirements:

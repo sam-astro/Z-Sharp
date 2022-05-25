@@ -3,6 +3,9 @@
 using namespace std;
 
 std::string ZSContents = R"(
+////////////////////////////////////////////////////////////////////////////////
+// ↓ DEFAULT BUILTIN ↓
+
 // Default variables, can be overwritten
 // if re-initialized or changed
 float PI = 3.14159265358979323846264338
@@ -138,9 +141,71 @@ func GetKey(keyName)
 	return b
 }
 
+// WIP
 //func SplitThread(function)
 //{
 //	ZS.System.SplitThread(function)
 //}
+
+
+//////////////////////////////////////////////////////
+// ↓ MADE BY KAPUTCHINO ↓
+
+// Return the number of combinations
+func Comb(n, r)
+{
+    return Perm(n, r) / Fac(r)
+}
+
+// Return the factorial of a number
+func Fac(x)
+{
+    int r = 1
+    while x > 1
+    {
+        r = r * x
+        x = x - 1
+    }
+    return r
+}
+
+// Return exp(x) by using the taylor method, not extremly accurate
+func TaylorExp(x)
+{
+    float sum = 0
+    float term = 1
+    int i = 1
+    float sumterm = 1
+    while sum != sumterm
+    {
+        sum = sumterm
+        term = term * x / i
+        i = i + 1
+        sumterm = sumterm + term
+    }
+    return sum
+}
+
+// Return the number of permutations
+func Perm(n, r)
+{
+    if n < 0 
+    {
+        ZS.System.PrintLine("n muss be superior or equal to 0")
+        return -1
+    }
+    if r < 0
+    {
+        ZS.System.PrintLine("r muss be superior or equal to 0")
+        return -1
+    }
+    if r > n
+    {
+        ZS.System.PrintLine("r muss be inferor or equal to n")
+        return -1
+    }
+    return Fac(n) / Fac(n - r)
+}
+
 )"
 ;
