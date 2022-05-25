@@ -279,8 +279,10 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 
 bool BooleanLogic(const string& valA, const string& determinant, const string& valB, unordered_map<string, boost::any>& variableValues)
 {
-	boost::any valARealValue = EvalExpression(valA, variableValues);
-	boost::any valBRealValue = EvalExpression(valB, variableValues);
+	if(valA)
+		boost::any valARealValue = EvalExpression(valA, variableValues);
+	if(valB)
+		boost::any valBRealValue = EvalExpression(valB, variableValues);
 #if DEVELOPER_MESSAGES == true
 	InterpreterLog(AnyAsString(valARealValue) + " " + determinant + " " + AnyAsString(valBRealValue) + " : " + AnyAsString(valA) + " " + determinant + " " + AnyAsString(valB) + " : " + to_string(AnyAsString(valARealValue) == AnyAsString(valBRealValue)));
 #endif
@@ -296,6 +298,8 @@ bool BooleanLogic(const string& valA, const string& determinant, const string& v
 		return AnyAsFloat(valARealValue) > AnyAsFloat(valBRealValue);
 	else if (determinant == "<")
 		return AnyAsFloat(valARealValue) < AnyAsFloat(valBRealValue);
+	else if (determinant == "")
+		return AnyAsBool(valARealValue) == true;
 	else
 		LogWarning("unrecognized determinant \'" + determinant + "\'");
 
