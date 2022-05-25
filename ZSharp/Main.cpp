@@ -385,7 +385,7 @@ int varOperation(const vector<string>& str, unordered_map<string, boost::any>& v
 boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unordered_map<string, boost::any>& variableValues)
 {
 	// Check if the first two chars are '//', which would make it a comment
-	if (words.at(lineNum).at(0)[0] == '/' && words.at(lineNum).at(0)[1] == '/')
+	if (startsWith(words.at(lineNum).at(0), "//"))
 		return nullType;
 
 	// If print statement (deprecated, now use ZS.System.Print() function)
@@ -478,6 +478,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 		vector<vector<string>> whileContents;
 		vector<string> whileParameters;
 
+		// Gather the parameters that must be == true for the loop to run
 		int numOfBrackets = 0;
 		for (int w = 1; w < (int)words.at(lineNum).size(); w++) {
 			if (count(words.at(lineNum).at(w), '{') == 0)
@@ -489,8 +490,22 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 				break;
 			}
 		}
+		
+		// If the statement is already false, don't bother gathering the contents
+		if(BooleanLogic(whileParameters.at(0), whileParameters.at(1), whileParameters.at(2), variableValues) == false){
+			lineNum++;
+			while (lineNum < (int)words.size())
+			{
+				numOfBrackets += countInVector(words.at(lineNum), "{") - countInVector(words.at(lineNum), "}");
+				if (numOfBrackets == 0)
+					break;
+				lineNum++;
+			}
+			return nullType;
+		}
 
-		lineNum += 1;
+		// Gather the contents
+		lineNum++;
 		while (lineNum < (int)words.size())
 		{
 			numOfBrackets += countInVector(words.at(lineNum), "{") - countInVector(words.at(lineNum), "}");
@@ -502,11 +517,16 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 
 		whileContents = removeTabsWdArry(whileContents, 1);
 
+		// Loop while true
 		while (BooleanLogic(whileParameters.at(0), whileParameters.at(1), whileParameters.at(2), variableValues))
 		{
 			//Iterate through all lines in while loop
 			for (int lineNum = 0; lineNum < (int)whileContents.size(); lineNum++)
 			{
+				if(startsWith(whileContents.at(0), "continue"))
+					break; // Stops iterating through lines and return to beginning
+				if(startsWith(whileContents.at(0), "break"))
+					return nullType; // Stops iterating through lines and leave while loop
 				boost::any returnVal = ProcessLine(whileContents, lineNum, variableValues);
 				if (!returnVal.empty())
 					return returnVal;
@@ -521,6 +541,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 		vector<vector<string>> ifContents;
 		vector<string> ifParameters;
 
+		// Gather the parameters that must be == true for the loop to run
 		int numOfBrackets = 0;
 		for (int w = 1; w < (int)words.at(lineNum).size(); w++) {
 			if (count(words.at(lineNum).at(w), '{') == 0)
@@ -533,6 +554,20 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 			}
 		}
 
+		// If the statement is already false, don't bother gathering the contents
+		if(BooleanLogic(whileParameters.at(0), whileParameters.at(1), whileParameters.at(2), variableValues) == false){
+			lineNum++;
+			while (lineNum < (int)words.size())
+			{
+				numOfBrackets += countInVector(words.at(lineNum), "{") - countInVector(words.at(lineNum), "}");
+				if (numOfBrackets == 0)
+					break;
+				lineNum++;
+			}
+			return nullType;
+		}
+		
+		// Gather the contents
 		lineNum++;
 		while (lineNum < (int)words.size())
 		{
@@ -542,22 +577,24 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 			ifContents.push_back(words.at(lineNum));
 			lineNum++;
 		}
-
 		ifContents = removeTabsWdArry(ifContents, 1);
 
+		// Execute if true
 		if (BooleanLogic(ifParameters.at(0), ifParameters.at(1), ifParameters.at(2), variableValues))
 		{
 			//Iterate through all lines in if statement
 			for (int l = 0; l < (int)ifContents.size(); l++)
 			{
+				if(startsWith(whileContents.at(0), "break"))
+					return nullType; // Stops iterating through lines and leave while loop
 				boost::any returnVal = ProcessLine(ifContents, l, variableValues);
 				if (!returnVal.empty())
 					return returnVal;
 			}
 		}
-		else if (words.size() > lineNum + 1)
+		else if (words.size() > lineNum)
 		{
-			if (words[lineNum + 1].at(0) == "else")
+			if (words[lineNum].at(0) == "else")
 			{
 				vector<vector<string>> elseContents;
 				vector<string> elseParameters;
@@ -583,7 +620,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 
 				elseContents = removeTabsWdArry(elseContents, 1);
 
-				//Iterate through all lines in if statement
+				//Iterate through all lines in else statement
 				for (int l = 0; l < (int)elseContents.size(); l++)
 				{
 					boost::any returnVal = ProcessLine(elseContents, l, variableValues);
@@ -595,12 +632,6 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 		}
 		return nullType;
 	}
-	//// Gathers else statement contents
-	//if (words[lineNum][0] == "else")
-	//{
-	//	
-	//}
-
 	return nullType;
 }
 
