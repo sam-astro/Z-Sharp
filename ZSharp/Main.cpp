@@ -279,10 +279,12 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 
 bool BooleanLogic(const string& valA, const string& determinant, const string& valB, unordered_map<string, boost::any>& variableValues)
 {
-	if(valA)
-		boost::any valARealValue = EvalExpression(valA, variableValues);
-	if(valB)
-		boost::any valBRealValue = EvalExpression(valB, variableValues);
+	boost::any valARealValue;
+	boost::any valBRealValue;
+	if(valA != "")
+		valARealValue = EvalExpression(valA, variableValues);
+	if(valB != "")
+		valBRealValue = EvalExpression(valB, variableValues);
 #if DEVELOPER_MESSAGES == true
 	InterpreterLog(AnyAsString(valARealValue) + " " + determinant + " " + AnyAsString(valBRealValue) + " : " + AnyAsString(valA) + " " + determinant + " " + AnyAsString(valB) + " : " + to_string(AnyAsString(valARealValue) == AnyAsString(valBRealValue)));
 #endif
@@ -527,9 +529,9 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 			//Iterate through all lines in while loop
 			for (int lineNum = 0; lineNum < (int)whileContents.size(); lineNum++)
 			{
-				if(startsWith(whileContents.at(0), "continue"))
+				if(startsWith(whileContents.at(0).at(0), "continue"))
 					break; // Stops iterating through lines and return to beginning
-				if(startsWith(whileContents.at(0), "break"))
+				if(startsWith(whileContents.at(0).at(0), "break"))
 					return nullType; // Stops iterating through lines and leave while loop
 				boost::any returnVal = ProcessLine(whileContents, lineNum, variableValues);
 				if (!returnVal.empty())
@@ -559,7 +561,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 		}
 
 		// If the statement is already false, don't bother gathering the contents
-		if(BooleanLogic(whileParameters.at(0), whileParameters.at(1), whileParameters.at(2), variableValues) == false){
+		if(BooleanLogic(ifParameters.at(0), ifParameters.at(1), ifParameters.at(2), variableValues) == false){
 			lineNum++;
 			while (lineNum < (int)words.size())
 			{
@@ -589,7 +591,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 			//Iterate through all lines in if statement
 			for (int l = 0; l < (int)ifContents.size(); l++)
 			{
-				if(startsWith(whileContents.at(0), "break"))
+				if(startsWith(ifContents.at(0).at(0), "break"))
 					return nullType; // Stops iterating through lines and leave while loop
 				boost::any returnVal = ProcessLine(ifContents, l, variableValues);
 				if (!returnVal.empty())

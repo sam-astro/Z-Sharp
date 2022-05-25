@@ -403,8 +403,16 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 		if (!fileExists(StringRaw(AnyAsString(args.at(1)))))
 			LogCriticalError("Failed to create 'Text' object: \"" + StringRaw(AnyAsString(args.at(1))) + "\"");
 
-		Text t(StringRaw(AnyAsString(args.at(0))), StringRaw(AnyAsString(args.at(1))), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)), AnyAsFloat(args.at(4)), (Uint8)AnyAsFloat(args.at(5)), (Uint8)AnyAsFloat(args.at(6)), (Uint8)AnyAsFloat(args.at(7)));
-		return t;
+		if (args.size() <= 8)
+		{
+			Text t(StringRaw(AnyAsString(args.at(0))), StringRaw(AnyAsString(args.at(1))), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)), AnyAsFloat(args.at(4)), (Uint8)AnyAsFloat(args.at(5)), (Uint8)AnyAsFloat(args.at(6)), (Uint8)AnyAsFloat(args.at(7)), true);
+			return t;
+		}
+		else
+		{
+			Text t(StringRaw(AnyAsString(args.at(0))), StringRaw(AnyAsString(args.at(1))), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)), AnyAsFloat(args.at(4)), (Uint8)AnyAsFloat(args.at(5)), (Uint8)AnyAsFloat(args.at(6)), (Uint8)AnyAsFloat(args.at(7)), AnyAsBool(args.at(8)));
+			return t;
+		}
 	}
 	else if (name == "ZS.Graphics.DrawText")
 		any_cast<Text>(args.at(0)).Draw();

@@ -203,7 +203,7 @@ string betweenChars(const string& str, const char& openChar, const char& closeCh
 	for (int i = (int)str.size()-1; i >=0; i--)
 	{
 		if (str[i] == closeChar){
-			endPos = i-(startPos-1);
+			endPos = i-(startPos); // or startPos-1 idk I cant do math right now
 			break;
 		}
 	}
