@@ -3,6 +3,9 @@
 using namespace std;
 
 std::string ZSContents = R"(
+////////////////////////////////////////////////////////////////////////////////
+// ↓ DEFAULT BUILTIN ↓
+
 // Default variables, can be overwritten
 // if re-initialized or changed
 float PI = 3.14159265358979323846264338
@@ -138,22 +141,23 @@ func GetKey(keyName)
 	return b
 }
 
+// WIP
 //func SplitThread(function)
 //{
 //	ZS.System.SplitThread(function)
 //}
 
-//Function made by Kaputchino
 
-//return the number of combinaison
+//////////////////////////////////////////////////////
+// ↓ MADE BY KAPUTCHINO ↓
 
+// Return the number of combinations
 func Comb(n, r)
 {
-    return Perm(n ,r) / Fac(r)
+    return Perm(n, r) / Fac(r)
 }
 
-//return the factorial of a number
-
+// Return the factorial of a number
 func Fac(x)
 {
     int r = 1
@@ -164,8 +168,8 @@ func Fac(x)
     }
     return r
 }
-//return exp(x) by using the taylor method, not extremly accurate
 
+// Return exp(x) by using the taylor method, not extremly accurate
 func TaylorExp(x)
 {
     float sum = 0
@@ -182,8 +186,7 @@ func TaylorExp(x)
     return sum
 }
 
-//return the number of permutation
-
+// Return the number of permutations
 func Perm(n, r)
 {
     if n < 0 
