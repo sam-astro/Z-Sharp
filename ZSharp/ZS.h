@@ -151,27 +151,7 @@ func Comb(n, r)
 {
     return Perm(n ,r) / Fac(r)
 }
-//return the number of permutation
 
-func Perm(n, r)
-{
-    if n < 0 
-    {
-        ZS.System.PrintLine("n muss be superior or equal to 0")
-        return -1
-    }
-    if r < 0
-    {
-        ZS.System.PrintLine("r muss be superior or equal to 0")
-        return -1
-    }
-    if r > n
-    {
-        ZS.System.PrintLine("r muss be inferor or equal to n")
-        return -1
-    }
-    return Fac(n) / Fac(n - r)
-}
 //return the factorial of a number
 
 func Fac(x)
@@ -201,5 +181,28 @@ func TaylorExp(x)
     }
     return sum
 }
+
+//return the number of permutation
+
+func Perm(n, r)
+{
+    if n < 0 
+    {
+        ZS.System.PrintLine("n muss be superior or equal to 0")
+        return -1
+    }
+    if r < 0
+    {
+        ZS.System.PrintLine("r muss be superior or equal to 0")
+        return -1
+    }
+    if r > n
+    {
+        ZS.System.PrintLine("r muss be inferor or equal to n")
+        return -1
+    }
+    return Fac(n) / Fac(n - r)
+}
+
 )"
 ;
