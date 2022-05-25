@@ -4,7 +4,7 @@
 #include <string>
 #define DEVELOPER_MESSAGES false
 #define EXAMPLE_PROJECT false
-#define NAMEVERSION "ZSharp v2.0.2"
+#define NAMEVERSION "ZSharp v2.1.0-alpha"
 
 #if defined(__unix__)
 #define UNIX true
@@ -803,13 +803,12 @@ int main(int argc, char* argv[])
 		// Change the current working directory to that of the script
 		int chErr = chdir(projectDirectory.c_str());
 		if (chErr < 0)
-			LogCriticalError("Failed to change directory to: \"" + projectDirectory + "\", error num: " + chErr);
+			LogCriticalError("Failed to change directory to: \"" + projectDirectory + "\", error num: " + to_string(chErr));
+
 #if DEVELOPER_MESSAGES
 		InterpreterLog("Changed directory to " + projectDirectory + "...");
 #endif
-#if DEVELOPER_MESSAGES
-		string newPath = filesystem::current_path();
-#endif
+
 #elif WINDOWS
 		// Get script contents as single string
 		ifstream script(scriptPath);
