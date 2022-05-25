@@ -142,5 +142,64 @@ func GetKey(keyName)
 //{
 //	ZS.System.SplitThread(function)
 //}
+
+//Function made by Kaputchino
+
+//return the number of combinaison
+
+func Comb(n, r)
+{
+    return Perm(n ,r) / Fac(r)
+}
+//return the number of permutation
+
+func Perm(n, r)
+{
+    if n < 0 
+    {
+        ZS.System.PrintLine("n muss be superior or equal to 0")
+        return -1
+    }
+    if r < 0
+    {
+        ZS.System.PrintLine("r muss be superior or equal to 0")
+        return -1
+    }
+    if r > n
+    {
+        ZS.System.PrintLine("r muss be inferor or equal to n")
+        return -1
+    }
+    return Fac(n) / Fac(n - r)
+}
+//return the factorial of a number
+
+func Fac(x)
+{
+    int r = 1
+    while x > 1
+    {
+        r = r * x
+        x = x - 1
+    }
+    return r
+}
+//return exp(x) by using the taylor method, not extremly accurate
+
+func TaylorExp(x)
+{
+    float sum = 0
+    float term = 1
+    int i = 1
+    float sumterm = 1
+    while sum != sumterm
+    {
+        sum = sumterm
+        term = term * x / i
+        i = i + 1
+        sumterm = sumterm + term
+    }
+    return sum
+}
 )"
 ;
