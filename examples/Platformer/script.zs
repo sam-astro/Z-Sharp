@@ -41,7 +41,7 @@ func Start()
 	global Sprite g_groundSprite = ZS.Graphics.Sprite("./square.png", groundPos, groundScale, 0)
 	
 	Vec2 instructionsPos = NVec2(centerOfScreen.x, centerOfScreen.y)
-	global Text g_instructionsText = ZS.Graphics.Text("Use Arrow Keys or WASD to Move, and Spacebar to Jump", "./arial.ttf", instructionsPos, 20, 0, 255, 255, 255)
+	global Text g_instructionsText = ZS.Graphics.Text("Use Arrow Keys or WASD to Move and Spacebar to Jump", "./arial.ttf", instructionsPos, 20, 0, 255, 255, 255)
 	
 	global Vec2 g_playerTargetPosition = playerPos
 	
@@ -92,7 +92,7 @@ func Update(deltaTime) {
 	float newX = g_playerTargetPosition.x
 	float stopSpeed = deltaTime * 7
 	float lerpedX = Lerp(oldX, newX, stopSpeed)
-	g_playerSprite.position = NVec2(lerpedX, newY)
+	g_playerSprite.position = NVec2(lerpedX, g_playerTargetPosition.y)
 	
 	
 	// Finally draws all of the sprites
