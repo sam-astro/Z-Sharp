@@ -190,20 +190,25 @@ string betweenChars(const string& str, const char& openChar, const char& closeCh
 {
 	string content = "";
 
-	int waitingForClose = 0;
+	int startPos = 0;
+	int endPos = (int)str.size();
 
 	for (int i = 0; i < (int)str.size(); i++)
 	{
-		if (waitingForClose > 0 && !(str[i] == closeChar && waitingForClose == 1))
-			content += str[i];
-
-		if (str[i] == openChar)
-			waitingForClose++;
-		else if (str[i] == closeChar)
-			waitingForClose--;
+		if (str[i] == openChar){
+			startPos = i+1;
+			break;
+		}
+	}
+	for (int i = (int)str.size()-1; i >=0; i--)
+	{
+		if (str[i] == closeChar){
+			endPos = i-(startPos-1);
+			break;
+		}
 	}
 
-	return content;
+	return str.substr(startPos, endPos);
 }
 
 bool startsWith(const string& str, const string& lookFor)
