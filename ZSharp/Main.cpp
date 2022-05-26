@@ -680,11 +680,8 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 int parseZSharp(string script)
 {
 	//script = replace(script, "    ", "\t"); // Replace spaces with tabs (not really required, and will break purposefull whitespace in strings etc.)
-#if DEVELOPER_MESSAGES
-	InterpreterLog("Contents:\n" + script);
-#endif
 
-	// Split the script by ;, signifying a line ending
+	// Split the script by newline, signifying a line ending
 	vector<string> lines = split(script, '\n');
 	for (int i = 0; i < (int)lines.size(); i++){ // Then split said lines into indiviual words
 		if((lines.at(i)[0] == "/" && lines.at(i)[1] == "/") || trim(lines.at(i)) == "")
@@ -692,9 +689,17 @@ int parseZSharp(string script)
 			lines.erase(lines.begin() + i);
 		}
 	}
+#if DEVELOPER_MESSAGES
+	InterpreterLog("Contents:\n");
+#endif
 	vector<vector<string>> words;
 	for (int i = 0; i < (int)lines.size(); i++) // Then split said lines into indiviual words
+	{
 		words.push_back(split(lines.at(i), ' '));
+#if DEVELOPER_MESSAGES
+		cout << lines.at(i);
+#endif
+	}
 
 #if DEVELOPER_MESSAGES
 	InterpreterLog("Gather variables & functions...");
