@@ -679,13 +679,19 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 
 int parseZSharp(string script)
 {
-	script = replace(script, "    ", "\t"); // Replace spaces with tabs (not really required, and will break purposefull whitespace in strings etc.)
+	//script = replace(script, "    ", "\t"); // Replace spaces with tabs (not really required, and will break purposefull whitespace in strings etc.)
 #if DEVELOPER_MESSAGES
 	InterpreterLog("Contents:\n" + script);
 #endif
 
 	// Split the script by ;, signifying a line ending
 	vector<string> lines = split(script, '\n');
+	for (int i = 0; i < (int)lines.size(); i++){ // Then split said lines into indiviual words
+		if((lines.at(i)[0] == "/" && lines.at(i)[1] == "/") || trim(lines.at(i)) == "")
+		{ // Remove line if it is a comment or if it is blank
+			lines.erase(lines.begin() + i);
+		}
+	}
 	vector<vector<string>> words;
 	for (int i = 0; i < (int)lines.size(); i++) // Then split said lines into indiviual words
 		words.push_back(split(lines.at(i), ' '));
@@ -693,7 +699,7 @@ int parseZSharp(string script)
 #if DEVELOPER_MESSAGES
 	InterpreterLog("Gather variables & functions...");
 #endif
-	// First go through entire script and iterate through all types to see if line is a variable
+	// Go through entire script and iterate through all types to see if line is a variable
 	// or function declaration, then store it with it's value
 	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
 	{
@@ -867,7 +873,7 @@ int main(int argc, char* argv[])
 #endif
 	}
 	else
-	{ // If no script is provided as an argument then throw error
+	{ // If no script is provided as an argument throw error
 		LogWarning("No script provided! Please drag and drop .ZS file over interpreter executable file, or provide it's path as a command-line argument.");
 		cout << "Press Enter to Continue";
 		cin.ignore();
