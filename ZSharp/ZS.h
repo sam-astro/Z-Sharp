@@ -4,12 +4,16 @@ using namespace std;
 
 std::string ZSContents = R"(
 ////////////////////////////////////////////////////////////////////////////////
-// ↓ DEFAULT BUILTIN ↓
+//  BUILTIN 
+////////////////////////////////////////////////////////////////////////////////
 
 // Default variables, can be overwritten
 // if re-initialized or changed
 float PI = 3.14159265358979323846264338
 float EulersNumber = 2.71828183
+
+// This variable tells the interpreter if it should close the console window when the program has finished running.
+bool EXIT_WHEN_DONE = true
 
 // Trigonometric function Sin
 func Sin(input)
@@ -148,8 +152,10 @@ func GetKey(keyName)
 //}
 
 
-//////////////////////////////////////////////////////
-// ↓ MADE BY KAPUTCHINO ↓
+
+////////////////////////////
+// ↓ MADE BY KAPUTCHINO ↓ //
+////////////////////////////
 
 // Return the number of combinations
 func Comb(n, r)
@@ -191,17 +197,17 @@ func Perm(n, r)
 {
     if n < 0 
     {
-        ZS.System.PrintLine("n muss be superior or equal to 0")
+        ZS.System.PrintLine("n must be superior or equal to 0")
         return -1
     }
     if r < 0
     {
-        ZS.System.PrintLine("r muss be superior or equal to 0")
+        ZS.System.PrintLine("r must be superior or equal to 0")
         return -1
     }
     if r > n
     {
-        ZS.System.PrintLine("r muss be inferor or equal to n")
+        ZS.System.PrintLine("r must be inferior or equal to n")
         return -1
     }
     return Fac(n) / Fac(n - r)
