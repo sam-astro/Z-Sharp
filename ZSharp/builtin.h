@@ -164,8 +164,10 @@ int InterpreterLog(const string& logText)
 #if UNIX
 	time_t currentTime;
 	struct tm* localTime;
-	time(&currentTime);
-	localTime = localtime(&utc);
+
+	time(&currentTime);                   // Get the current time
+	localTime = localtime(&currentTime);  // Convert the current time to the local time
+
 	Hour = localTime->tm_hour;
 	Min = localTime->tm_min;
 	Sec = localTime->tm_sec;
