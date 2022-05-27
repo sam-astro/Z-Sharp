@@ -743,6 +743,7 @@ int parseZSharp(string script)
 				if (numOfBrackets == 0)
 					break;
 				functionContents.push_back(words.at(lineNum));
+				cout << functName << "<" << args << ">" << endl;
 				lineNum++;
 			}
 			//functionContents = removeTabsWdArry(functionContents, 1);
