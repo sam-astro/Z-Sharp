@@ -16,6 +16,8 @@ bool aiOn = false
 // so if you never call ZS.Graphics.Init, then Start won't run
 func Main()
 {
+	EXIT_WHEN_DONE = false
+	
 	// Immediately creates the window, then Start(), then the game loop. The game loop calls Update() every frame
 	ZS.Graphics.Init("This is a pong game", SCREENW, SCREENH)
 }
