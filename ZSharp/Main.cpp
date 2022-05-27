@@ -2,7 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#define DEVELOPER_MESSAGES false
+//bool DEVELOPER_MESSAGES = true;
+#define DEVELOPER_MESSAGES true
 #define EXAMPLE_PROJECT false
 #define NAMEVERSION "ZSharp v2.1.0-alpha"
 
@@ -430,7 +431,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 	// Check if it is a SplitThread call
 	else if (startsWith(words.at(lineNum).at(0), "SplitThread"))
 	{
-		vector<string> lineContents = removeTabs(words.at(lineNum), 10);
+		vector<string> lineContents = words.at(lineNum);
 		cout << "New Thread: " << words.at(lineNum).at(0) << endl;
 		//lineContents.at(0) = betweenChars(lineContents.at(0), '(', ')');
 
@@ -521,7 +522,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 			lineNum++;
 		}
 
-		whileContents = removeTabsWdArry(whileContents, 1);
+		//whileContents = removeTabsWdArry(whileContents, 1);
 
 		// Loop while true
 		while (BooleanLogic(whileParameters.at(0), whileParameters.at(1), whileParameters.at(2), variableValues))
@@ -583,7 +584,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 			ifContents.push_back(words.at(lineNum));
 			lineNum++;
 		}
-		ifContents = removeTabsWdArry(ifContents, 1);
+		//ifContents = removeTabsWdArry(ifContents, 1);
 
 		// Execute if true
 		if (BooleanLogic(ifParameters.at(0), ifParameters.at(1), ifParameters.at(2), variableValues))
@@ -624,7 +625,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 					lineNum++;
 				}
 
-				elseContents = removeTabsWdArry(elseContents, 1);
+				//elseContents = removeTabsWdArry(elseContents, 1);
 
 				//Iterate through all lines in else statement
 				for (int l = 0; l < (int)elseContents.size(); l++)
@@ -682,11 +683,12 @@ int parseZSharp(string script)
 	//script = replace(script, "    ", "\t"); // Replace spaces with tabs (not really required, and will break purposefull whitespace in strings etc.)
 
 	// Split the script by newline, signifying a line ending
-	vector<string> lines = split(script, '\n');
-	for (int i = 0; i < (int)lines.size(); i++){ // Then split said lines into indiviual words
-		if((lines.at(i)[0] == "/" && lines.at(i)[1] == "/") || trim(lines.at(i)) == "")
-		{ // Remove line if it is a comment or if it is blank
-			lines.erase(lines.begin() + i);
+	vector<string> beforeProcessLines = split(script, '\n');
+	vector<string> lines;
+	for (int i = 0; i < (int)beforeProcessLines.size(); i++){ // Then split said lines into indiviual words
+		if(!startsWith(trim(beforeProcessLines.at(i)), "//") && trim(beforeProcessLines.at(i)) != "")
+		{ // dont include line if it is a comment or if it is blank
+			lines.push_back(trim(beforeProcessLines.at(i)));
 		}
 	}
 #if DEVELOPER_MESSAGES
@@ -697,7 +699,7 @@ int parseZSharp(string script)
 	{
 		words.push_back(split(lines.at(i), ' '));
 #if DEVELOPER_MESSAGES
-		cout << lines.at(i);
+		cout << unWrapVec(words.at(i)) << endl;
 #endif
 	}
 
@@ -718,18 +720,34 @@ int parseZSharp(string script)
 			InterpreterLog("Load script function " + functName + "...");
 #endif
 
-			string args = "";
-			if (indexInStr(unWrapVec(words.at(lineNum)), ')') - indexInStr(unWrapVec(words.at(lineNum)), '(') > 1)
-				for (int w = 1; w < (int)words.at(lineNum).size(); w++) // Get all words from the instantiation line: these are the args
-				{
-					if (count(words.at(lineNum).at(w), '{') == 0)
-						args += replace(replace(words.at(lineNum).at(w), "(", " "), ")", "");
-				}
+			//string args = "";
+			//if (indexInStr(unWrapVec(words.at(lineNum)), ')') - indexInStr(unWrapVec(words.at(lineNum)), '(') > 1)
+			//	for (int w = 0; w < (int)words.at(lineNum).size(); w++) // Get all words from the instantiation line: these are the args
+			//	{
+			//		if (count(words.at(lineNum).at(w), '{') == 0)
+			//			args += replace(replace(words.at(lineNum).at(w), "(", " "), ")", "");
+			//	}
+			string args = betweenChars(unWrapVec(words.at(lineNum)), '(', ')');
+			cout << functName << "<" << args << ">" << endl;
 
-			args = trim(replace(args, functName + " ", ""));
+			//args = trim(replace(args, functName, ""));
 			functionContents.push_back(split(args, ','));
 
-			int numOfBrackets = 0;
+
+			int numOfBrackets = countInVector(words.at(lineNum), "{") - countInVector(words.at(lineNum), "}");
+			// Gather the contents
+			lineNum++;
+			while (lineNum < (int)words.size())
+			{
+				numOfBrackets += countInVector(words.at(lineNum), "{") - countInVector(words.at(lineNum), "}");
+				if (numOfBrackets == 0)
+					break;
+				functionContents.push_back(words.at(lineNum));
+				lineNum++;
+			}
+			//functionContents = removeTabsWdArry(functionContents, 1);
+
+			/*int numOfBrackets = 0;
 			for (int w = 1; w < (int)words.at(lineNum).size(); w++) {
 				if (count(words.at(lineNum).at(w), '{') != 0) {
 					numOfBrackets = 1;
@@ -743,7 +761,7 @@ int parseZSharp(string script)
 				if (numOfBrackets == 0)
 					break;
 				functionContents.push_back(removeTabs(words.at(p), 1));
-			}
+			}*/
 			functionValues[functName] = functionContents;
 		}
 		else
@@ -817,9 +835,9 @@ int main(int argc, char* argv[])
 	cout << endl << endl;
 
 	// Gathers builtin functions and variables
-	GetBuiltins(ZSContents);
-	functionValues = builtinFunctionValues;
-	globalVariableValues = builtinVarVals;
+	parseZSharp(ZSContents);
+	//functionValues = builtinFunctionValues;
+	//globalVariableValues = builtinVarVals;
 
 	std::string scriptTextContents;
 
@@ -828,7 +846,7 @@ int main(int argc, char* argv[])
 	{
 		std::string scriptPath;
 		if (EXAMPLE_PROJECT)
-			scriptPath = "D:\\Code\\Z-Sharp\\Releases\\ZS-Win-x64-Base\\Pong-Example-Project\\script.zs";
+			scriptPath = "D:\\Code\\Z-Sharp\\examples\\Platformer\\script.zs";
 		else
 			scriptPath = argv[1];
 #if DEVELOPER_MESSAGES

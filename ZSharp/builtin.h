@@ -28,8 +28,8 @@ using namespace boost;
 
 vector<string> types = { "int", "float", "string", "bool", "void", "null", "Sprite", "Vec2", "Text" };
 
-unordered_map<string, vector<vector<string>>> builtinFunctionValues;
-unordered_map<string, boost::any> builtinVarVals;
+//unordered_map<string, vector<vector<string>>> builtinFunctionValues;
+//unordered_map<string, boost::any> builtinVarVals;
 
 // Foreground colors
 const std::string blackFGColor = "\x1B[30m";
@@ -276,90 +276,90 @@ bool AxisAlignedCollision(const Sprite& a, const Sprite& b) // AABB - AABB colli
 	return collisionX && collisionY;
 }
 
-// Initial script processing, which loads variables and functions from builtin
-int GetBuiltins(std::string s)
-{
-	std::string script = replace(s, "    ", "\t");
-
-	vector<string> lines = split(script, '\n');
-	vector<vector<string>> words;
-	for (int i = 0; i < (int)lines.size(); i++)
-	{
-		words.push_back(split(lines.at(i), ' '));
-	}
-
-	// Go through entire script and iterate through all types to see if line is a
-	// function declaration, then store it with it's value
-	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
-	{
-		//Checks if it is function
-		if (words.at(lineNum).at(0) == "func")
-		{
-			vector<vector<string>> functionContents;
-
-			string functName = split(words.at(lineNum).at(1), '(')[0];
-
-#if DEVELOPER_MESSAGES == true
-			InterpreterLog("Load builtin function " + functName + "...");
-#endif
-
-			string args = "";
-			for (int w = 1; w < (int)words.at(lineNum).size(); w++) // Get all words from the instantiation line: these are the args
-			{
-				args += replace(replace(words.at(lineNum).at(w), "(", " "), ")", "");
-			}
-
-			args = replace(args, functName + " ", "");
-			functionContents.push_back(split(args, ','));
-
-			int numOfBrackets = 1;
-			for (int p = lineNum + 2; p < (int)words.size(); p++)
-			{
-				numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
-				if (numOfBrackets == 0)
-					break;
-				functionContents.push_back(removeTabs(words.at(p), 1));
-			}
-			builtinFunctionValues[functName] = functionContents;
-			//cout << functName << " is \n" << Vec2Str(functionContents) << endl << endl;
-		}
-		else
-		{
-			if (words.at(lineNum).at(0) == "string")
-			{
-				builtinVarVals[words.at(lineNum).at(1)] = StringRaw(words.at(lineNum).at(3));
-#if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
-#endif
-			}
-			else if (words.at(lineNum).at(0) == "int")
-			{
-				builtinVarVals[words.at(lineNum).at(1)] = stoi(words.at(lineNum).at(3));
-#if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
-#endif
-			}
-			else if (words.at(lineNum).at(0) == "float")
-			{
-				builtinVarVals[words.at(lineNum).at(1)] = stof(words.at(lineNum).at(3));
-#if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
-#endif
-			}
-			else if (words.at(lineNum).at(0) == "bool")
-			{
-				builtinVarVals[words.at(lineNum).at(1)] = stob(words.at(lineNum).at(3));
-#if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
-#endif
-			}
-			//else
-			//	LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
-		}
-	}
-
-	return 0;
-}
+//// Initial script processing, which loads variables and functions from builtin
+//int GetBuiltins(std::string s)
+//{
+//	std::string script = replace(s, "    ", "\t");
+//
+//	vector<string> lines = split(script, '\n');
+//	vector<vector<string>> words;
+//	for (int i = 0; i < (int)lines.size(); i++)
+//	{
+//		words.push_back(split(lines.at(i), ' '));
+//	}
+//
+//	// Go through entire script and iterate through all types to see if line is a
+//	// function declaration, then store it with it's value
+//	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
+//	{
+//		//Checks if it is function
+//		if (words.at(lineNum).at(0) == "func")
+//		{
+//			vector<vector<string>> functionContents;
+//
+//			string functName = split(words.at(lineNum).at(1), '(')[0];
+//
+//#if DEVELOPER_MESSAGES == true
+//			InterpreterLog("Load builtin function " + functName + "...");
+//#endif
+//
+//			string args = "";
+//			for (int w = 1; w < (int)words.at(lineNum).size(); w++) // Get all words from the instantiation line: these are the args
+//			{
+//				args += replace(replace(words.at(lineNum).at(w), "(", " "), ")", "");
+//			}
+//
+//			args = replace(args, functName + " ", "");
+//			functionContents.push_back(split(args, ','));
+//
+//			int numOfBrackets = 1;
+//			for (int p = lineNum + 2; p < (int)words.size(); p++)
+//			{
+//				numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
+//				if (numOfBrackets == 0)
+//					break;
+//				functionContents.push_back(removeTabs(words.at(p), 1));
+//			}
+//			builtinFunctionValues[functName] = functionContents;
+//			//cout << functName << " is \n" << Vec2Str(functionContents) << endl << endl;
+//		}
+//		else
+//		{
+//			if (words.at(lineNum).at(0) == "string")
+//			{
+//				builtinVarVals[words.at(lineNum).at(1)] = StringRaw(words.at(lineNum).at(3));
+//#if DEVELOPER_MESSAGES == true
+//				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
+//#endif
+//			}
+//			else if (words.at(lineNum).at(0) == "int")
+//			{
+//				builtinVarVals[words.at(lineNum).at(1)] = stoi(words.at(lineNum).at(3));
+//#if DEVELOPER_MESSAGES == true
+//				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
+//#endif
+//			}
+//			else if (words.at(lineNum).at(0) == "float")
+//			{
+//				builtinVarVals[words.at(lineNum).at(1)] = stof(words.at(lineNum).at(3));
+//#if DEVELOPER_MESSAGES == true
+//				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
+//#endif
+//			}
+//			else if (words.at(lineNum).at(0) == "bool")
+//			{
+//				builtinVarVals[words.at(lineNum).at(1)] = stob(words.at(lineNum).at(3));
+//#if DEVELOPER_MESSAGES == true
+//				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
+//#endif
+//			}
+//			//else
+//			//	LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
+//		}
+//	}
+//
+//	return 0;
+//}
 
 // Executes 
 boost::any ZSFunction(const string& name, const vector<boost::any>& args)

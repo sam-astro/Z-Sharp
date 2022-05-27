@@ -8,7 +8,8 @@
 //#include "builtin.h"
 using namespace std;
 
-const string WHITESPACE = " \n\r\t\f\v";
+const string WHITESPACE = " \t\f";
+//const string WHITESPACE = " \n\r\t\f\v";
 
 
 bool isNumber(const string& str)

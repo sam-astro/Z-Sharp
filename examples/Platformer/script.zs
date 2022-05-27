@@ -83,15 +83,18 @@ func Update(deltaTime)
 	
 	// Apply gravity
 	g_colliding = Colliding(g_playerSprite, g_groundSprite)
+	print g_colliding
 	if g_colliding == false
 	{
+		print g_jumping
 		if g_jumping == false
 		{
 			g_playerTargetPosition.y += deltaTime * g_gravitySpeed
+			print "grav"
 		}
 		if g_jumping == true
 		{
-			g_playerTargetPosition.y -= (g_jumpHeight*deltaTime) + (deltaTime*g_gravitySpeed*-g_jumpingTime*5)
+			g_playerTargetPosition.y -= (g_jumpHeight * deltaTime) + (deltaTime * g_gravitySpeed * -g_jumpingTime * 5)
 			print g_jumpingTime
 		}
 	}
@@ -128,6 +131,6 @@ func Update(deltaTime)
 
 func Colliding(a, b)
 {
-	bool b = ZS.Physics.AxisAlignedCollision(a, b)
-	return b
+	bool bo = ZS.Physics.AxisAlignedCollision(a, b)
+	return bo
 }
