@@ -20,6 +20,7 @@ float g_jumpingTime = 0
 func Main()
 {
 	//SplitThread(ThreadedFunction())
+	EXIT_WHEN_DONE = false
 	
 	// Immediately creates the window, then runs Start(), then the game loop. The game loop calls Update() every frame
 	ZS.Graphics.Init("Platformer game", g_screenw, g_screenh, g_resolutionScale)
