@@ -41,7 +41,7 @@ func Start()
 	Vec2 rPaddlePosition = NVec2(rOffset, yPosPaddle)
 	global Vec2 rPaddleTargetPosition = NVec2(rOffset, yPosPaddle)
 	
-	global Sprite ballSpr = ZS.Graphics.Sprite("./square.png", ballPos, ballScale, 0)
+	global Sprite ballSpr = ZS.Graphics.Sprite("./ball.png", ballPos, ballScale, 0)
 	global Sprite lPaddle = ZS.Graphics.Sprite("./square.png", lPaddlePosition, paddleScale, 0)
 	global Sprite rPaddle = ZS.Graphics.Sprite("./square.png", rPaddlePosition, paddleScale, 0)
 	
@@ -239,7 +239,7 @@ func HandleBallBounce()
 		difference -= ballY
 		float paddleHeight = rPaddle.scale.y
 		float normalizedRelativeIntersectionY = difference / (paddleHeight / 2)
-		float bounceAngle = normalizedRelativeIntersectionY * 0.523599
+		float bounceAngle = normalizedRelativeIntersectionY * -0.523599
 		float ballVx = ballSpeed
 		ballVx *= Cos(bounceAngle)
 		ballVx *= -1
