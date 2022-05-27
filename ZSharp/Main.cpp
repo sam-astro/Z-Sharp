@@ -391,9 +391,9 @@ int varOperation(const vector<string>& str, unordered_map<string, boost::any>& v
 
 boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unordered_map<string, boost::any>& variableValues)
 {
-	// Check if the first two chars are '//', which would make it a comment
-	if (startsWith(words.at(lineNum).at(0), "//"))
-		return nullType;
+	//// Check if the first two chars are '//', which would make it a comment
+	//if (startsWith(words.at(lineNum).at(0), "//"))
+	//	return nullType;
 
 	// If print statement (deprecated, now use ZS.System.Print() function)
 	else if (words.at(lineNum).at(0) == "print")
@@ -407,7 +407,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 		return EvalExpression(unWrapVec(vector<string>(words.at(lineNum).begin() + 1, words.at(lineNum).end())), variableValues);
 
 	// Check if it is ZS Builtin function
-	else if (words.at(lineNum).at(0)[0] == 'Z' && words.at(lineNum).at(0)[1] == 'S' && words.at(lineNum).at(0)[2] == '.')
+	else if (startsWith(words.at(lineNum).at(0), "ZS."))
 		return EvalExpression(unWrapVec(words.at(lineNum)), variableValues);
 
 	// Check if it is function
@@ -657,7 +657,7 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 		{
 			variableValues[funcArgs[i]] = inputVarVals[i];
 #if DEVELOPER_MESSAGES == true
-			cout << functionName + "  \x1B[33m" << funcArgs[i] << " == " << AnyAsString(inputVarVals[i]) << "\033[0m\t\t" << endl;
+			cout << "in " << functionName + "  " << funcArgs[i] << " == " << AnyAsString(inputVarVals[i]) << endl;
 #endif
 		}
 	}
@@ -803,26 +803,34 @@ int parseZSharp(string script)
 				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
 #endif
 			}
-			else if (words.at(lineNum).at(0) == "int") {
-				globalVariableValues[words.at(lineNum).at(1)] = stoi(words.at(lineNum).at(3));
-#if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
-#endif
+			
+			// Iterate through all types to see if line inits or
+			// re-inits a variable then store it with it's value
+			else if (countInVector(types, trim(words.at(lineNum).at(0))) > 0)
+			{
+				//cout << words.at(lineNum).at(1) << "=" << unWrapVec(slice(words.at(lineNum), 3, -1)) << "=" << AnyAsString(EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), variableValues)) << endl;
+				globalVariableValues[words.at(lineNum).at(1)] = EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), variableValues);
 			}
-			else if (words.at(lineNum).at(0) == "float") {
-				globalVariableValues[words.at(lineNum).at(1)] = stof(words.at(lineNum).at(3));
-#if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
-#endif
-			}
-			else if (words.at(lineNum).at(0) == "bool") {
-				globalVariableValues[words.at(lineNum).at(1)] = stob(words.at(lineNum).at(3));
-#if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
-#endif
-			}
-			/*else
-				LogWarning("unrecognized type \'" + words.at(lineNum).at(0) + "\' on line: " + to_string(lineNum));*/
+//			else if (words.at(lineNum).at(0) == "int") {
+//				globalVariableValues[words.at(lineNum).at(1)] = stoi(words.at(lineNum).at(3));
+//#if DEVELOPER_MESSAGES == true
+//				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
+//#endif
+//			}
+//			else if (words.at(lineNum).at(0) == "float") {
+//				globalVariableValues[words.at(lineNum).at(1)] = stof(words.at(lineNum).at(3));
+//#if DEVELOPER_MESSAGES == true
+//				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
+//#endif
+//			}
+//			else if (words.at(lineNum).at(0) == "bool") {
+//				globalVariableValues[words.at(lineNum).at(1)] = stob(words.at(lineNum).at(3));
+//#if DEVELOPER_MESSAGES == true
+//				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
+//#endif
+//			}
+			else
+				LogWarning("unrecognized type \'" + words.at(lineNum).at(0) + "\' on line: " + to_string(lineNum));
 		}
 	}
 
@@ -940,6 +948,12 @@ int main(int argc, char* argv[])
 			cin.ignore();
 			exit(1);
 		}
+	}
+	else if (AnyAsBool(GetVariableValue("EXIT_WHEN_DONE", globalVariableValues)) == false)
+	{
+		cout << "Press Enter to Continue";
+		cin.ignore();
+		exit(1);
 	}
 #endif // Else exit automatically
 	return 0;
