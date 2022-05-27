@@ -162,7 +162,13 @@ int InterpreterLog(const string& logText)
 
 	tm bt{};
 #if UNIX
-	//localtime_r(&timer, &bt);
+	time_t currentTime;
+	struct tm* localTime;
+	time(&currentTime);
+	localTime = localtime(&utc);
+	Hour = localTime->tm_hour;
+	Min = localTime->tm_min;
+	Sec = localTime->tm_sec;
 #elif WINDOWS
 	localtime_s(&bt, &timer);
 	Hour = bt.tm_hour;
