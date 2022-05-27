@@ -107,15 +107,15 @@ func SetPixel(x, y, r, g, b)
 }
 
 // Prints input value to console
-func Print(in)
+func Print(strToPrint)
 {
-	ZS.System.Print(in)
+	ZS.System.Print(strToPrint)
 }
 
 // Prints input value to console with appended newline '\n'
-func Printl(in)
+func Printl(strToPrint)
 {
-	ZS.System.PrintLine(in)
+	ZS.System.PrintLine(strToPrint)
 }
 
 // Creates new sprite class

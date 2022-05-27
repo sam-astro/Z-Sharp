@@ -3,7 +3,7 @@
 #include <fstream>
 #include <string>
 //bool DEVELOPER_MESSAGES = true;
-#define DEVELOPER_MESSAGES true
+#define DEVELOPER_MESSAGES false
 #define EXAMPLE_PROJECT false
 #define NAMEVERSION "ZSharp v2.1.0-alpha"
 
@@ -83,8 +83,8 @@ bool IsVar(const string& varName, const unordered_map<string, boost::any>& varia
 	
 	if (variableValues.find(split(varName, '.')[0]) != variableValues.end())
 		return true;
-	else
-		return false;
+	
+	return false;
 }
 
 // Return a vector of values that correspond to a vector of input variable names
@@ -114,6 +114,20 @@ vector<boost::any> VarValues(const vector<string>& varNames, unordered_map<strin
 
 	return realValues;
 }
+
+void printVarValues(const vector<string>& vec, unordered_map<string, boost::any>& variableValues)
+{
+	cout << "<";
+	for (int i = 0; i < vec.size(); i++)
+	{
+		cout << AnyAsString(GetVariableValue(vec.at(i), globalVariableValues));
+		cout << AnyAsString(GetVariableValue(vec.at(i), variableValues));
+		cout << " | ";
+	}
+	cout << ">";
+	cout << endl;
+}
+
 
 bool IsFunction(const string& funcName)
 {
@@ -147,30 +161,26 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 			// start -> FuncCall(0, x, OtherFunc(a))
 			// changeto -> 0, x, OtherFunc(a)
 			string insideFunArgs = betweenChars(expression, '(', ')');
-#if DEVELOPER_MESSAGES == true
-			cout << insideFunArgs << endl;
-#endif
 			vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
 #if DEVELOPER_MESSAGES == true
 			cout << "[" << unWrapVec(argList) << "]" << endl;
+			printVarValues(argList, variableValues);
 #endif
 			vector<boost::any> funcArgs = VarValues(argList, variableValues);
-			return ExecuteFunction(trim(split(expression, '(')[0]), funcArgs);
+			return ExecuteFunction(split(expression, '(')[0], funcArgs);
 		}
 		else if (isZS && !inQuotes)
 		{
 			// start -> FuncCall(0, x, OtherFunc(a))
 			// changeto -> 0, x, OtherFunc(a)
 			string insideFunArgs = betweenChars(expression, '(', ')');
-#if DEVELOPER_MESSAGES == true
-			cout << insideFunArgs << endl;
-#endif
 			vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
 #if DEVELOPER_MESSAGES == true
-			cout << "[" << unWrapVec(argList) << "]" << endl;
+			cout << split(expression, '(')[0]<< "  [" << unWrapVec(argList) << "]" << endl;
+			printVarValues(argList, variableValues);
 #endif
 			vector<boost::any> funcArgs = VarValues(argList, variableValues);
-			return ZSFunction(trim(split(expression, '(')[0]), funcArgs);
+			return ZSFunction(split(expression, '(')[0], funcArgs);
 		}
 		else
 			return GetVariableValue(expression, variableValues);
@@ -201,15 +211,13 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 				// start -> FuncCall(0, x, OtherFunc(a))
 				// changeto -> 0, x, OtherFunc(a)
 				string insideFunArgs = betweenChars(expression, '(', ')');
-#if DEVELOPER_MESSAGES == true
-				cout << insideFunArgs << endl;
-#endif
 				vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
 #if DEVELOPER_MESSAGES == true
-				cout << unWrapVec(argList) << endl;
+				cout << "[" << unWrapVec(argList) << "]" << endl;
+				printVarValues(argList, variableValues);
 #endif
 				vector<boost::any> funcArgs = VarValues(argList, variableValues);
-				string returnVal = AnyAsString(ExecuteFunction(trim(split(expression, '(')[0]), funcArgs));
+				string returnVal = AnyAsString(ExecuteFunction(split(expression, '(')[0], funcArgs));
 				newExpression += returnVal;
 			}
 			else if (split(name, '.')[0] == "ZS" && !inQuotes)
@@ -217,15 +225,13 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 				// start -> FuncCall(0, x, OtherFunc(a))
 				// changeto -> 0, x, OtherFunc(a)
 				string insideFunArgs = betweenChars(expression, '(', ')');
-#if DEVELOPER_MESSAGES == true
-				cout << insideFunArgs << endl;
-#endif
 				vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
 #if DEVELOPER_MESSAGES == true
-				cout << unWrapVec(argList) << endl;
+				cout << "[" << unWrapVec(argList) << "]" << endl;
+				printVarValues(argList, variableValues);
 #endif
 				vector<boost::any> funcArgs = VarValues(argList, variableValues);
-				string returnVal = AnyAsString(ExecuteFunction(trim(split(expression, '(')[0]), funcArgs));
+				string returnVal = AnyAsString(ZSFunction(split(expression, '(')[0], funcArgs));
 				newExpression += returnVal;
 			}
 			else
@@ -278,7 +284,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 		return evaluate(newExpression);
 }
 
-bool BooleanLogic(const string& valA, const string& determinant, const string& valB, unordered_map<string, boost::any>& variableValues)
+bool BooleanLogic(const string& valA, const string& comparer, const string& valB, unordered_map<string, boost::any>& variableValues)
 {
 	boost::any valARealValue;
 	boost::any valBRealValue;
@@ -287,24 +293,24 @@ bool BooleanLogic(const string& valA, const string& determinant, const string& v
 	if(valB != "")
 		valBRealValue = EvalExpression(valB, variableValues);
 #if DEVELOPER_MESSAGES == true
-	InterpreterLog(AnyAsString(valARealValue) + " " + determinant + " " + AnyAsString(valBRealValue) + " : " + AnyAsString(valA) + " " + determinant + " " + AnyAsString(valB) + " : " + to_string(AnyAsString(valARealValue) == AnyAsString(valBRealValue)));
+	InterpreterLog(AnyAsString(valARealValue) + " " + comparer + " " + AnyAsString(valBRealValue) + " : " + AnyAsString(valA) + " " + comparer + " " + AnyAsString(valB) + " : " + to_string(AnyAsString(valARealValue) == AnyAsString(valBRealValue)));
 #endif
-	if (determinant == "==")
+	if (comparer == "==")
 		return any_compare(valARealValue, valBRealValue);
-	else if (determinant == "!=")
+	else if (comparer == "!=")
 		return !any_compare(valARealValue, valBRealValue);
-	else if (determinant == ">=")
+	else if (comparer == ">=")
 		return AnyAsFloat(valARealValue) >= AnyAsFloat(valBRealValue);
-	else if (determinant == "<=")
+	else if (comparer == "<=")
 		return AnyAsFloat(valARealValue) <= AnyAsFloat(valBRealValue);
-	else if (determinant == ">")
+	else if (comparer == ">")
 		return AnyAsFloat(valARealValue) > AnyAsFloat(valBRealValue);
-	else if (determinant == "<")
+	else if (comparer == "<")
 		return AnyAsFloat(valARealValue) < AnyAsFloat(valBRealValue);
-	else if (determinant == "")
+	else if (comparer == "")
 		return AnyAsBool(valARealValue) == true;
 	else
-		LogWarning("unrecognized determinant \'" + determinant + "\'");
+		LogWarning("unrecognized comparer \'" + comparer + "\'");
 
 	return false;
 }
@@ -396,7 +402,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 	//	return nullType;
 
 	// If print statement (deprecated, now use ZS.System.Print() function)
-	else if (words.at(lineNum).at(0) == "print")
+	if (words.at(lineNum).at(0) == "print")
 	{
 		cout << StringRaw(AnyAsString(EvalExpression(unWrapVec(vector<string>(words.at(lineNum).begin() + 1, words.at(lineNum).end())), variableValues))) << endl;
 		return nullType;
@@ -411,19 +417,23 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 		return EvalExpression(unWrapVec(words.at(lineNum)), variableValues);
 
 	// Check if it is function call
-	else if (IsFunction(trim(split(words.at(lineNum).at(0), '(')[0])))
+	else if (IsFunction(split(words.at(lineNum).at(0), '(')[0]))
 	{
 		// No args provided
-		if (count(words.at(lineNum).at(0), '(') > 0 && count(words.at(lineNum).at(0), ')') > 0)
-			ExecuteFunction(trim(split(words.at(lineNum).at(0), '(')[0]), vector<boost::any>());
+		if (indexInStr(words.at(lineNum).at(0), ')') - indexInStr(words.at(lineNum).at(0), '(')<=1)
+			ExecuteFunction(split(words.at(lineNum).at(0), '(')[0], vector<boost::any>());
 		else
 		{ // Args provided, parse them first
 			// start -> FuncCall(0, x, OtherFunc(a))
 			// changeto -> 0, x, OtherFunc(a)
 			string insideFunArgs = betweenChars(unWrapVec(words.at(lineNum)), '(', ')');
 			vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
+#if DEVELOPER_MESSAGES == true
+			cout << unWrapVec(argList) << endl;
+			printVarValues(argList, variableValues);
+#endif
 			vector<boost::any> funcArgs = VarValues(argList, variableValues);
-			ExecuteFunction(trim(split(words.at(lineNum).at(0), '(')[0]), funcArgs);
+			ExecuteFunction(split(words.at(lineNum).at(0), '(')[0], funcArgs);
 		}
 		return nullType;
 	}
@@ -445,7 +455,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 	}
 
 	// Check if global variable declaration
-	else if (trim(words.at(lineNum).at(0)) == "global")
+	else if (words.at(lineNum).at(0) == "global")
 	{
 		try
 		{
@@ -453,14 +463,14 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 		}
 		catch (const std::exception&)
 		{
-			LogCriticalError("Error at line: " + lineNum + ", " + unWrapVec(words.at(lineNum)) + ", couldn't initialize variable.");
+			LogCriticalError("Error at line: " + to_string(lineNum) + ", " + unWrapVec(words.at(lineNum)) + ", couldn't initialize variable.");
 		}
 		return nullType;
 	}
 
 	// Iterate through all types to see if line inits or
 	// re-inits a variable then store it with it's value
-	else if (countInVector(types, trim(words.at(lineNum).at(0))) > 0)
+	else if (countInVector(types, words.at(lineNum).at(0)) > 0)
 	{
 		try
 		{
@@ -468,7 +478,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 		}
 		catch (const std::exception&)
 		{
-			LogCriticalError("Error at line: " + lineNum + ", " + unWrapVec(words.at(lineNum)) + ", couldn't initialize variable.");
+			LogCriticalError("Error at line: " + to_string(lineNum) + ", " + unWrapVec(words.at(lineNum)) + ", couldn't initialize variable.");
 		}
 		return nullType;
 	}
@@ -543,13 +553,22 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 			//Iterate through all lines in while loop
 			for (int lineNum = 0; lineNum < (int)whileContents.size(); lineNum++)
 			{
-				if(startsWith(whileContents.at(0).at(0), "continue"))
+				if(whileContents.at(lineNum).at(0)== "continue")
 					break; // Stops iterating through lines and return to beginning
-				if(startsWith(whileContents.at(0).at(0), "break"))
+				if(whileContents.at(lineNum).at(0)== "break")
 					return nullType; // Stops iterating through lines and leave while loop
 				boost::any returnVal = ProcessLine(whileContents, lineNum, variableValues);
-				if (!returnVal.empty())
-					return returnVal;
+				if (!returnVal.empty()) {
+					try
+					{
+						BREAK t = any_cast<BREAK>(returnVal);
+						return nullType;
+					}
+					catch (boost::bad_any_cast)
+					{
+						return returnVal;
+					}
+				}
 			}
 		}
 		return nullType;
@@ -605,8 +624,8 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 			//Iterate through all lines in if statement
 			for (int l = 0; l < (int)ifContents.size(); l++)
 			{
-				if(startsWith(ifContents.at(0).at(0), "break"))
-					return nullType; // Stops iterating through lines and leave while loop
+				if(ifContents.at(l).at(0)== "break")
+					return breakReOp; // Stops iterating through lines and leave while loop
 				boost::any returnVal = ProcessLine(ifContents, l, variableValues);
 				if (!returnVal.empty())
 					return returnVal;
@@ -686,7 +705,7 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 		}
 		catch (const std::exception&)
 		{
-			LogCriticalError("Error at line: " + lineNum + ", " + unWrapVec(words.at(lineNum)));
+			LogCriticalError("Error at line: " + to_string(lineNum) + ", " + unWrapVec(words.at(lineNum)));
 		}
 	}
 	return nullType;
@@ -742,10 +761,10 @@ int parseZSharp(string script)
 			//			args += replace(replace(words.at(lineNum).at(w), "(", " "), ")", "");
 			//	}
 			string args = betweenChars(unWrapVec(words.at(lineNum)), '(', ')');
-			cout << functName << "<" << args << ">" << endl;
+			//cout << functName << "<" << args << ">" << endl;
 
 			//args = trim(replace(args, functName, ""));
-			functionContents.push_back(split(args, ','));
+			functionContents.push_back(split(replace(args, " ", ""), ','));
 
 
 			int numOfBrackets = countInVector(words.at(lineNum), "{") - countInVector(words.at(lineNum), "}");
@@ -757,7 +776,7 @@ int parseZSharp(string script)
 				if (numOfBrackets == 0)
 					break;
 				functionContents.push_back(words.at(lineNum));
-				cout << functName << "<" << args << ">" << endl;
+				//cout << functName << "<" << args << ">" << endl;
 				lineNum++;
 			}
 			//functionContents = removeTabsWdArry(functionContents, 1);
@@ -823,7 +842,7 @@ int parseZSharp(string script)
 			else if (countInVector(types, trim(words.at(lineNum).at(0))) > 0)
 			{
 				//cout << words.at(lineNum).at(1) << "=" << unWrapVec(slice(words.at(lineNum), 3, -1)) << "=" << AnyAsString(EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), variableValues)) << endl;
-				globalVariableValues[words.at(lineNum).at(1)] = EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), variableValues);
+				globalVariableValues[words.at(lineNum).at(1)] = EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), globalVariableValues);
 			}
 //			else if (words.at(lineNum).at(0) == "int") {
 //				globalVariableValues[words.at(lineNum).at(1)] = stoi(words.at(lineNum).at(3));

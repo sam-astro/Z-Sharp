@@ -64,7 +64,7 @@ func Start()
 func Update(deltaTime)
 {
 	//float FPS = 1 / deltaTime
-	//print "FPS: " + FPS
+	//Printl("FPS: " + FPS)
 
 	// Handles Left Paddle Movement
 	//

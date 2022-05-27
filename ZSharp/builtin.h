@@ -72,8 +72,13 @@ class NullType {
 public:
 	string type = "NULL";
 };
+class BREAK {
+public:
+	string type = "BREAK";
+};
 
 boost::any nullType;
+boost::any breakReOp;
 
 float clamp(float v, float min, float max)
 {
@@ -425,9 +430,9 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 	else if (name == "ZS.Input.GetKey")
 		return KEYS[StringRaw(any_cast<string>(args.at(0)))] == 1;
 	else if (name == "ZS.System.Print")
-		cout << StringRaw(AnyAsString(args.at(0)));
+		cout << StringRaw(AnyAsString(args.at(0))) << StringRaw(AnyAsString(args.at(0))).length();
 	else if (name == "ZS.System.PrintLine")
-		cout << StringRaw(AnyAsString(args.at(0))) << endl;
+		cout << StringRaw(AnyAsString(args.at(0))) << StringRaw(AnyAsString(args.at(0))).length() << endl;
 	else if (name == "ZS.System.Vec2")
 	{
 		Vec2 v(AnyAsFloat(args.at(0)), AnyAsFloat(args.at(1)));

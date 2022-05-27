@@ -5,74 +5,74 @@
 
 func TestInclude()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 //////////////////////////////////////////////////////////////////////////////
 // Benchmark, to check if performance suffers from too many functions/variables
 //////////////////////////////////////////////////////////////////////////////
 func b1()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b2()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b3()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b4()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b5()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b6()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b7()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b8()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b9()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b10()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b11()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b12()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b13()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b14()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b15()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 func b16()
 {
-	print "Hello World!"
+	Printl("Hello World!")
 }
 
 int a = 4

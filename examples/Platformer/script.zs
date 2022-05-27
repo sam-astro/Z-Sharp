@@ -28,7 +28,7 @@ func Main()
 
 func ThreadedFunction()
 {
-	print "threaded:"
+	Printl("threaded:")
 }
 
 func Start()
@@ -51,12 +51,8 @@ func Update(deltaTime)
 {
 	float fps = 1 / deltaTime
 	g_jumpingTime += deltaTime
-	//print "FPS: " + fps
+	Printl("FPS: " + fps)
 	//TestInclude()
-	
-	//// Test automatic conversion from bool to int
-	//int c = GetKey("A")
-	//print "Test: " + c
 
 	// Shift key lets you sprint
 	g_running = GetKey("SHIFT_L")
@@ -84,19 +80,15 @@ func Update(deltaTime)
 	
 	// Apply gravity
 	g_colliding = Colliding(g_playerSprite, g_groundSprite)
-	print g_colliding
 	if g_colliding == false
 	{
-		print g_jumping
 		if g_jumping == false
 		{
 			g_playerTargetPosition.y += deltaTime * g_gravitySpeed
-			print "grav"
 		}
 		if g_jumping == true
 		{
 			g_playerTargetPosition.y -= (g_jumpHeight * deltaTime) + (deltaTime * g_gravitySpeed * -g_jumpingTime * 5)
-			print g_jumpingTime
 		}
 	}
 	if g_colliding == true
@@ -111,7 +103,6 @@ func Update(deltaTime)
 		if GetKey("SPACE") == true
 		{
 			g_jumping = true
-			print "jump" + g_jumpingTime
 			g_jumpingTime = 0
 			g_playerTargetPosition.y -= 2
 		}
