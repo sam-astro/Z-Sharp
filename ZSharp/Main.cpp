@@ -78,7 +78,10 @@ boost::any GetVariableValue(const string& varName, const unordered_map<string, b
 // Check if there is a variable with the specified name
 bool IsVar(const string& varName, const unordered_map<string, boost::any>& variableValues)
 {
-	if (variableValues.find(split(varName, '.')[0]) != variableValues.end() && split(varName, '.')[0] != "ZS")
+	if(split(varName, '.')[0] == "ZS")
+		return false;
+	
+	if (variableValues.find(split(varName, '.')[0]) != variableValues.end())
 		return true;
 	else
 		return false;
@@ -121,10 +124,7 @@ bool IsFunction(const string& funcName)
 }
 bool IsZSFunction(const string& funcName)
 {
-	if (funcName[0] == 'Z' && funcName[1] == 'S' && funcName[2] == '.')
-		return true;
-	else
-		return false;
+	return startsWith(funcName, "ZS.");
 }
 
 boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& variableValues)
@@ -406,11 +406,11 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 	else if (words.at(lineNum).at(0) == "return")
 		return EvalExpression(unWrapVec(vector<string>(words.at(lineNum).begin() + 1, words.at(lineNum).end())), variableValues);
 
-	// Check if it is ZS Builtin function
+	// Check if it is ZS Builtin function call
 	else if (startsWith(words.at(lineNum).at(0), "ZS."))
 		return EvalExpression(unWrapVec(words.at(lineNum)), variableValues);
 
-	// Check if it is function
+	// Check if it is function call
 	else if (IsFunction(trim(split(words.at(lineNum).at(0), '(')[0])))
 	{
 		// No args provided
@@ -447,7 +447,14 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 	// Check if global variable declaration
 	else if (trim(words.at(lineNum).at(0)) == "global")
 	{
-		globalVariableValues[words.at(lineNum).at(2)] = EvalExpression(unWrapVec(slice(words.at(lineNum), 4, -1)), variableValues);
+		try
+		{
+			globalVariableValues[words.at(lineNum).at(2)] = EvalExpression(unWrapVec(slice(words.at(lineNum), 4, -1)), variableValues);
+		}
+		catch (const std::exception&)
+		{
+			LogCriticalError("Error at line: " + lineNum + ", " + unWrapVec(words.at(lineNum)) + ", couldn't initialize variable.");
+		}
 		return nullType;
 	}
 
@@ -455,8 +462,14 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 	// re-inits a variable then store it with it's value
 	else if (countInVector(types, trim(words.at(lineNum).at(0))) > 0)
 	{
-		//cout << words.at(lineNum).at(1) << "=" << unWrapVec(slice(words.at(lineNum), 3, -1)) << "=" << AnyAsString(EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), variableValues)) << endl;
-		variableValues[words.at(lineNum).at(1)] = EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), variableValues);
+		try
+		{
+			variableValues[words.at(lineNum).at(1)] = EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), variableValues);
+		}
+		catch (const std::exception&)
+		{
+			LogCriticalError("Error at line: " + lineNum + ", " + unWrapVec(words.at(lineNum)) + ", couldn't initialize variable.");
+		}
 		return nullType;
 	}
 
@@ -673,6 +686,7 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 		}
 		catch (const std::exception&)
 		{
+			LogCriticalError("Error at line: " + lineNum + ", " + unWrapVec(words.at(lineNum)));
 		}
 	}
 	return nullType;
