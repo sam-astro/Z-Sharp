@@ -940,7 +940,7 @@ int main(int argc, char* argv[])
 	else
 	{ // If no script is provided as an argument throw error
 		LogWarning("No script provided! Please drag and drop .ZS file over interpreter executable file, or provide it's path as a command-line argument.");
-		cout << "Press Enter to Continue";
+		InterpreterLog("Press Enter to Exit...");
 		cin.ignore();
 		exit(1);
 	}
@@ -965,7 +965,7 @@ int main(int argc, char* argv[])
 
 	// Entire script has been run, exit.
 #if DEVELOPER_MESSAGES // If built with developer messages, then verify exit
-	cout << "Press Enter to Continue";
+	InterpreterLog("Press Enter to Exit...");
 	cin.ignore();
 	exit(1);
 #else
@@ -977,14 +977,14 @@ int main(int argc, char* argv[])
 
 		if (a == "-ve") // If the '-ve' (verify exit) option is used, ask for verification on exit
 		{
-			cout << "Press Enter to Continue";
+			InterpreterLog("Press Enter to Exit...");
 			cin.ignore();
 			exit(1);
 		}
 	}
 	else if (AnyAsBool(GetVariableValue("EXIT_WHEN_DONE", globalVariableValues)) == false)
 	{
-		cout << "Press Enter to Continue";
+		InterpreterLog("Press Enter to Exit...");
 		cin.ignore();
 		exit(1);
 	}

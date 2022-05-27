@@ -207,7 +207,7 @@ int LogCriticalError(const string& errorText)
 	PrintColored("ZSharp: ", yellowFGColor, "", true);
 	PrintColored(errorText, redFGColor, "", true);
 	cerr << std::endl;
-	cout << "Press Enter to Continue";
+	InterpreterLog("Press Enter to Exit...");
 	cin.ignore();
 	exit(1);
 	//cerr << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mZSharp: \x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
