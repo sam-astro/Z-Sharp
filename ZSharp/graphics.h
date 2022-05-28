@@ -523,8 +523,8 @@ public:
 class Text
 {
 public:
-	Text(std::string content, std::string pathToFont, Vec2 position, float fontSize, double angle, Uint8 r, Uint8 g, Uint8 b)
-		: position(position), angle(angle), content(content), pathToFont(pathToFont), fontSize(fontSize), r(r), g(g), b(b)
+	Text(std::string content, std::string pathToFont, Vec2 position, float fontSize, double angle, Uint8 r, Uint8 g, Uint8 b, bool antialias)
+		: position(position), angle(angle), content(content), pathToFont(pathToFont), fontSize(fontSize), r(r), g(g), b(b), antialias(antialias)
 	{
 		rect.x = position.x;
 		rect.y = position.y;
@@ -538,8 +538,12 @@ public:
 	{
 		SDL_Color color = { r, g, b };
 
-		SDL_Surface* surface = TTF_RenderText_Blended(font, content.c_str(), color);
-		
+		SDL_Surface* surface;
+		if (antialias)
+			surface = TTF_RenderText_Blended(font, content.c_str(), color);
+		else
+			surface = TTF_RenderText_Solid(font, content.c_str(), color);
+
 		texture = SDL_CreateTextureFromSurface(gRenderer, surface);
 
 		TTF_SizeText(font, content.c_str(), &rect.w, &rect.h);
@@ -559,7 +563,11 @@ public:
 	{
 		SDL_Color color = { r, g, b };
 
-		SDL_Surface* surface = TTF_RenderText_Blended(font, content.c_str(), color);
+		SDL_Surface* surface;
+		if (antialias)
+			surface = TTF_RenderText_Blended(font, content.c_str(), color);
+		else
+			surface = TTF_RenderText_Solid(font, content.c_str(), color);
 
 		SDL_DestroyTexture(texture);
 		texture = SDL_CreateTextureFromSurface(gRenderer, surface);
@@ -604,6 +612,8 @@ public:
 			return content;
 		if (componentName == "pathToFont")
 			return pathToFont;
+		if (componentName == "antialias")
+			return antialias;
 		return 0;
 	}
 
@@ -711,11 +721,18 @@ public:
 			else if (oper == "+=")
 				content += AnyAsString(otherVal);
 		}
+		else if (componentName == "antialias")
+		{
+			if (oper == "=")
+				antialias = AnyAsBool(otherVal);
+		}
 
 		// Updates changes to text
 		Update();
 		return *this;
 	}
+
+	bool antialias = true;
 
 	Vec2 position;
 	Vec2 scale;

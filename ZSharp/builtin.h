@@ -28,8 +28,8 @@ using namespace boost;
 
 vector<string> types = { "int", "float", "string", "bool", "void", "null", "Sprite", "Vec2", "Text" };
 
-unordered_map<string, vector<vector<string>>> builtinFunctionValues;
-unordered_map<string, boost::any> builtinVarVals;
+//unordered_map<string, vector<vector<string>>> builtinFunctionValues;
+//unordered_map<string, boost::any> builtinVarVals;
 
 // Foreground colors
 const std::string blackFGColor = "\x1B[30m";
@@ -72,8 +72,13 @@ class NullType {
 public:
 	string type = "NULL";
 };
+class BREAK {
+public:
+	string type = "BREAK";
+};
 
 boost::any nullType;
+boost::any breakReOp;
 
 float clamp(float v, float min, float max)
 {
@@ -141,7 +146,7 @@ void PrintColored(std::string text, std::string fgColor, std::string bgColor, bo
 int LogWarning(const string& warningText)
 {
 	PrintColored("WARNING: ", yellowFGColor, "", true);
-	PrintColored(warningText, yellowFGColor, "", true);
+	PrintColored(escaped(warningText), yellowFGColor, "", true);
 	cerr << std::endl;
 	//cout << "\x1B[33mWARNING: " << warningText << "\033[0m\t\t" << endl;
 	return 1;
@@ -157,7 +162,15 @@ int InterpreterLog(const string& logText)
 
 	tm bt{};
 #if UNIX
-	//localtime_r(&timer, &bt);
+	time_t currentTime;
+	struct tm* localTime;
+
+	time(&currentTime);                   // Get the current time
+	localTime = localtime(&currentTime);  // Convert the current time to the local time
+
+	Hour = localTime->tm_hour;
+	Min = localTime->tm_min;
+	Sec = localTime->tm_sec;
 #elif WINDOWS
 	localtime_s(&bt, &timer);
 	Hour = bt.tm_hour;
@@ -171,7 +184,7 @@ int InterpreterLog(const string& logText)
 
 	PrintColored("[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] ", blueFGColor, "", true);
 	PrintColored("ZSharp: ", yellowFGColor, "", true);
-	PrintColored(logText, greenFGColor, "", true);
+	PrintColored(escaped(logText), greenFGColor, "", true);
 	cout << std::endl;
 	//cout << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mZSharp: \x1B[32m" << logText << "\033[0m\t\t" << endl;
 	return 1;
@@ -185,9 +198,17 @@ int LogCriticalError(const string& errorText)
 	time_t timer = time(0);
 
 	tm bt{};
-#if defined(__unix__)
-	//localtime_r(&timer, &bt);
-#elif defined(_MSC_VER)
+#if UNIX
+	time_t currentTime;
+	struct tm* localTime;
+
+	time(&currentTime);                   // Get the current time
+	localTime = localtime(&currentTime);  // Convert the current time to the local time
+
+	Hour = localTime->tm_hour;
+	Min = localTime->tm_min;
+	Sec = localTime->tm_sec;
+#elif WINDOWS
 	localtime_s(&bt, &timer);
 	Hour = bt.tm_hour;
 	Min = bt.tm_min;
@@ -200,9 +221,9 @@ int LogCriticalError(const string& errorText)
 
 	PrintColored("[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] ", blueFGColor, "", true);
 	PrintColored("ZSharp: ", yellowFGColor, "", true);
-	PrintColored(errorText, redFGColor, "", true);
+	PrintColored(escaped(errorText), redFGColor, "", true);
 	cerr << std::endl;
-	cout << "Press Enter to Continue";
+	InterpreterLog("Press Enter to Exit...");
 	cin.ignore();
 	exit(1);
 	//cerr << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mZSharp: \x1B[31mERROR: " << errorText << "\033[0m\t\t" << endl;
@@ -276,90 +297,90 @@ bool AxisAlignedCollision(const Sprite& a, const Sprite& b) // AABB - AABB colli
 	return collisionX && collisionY;
 }
 
-// Initial script processing, which loads variables and functions from builtin
-int GetBuiltins(std::string s)
-{
-	std::string script = replace(s, "    ", "\t");
-
-	vector<string> lines = split(script, '\n');
-	vector<vector<string>> words;
-	for (int i = 0; i < (int)lines.size(); i++)
-	{
-		words.push_back(split(lines.at(i), ' '));
-	}
-
-	// Go through entire script and iterate through all types to see if line is a
-	// function declaration, then store it with it's value
-	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
-	{
-		//Checks if it is function
-		if (words.at(lineNum).at(0) == "func")
-		{
-			vector<vector<string>> functionContents;
-
-			string functName = split(words.at(lineNum).at(1), '(')[0];
-
-#if DEVELOPER_MESSAGES == true
-			InterpreterLog("Load builtin function " + functName + "...");
-#endif
-
-			string args = "";
-			for (int w = 1; w < (int)words.at(lineNum).size(); w++) // Get all words from the instantiation line: these are the args
-			{
-				args += replace(replace(words.at(lineNum).at(w), "(", " "), ")", "");
-			}
-
-			args = replace(args, functName + " ", "");
-			functionContents.push_back(split(args, ','));
-
-			int numOfBrackets = 1;
-			for (int p = lineNum + 2; p < (int)words.size(); p++)
-			{
-				numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
-				if (numOfBrackets == 0)
-					break;
-				functionContents.push_back(removeTabs(words.at(p), 1));
-			}
-			builtinFunctionValues[functName] = functionContents;
-			//cout << functName << " is \n" << Vec2Str(functionContents) << endl << endl;
-		}
-		else
-		{
-			if (words.at(lineNum).at(0) == "string")
-			{
-				builtinVarVals[words.at(lineNum).at(1)] = StringRaw(words.at(lineNum).at(3));
-#if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
-#endif
-			}
-			else if (words.at(lineNum).at(0) == "int")
-			{
-				builtinVarVals[words.at(lineNum).at(1)] = stoi(words.at(lineNum).at(3));
-#if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
-#endif
-			}
-			else if (words.at(lineNum).at(0) == "float")
-			{
-				builtinVarVals[words.at(lineNum).at(1)] = stof(words.at(lineNum).at(3));
-#if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
-#endif
-			}
-			else if (words.at(lineNum).at(0) == "bool")
-			{
-				builtinVarVals[words.at(lineNum).at(1)] = stob(words.at(lineNum).at(3));
-#if DEVELOPER_MESSAGES == true
-				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
-#endif
-			}
-			//else
-			//	LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
-		}
-	}
-
-	return 0;
-}
+//// Initial script processing, which loads variables and functions from builtin
+//int GetBuiltins(std::string s)
+//{
+//	std::string script = replace(s, "    ", "\t");
+//
+//	vector<string> lines = split(script, '\n');
+//	vector<vector<string>> words;
+//	for (int i = 0; i < (int)lines.size(); i++)
+//	{
+//		words.push_back(split(lines.at(i), ' '));
+//	}
+//
+//	// Go through entire script and iterate through all types to see if line is a
+//	// function declaration, then store it with it's value
+//	for (int lineNum = 0; lineNum < (int)words.size(); lineNum++)
+//	{
+//		//Checks if it is function
+//		if (words.at(lineNum).at(0) == "func")
+//		{
+//			vector<vector<string>> functionContents;
+//
+//			string functName = split(words.at(lineNum).at(1), '(')[0];
+//
+//#if DEVELOPER_MESSAGES == true
+//			InterpreterLog("Load builtin function " + functName + "...");
+//#endif
+//
+//			string args = "";
+//			for (int w = 1; w < (int)words.at(lineNum).size(); w++) // Get all words from the instantiation line: these are the args
+//			{
+//				args += replace(replace(words.at(lineNum).at(w), "(", " "), ")", "");
+//			}
+//
+//			args = replace(args, functName + " ", "");
+//			functionContents.push_back(split(args, ','));
+//
+//			int numOfBrackets = 1;
+//			for (int p = lineNum + 2; p < (int)words.size(); p++)
+//			{
+//				numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
+//				if (numOfBrackets == 0)
+//					break;
+//				functionContents.push_back(removeTabs(words.at(p), 1));
+//			}
+//			builtinFunctionValues[functName] = functionContents;
+//			//cout << functName << " is \n" << Vec2Str(functionContents) << endl << endl;
+//		}
+//		else
+//		{
+//			if (words.at(lineNum).at(0) == "string")
+//			{
+//				builtinVarVals[words.at(lineNum).at(1)] = StringRaw(words.at(lineNum).at(3));
+//#if DEVELOPER_MESSAGES == true
+//				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
+//#endif
+//			}
+//			else if (words.at(lineNum).at(0) == "int")
+//			{
+//				builtinVarVals[words.at(lineNum).at(1)] = stoi(words.at(lineNum).at(3));
+//#if DEVELOPER_MESSAGES == true
+//				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
+//#endif
+//			}
+//			else if (words.at(lineNum).at(0) == "float")
+//			{
+//				builtinVarVals[words.at(lineNum).at(1)] = stof(words.at(lineNum).at(3));
+//#if DEVELOPER_MESSAGES == true
+//				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
+//#endif
+//			}
+//			else if (words.at(lineNum).at(0) == "bool")
+//			{
+//				builtinVarVals[words.at(lineNum).at(1)] = stob(words.at(lineNum).at(3));
+//#if DEVELOPER_MESSAGES == true
+//				InterpreterLog("Load builtin variable " + words.at(lineNum).at(1) + "...");
+//#endif
+//			}
+//			//else
+//			//	LogWarning("unrecognized type \'" + words[lineNum][0] + "\' on line: " + to_string(lineNum));
+//		}
+//	}
+//
+//	return 0;
+//}
 
 // Executes 
 boost::any ZSFunction(const string& name, const vector<boost::any>& args)
@@ -403,8 +424,16 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 		if (!fileExists(StringRaw(AnyAsString(args.at(1)))))
 			LogCriticalError("Failed to create 'Text' object: \"" + StringRaw(AnyAsString(args.at(1))) + "\"");
 
-		Text t(StringRaw(AnyAsString(args.at(0))), StringRaw(AnyAsString(args.at(1))), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)), AnyAsFloat(args.at(4)), (Uint8)AnyAsFloat(args.at(5)), (Uint8)AnyAsFloat(args.at(6)), (Uint8)AnyAsFloat(args.at(7)));
-		return t;
+		if (args.size() <= 8)
+		{
+			Text t(StringRaw(AnyAsString(args.at(0))), StringRaw(AnyAsString(args.at(1))), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)), AnyAsFloat(args.at(4)), (Uint8)AnyAsFloat(args.at(5)), (Uint8)AnyAsFloat(args.at(6)), (Uint8)AnyAsFloat(args.at(7)), true);
+			return t;
+		}
+		else
+		{
+			Text t(StringRaw(AnyAsString(args.at(0))), StringRaw(AnyAsString(args.at(1))), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)), AnyAsFloat(args.at(4)), (Uint8)AnyAsFloat(args.at(5)), (Uint8)AnyAsFloat(args.at(6)), (Uint8)AnyAsFloat(args.at(7)), AnyAsBool(args.at(8)));
+			return t;
+		}
 	}
 	else if (name == "ZS.Graphics.DrawText")
 		any_cast<Text>(args.at(0)).Draw();
@@ -417,9 +446,9 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 	else if (name == "ZS.Input.GetKey")
 		return KEYS[StringRaw(any_cast<string>(args.at(0)))] == 1;
 	else if (name == "ZS.System.Print")
-		cout << StringRaw(AnyAsString(args.at(0)));
+		cout << StringRaw(AnyAsString(args.at(0))) << StringRaw(AnyAsString(args.at(0))).length();
 	else if (name == "ZS.System.PrintLine")
-		cout << StringRaw(AnyAsString(args.at(0))) << endl;
+		cout << StringRaw(AnyAsString(args.at(0))) << StringRaw(AnyAsString(args.at(0))).length() << endl;
 	else if (name == "ZS.System.Vec2")
 	{
 		Vec2 v(AnyAsFloat(args.at(0)), AnyAsFloat(args.at(1)));

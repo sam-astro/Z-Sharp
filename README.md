@@ -85,7 +85,7 @@ func Main()
     
     if s == "r"
     {
-        print s + " is r"
+        Printl(s + " is r")
     }
     
     int functionNumber = ExampleFunction("A", s)
@@ -99,8 +99,8 @@ func Main()
 /// be assigned at all on execute and can be left blank
 func ExampleFunction(inputA, inputB)
 {
-    print "In A is: " + inputA
-    print "In B is: " + inputB
+    Printl("In A is: " + inputA)
+    Printl("In B is: " + inputB)
     
     // Return a value to the valling location
     return 4

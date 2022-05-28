@@ -69,4 +69,6 @@ bool isEscaped(const string& str, int curChar);
 
 bool startsWith(const string& str, const string& lookFor);
 
+std::string escaped(const std::string& input);
+
 #endif

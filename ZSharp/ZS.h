@@ -3,10 +3,17 @@
 using namespace std;
 
 std::string ZSContents = R"(
+////////////////////////////////////////////////////////////////////////////////
+//  BUILTIN 
+////////////////////////////////////////////////////////////////////////////////
+
 // Default variables, can be overwritten
 // if re-initialized or changed
 float PI = 3.14159265358979323846264338
 float EulersNumber = 2.71828183
+
+// This variable tells the interpreter if it should close the console window when the program has finished running.
+bool EXIT_WHEN_DONE = true
 
 // Trigonometric function Sin
 func Sin(input)
@@ -100,15 +107,15 @@ func SetPixel(x, y, r, g, b)
 }
 
 // Prints input value to console
-func Print(in)
+func Print(strToPrint)
 {
-	ZS.System.Print(in)
+	ZS.System.Print(strToPrint)
 }
 
 // Prints input value to console with appended newline '\n'
-func Printl(in)
+func Printl(strToPrint)
 {
-	ZS.System.PrintLine(in)
+	ZS.System.PrintLine(strToPrint)
 }
 
 // Creates new sprite class
@@ -138,9 +145,73 @@ func GetKey(keyName)
 	return b
 }
 
+// WIP
 //func SplitThread(function)
 //{
 //	ZS.System.SplitThread(function)
 //}
+
+
+
+////////////////////////////
+// ↓ MADE BY KAPUTCHINO ↓ //
+////////////////////////////
+
+// Return the number of combinations
+func Comb(n, r)
+{
+    return Perm(n, r) / Fac(r)
+}
+
+// Return the factorial of a number
+func Fac(x)
+{
+    int r = 1
+    while x > 1
+    {
+        r = r * x
+        x = x - 1
+    }
+    return r
+}
+
+// Return exp(x) by using the taylor method, not extremly accurate
+func TaylorExp(x)
+{
+    float sum = 0
+    float term = 1
+    int i = 1
+    float sumterm = 1
+    while sum != sumterm
+    {
+        sum = sumterm
+        term = term * x / i
+        i = i + 1
+        sumterm = sumterm + term
+    }
+    return sum
+}
+
+// Return the number of permutations
+func Perm(n, r)
+{
+    if n < 0 
+    {
+        ZS.System.PrintLine("n must be superior or equal to 0")
+        return -1
+    }
+    if r < 0
+    {
+        ZS.System.PrintLine("r must be superior or equal to 0")
+        return -1
+    }
+    if r > n
+    {
+        ZS.System.PrintLine("r must be inferior or equal to n")
+        return -1
+    }
+    return Fac(n) / Fac(n - r)
+}
+
 )"
 ;

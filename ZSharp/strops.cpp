@@ -8,7 +8,8 @@
 //#include "builtin.h"
 using namespace std;
 
-const string WHITESPACE = " \n\r\t\f\v";
+const string WHITESPACE = " \t\f";
+//const string WHITESPACE = " \n\r\t\f\v";
 
 
 bool isNumber(const string& str)
@@ -23,6 +24,51 @@ bool stob(const string& str)
 {
 	bool b = trim(str) == "true";
 	return b;
+}
+
+string unescape(const string& s)
+{
+	string res;
+	string::const_iterator it = s.begin();
+	while (it != s.end())
+	{
+		char c = *it++;
+		if (c == '\\' && it != s.end())
+		{
+			switch (*it++) {
+			case '\\': c = '\\'; break;
+			case 'n': c = '\n'; break;
+			case 't': c = '\t'; break;
+				// all other escapes
+			default:
+				// invalid escape sequence - skip it. alternatively you can copy it as is, throw an exception...
+				continue;
+			}
+		}
+		res += c;
+	}
+
+	return res;
+}
+
+std::string escaped(const std::string& input)
+{
+	std::string output;
+	output.reserve(input.size());
+	for (const char c : input) {
+		switch (c) {
+		case '\a':  output += "\\a";        break;
+		case '\b':  output += "\\b";        break;
+		case '\f':  output += "\\f";        break;
+		case '\n':  output += "\\n";        break;
+		case '\r':  output += "\\r";        break;
+		case '\t':  output += "\\t";        break;
+		case '\v':  output += "\\v";        break;
+		default:    output += c;            break;
+		}
+	}
+
+	return output;
 }
 
 string StringRaw(const string& s)
@@ -42,7 +88,7 @@ string StringRaw(const string& s)
 	if (str[str.size() - 1] != '\"')
 		withoutQuotes += str[str.size() - 1];
 
-	return withoutQuotes;
+	return unescape(withoutQuotes);
 }
 
 string Quoted(const string& s)
@@ -190,20 +236,25 @@ string betweenChars(const string& str, const char& openChar, const char& closeCh
 {
 	string content = "";
 
-	int waitingForClose = 0;
+	int startPos = 0;
+	int endPos = (int)str.size();
 
 	for (int i = 0; i < (int)str.size(); i++)
 	{
-		if (waitingForClose > 0 && !(str[i] == closeChar && waitingForClose == 1))
-			content += str[i];
-
-		if (str[i] == openChar)
-			waitingForClose++;
-		else if (str[i] == closeChar)
-			waitingForClose--;
+		if (str[i] == openChar){
+			startPos = i+1;
+			break;
+		}
+	}
+	for (int i = (int)str.size()-1; i >=0; i--)
+	{
+		if (str[i] == closeChar){
+			endPos = i-(startPos); // or startPos-1 idk I cant do math right now
+			break;
+		}
 	}
 
-	return content;
+	return str.substr(startPos, endPos);
 }
 
 bool startsWith(const string& str, const string& lookFor)

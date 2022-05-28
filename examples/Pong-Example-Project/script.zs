@@ -16,6 +16,8 @@ bool aiOn = false
 // so if you never call ZS.Graphics.Init, then Start won't run
 func Main()
 {
+	EXIT_WHEN_DONE = false
+	
 	// Immediately creates the window, then Start(), then the game loop. The game loop calls Update() every frame
 	ZS.Graphics.Init("This is a pong game", SCREENW, SCREENH)
 }
@@ -39,7 +41,7 @@ func Start()
 	Vec2 rPaddlePosition = NVec2(rOffset, yPosPaddle)
 	global Vec2 rPaddleTargetPosition = NVec2(rOffset, yPosPaddle)
 	
-	global Sprite ballSpr = ZS.Graphics.Sprite("./square.png", ballPos, ballScale, 0)
+	global Sprite ballSpr = ZS.Graphics.Sprite("./ball.png", ballPos, ballScale, 0)
 	global Sprite lPaddle = ZS.Graphics.Sprite("./square.png", lPaddlePosition, paddleScale, 0)
 	global Sprite rPaddle = ZS.Graphics.Sprite("./square.png", rPaddlePosition, paddleScale, 0)
 	
@@ -62,7 +64,7 @@ func Start()
 func Update(deltaTime)
 {
 	//float FPS = 1 / deltaTime
-	//print "FPS: " + FPS
+	//Printl("FPS: " + FPS)
 
 	// Handles Left Paddle Movement
 	//
@@ -237,7 +239,7 @@ func HandleBallBounce()
 		difference -= ballY
 		float paddleHeight = rPaddle.scale.y
 		float normalizedRelativeIntersectionY = difference / (paddleHeight / 2)
-		float bounceAngle = normalizedRelativeIntersectionY * 0.523599
+		float bounceAngle = normalizedRelativeIntersectionY * -0.523599
 		float ballVx = ballSpeed
 		ballVx *= Cos(bounceAngle)
 		ballVx *= -1
