@@ -198,9 +198,17 @@ int LogCriticalError(const string& errorText)
 	time_t timer = time(0);
 
 	tm bt{};
-#if defined(__unix__)
-	//localtime_r(&timer, &bt);
-#elif defined(_MSC_VER)
+#if UNIX
+	time_t currentTime;
+	struct tm* localTime;
+
+	time(&currentTime);                   // Get the current time
+	localTime = localtime(&currentTime);  // Convert the current time to the local time
+
+	Hour = localTime->tm_hour;
+	Min = localTime->tm_min;
+	Sec = localTime->tm_sec;
+#elif WINDOWS
 	localtime_s(&bt, &timer);
 	Hour = bt.tm_hour;
 	Min = bt.tm_min;
