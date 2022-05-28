@@ -146,7 +146,7 @@ void PrintColored(std::string text, std::string fgColor, std::string bgColor, bo
 int LogWarning(const string& warningText)
 {
 	PrintColored("WARNING: ", yellowFGColor, "", true);
-	PrintColored(warningText, yellowFGColor, "", true);
+	PrintColored(escaped(warningText), yellowFGColor, "", true);
 	cerr << std::endl;
 	//cout << "\x1B[33mWARNING: " << warningText << "\033[0m\t\t" << endl;
 	return 1;
@@ -184,7 +184,7 @@ int InterpreterLog(const string& logText)
 
 	PrintColored("[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] ", blueFGColor, "", true);
 	PrintColored("ZSharp: ", yellowFGColor, "", true);
-	PrintColored(logText, greenFGColor, "", true);
+	PrintColored(escaped(logText), greenFGColor, "", true);
 	cout << std::endl;
 	//cout << "\x1B[34m[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] \x1B[33mZSharp: \x1B[32m" << logText << "\033[0m\t\t" << endl;
 	return 1;
@@ -221,7 +221,7 @@ int LogCriticalError(const string& errorText)
 
 	PrintColored("[" + to_string(Hour) + ":" + to_string(Min) + ":" + to_string(Sec) + "] ", blueFGColor, "", true);
 	PrintColored("ZSharp: ", yellowFGColor, "", true);
-	PrintColored(errorText, redFGColor, "", true);
+	PrintColored(escaped(errorText), redFGColor, "", true);
 	cerr << std::endl;
 	InterpreterLog("Press Enter to Exit...");
 	cin.ignore();

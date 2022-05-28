@@ -51,6 +51,26 @@ string unescape(const string& s)
 	return res;
 }
 
+std::string escaped(const std::string& input)
+{
+	std::string output;
+	output.reserve(input.size());
+	for (const char c : input) {
+		switch (c) {
+		case '\a':  output += "\\a";        break;
+		case '\b':  output += "\\b";        break;
+		case '\f':  output += "\\f";        break;
+		case '\n':  output += "\\n";        break;
+		case '\r':  output += "\\r";        break;
+		case '\t':  output += "\\t";        break;
+		case '\v':  output += "\\v";        break;
+		default:    output += c;            break;
+		}
+	}
+
+	return output;
+}
+
 string StringRaw(const string& s)
 {
 	string str = trim(s);
