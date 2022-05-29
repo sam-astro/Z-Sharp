@@ -418,6 +418,13 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 		Sprite s(StringRaw(AnyAsString(args.at(0))), any_cast<Vec2>(args.at(1)), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)));
 		return s;
 	}
+	else if (name == "ZS.Graphics.DrawPixel")
+	{
+		SDL_SetRenderDrawColor(gRenderer, AnyAsInt(args.at(2)), AnyAsInt(args.at(3)), AnyAsInt(args.at(4)), 255);
+		SDL_RenderDrawPoint(gRenderer, AnyAsInt(args.at(0)), AnyAsInt(args.at(1)));
+		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0);
+	}
+		//DrawPixel(AnyAsInt(args.at(0)), AnyAsInt(args.at(1)), AnyAsInt(args.at(2)), AnyAsInt(args.at(3)), AnyAsInt(args.at(4)));
 	else if (name == "ZS.Graphics.Draw")
 		any_cast<Sprite>(args.at(0)).Draw();
 	else if (name == "ZS.Graphics.Load")
