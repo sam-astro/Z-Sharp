@@ -1028,6 +1028,11 @@ int updateLoop()
 
 		ExecuteFunction("Update", vector<boost::any> {dt});
 
+		SDL_SetRenderDrawColor(gRenderer, 255, 0, 0, 255);
+		for (int i = 0; i < WINDOW_WIDTH; ++i)
+			SDL_RenderDrawPoint(gRenderer, i, i);
+		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0);
+
 		// Present the backbuffer
 		SDL_RenderPresent(gRenderer);
 
