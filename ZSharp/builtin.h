@@ -452,9 +452,9 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 	else if (name == "ZS.Input.GetKey")
 		return KEYS[StringRaw(any_cast<string>(args.at(0)))] == 1;
 	else if (name == "ZS.System.Print")
-		cout << StringRaw(AnyAsString(args.at(0))) << StringRaw(AnyAsString(args.at(0))).length();
+		cout << StringRaw(AnyAsString(args.at(0)));
 	else if (name == "ZS.System.PrintLine")
-		cout << StringRaw(AnyAsString(args.at(0))) << StringRaw(AnyAsString(args.at(0))).length() << endl;
+		cout << StringRaw(AnyAsString(args.at(0))) << endl;
 	else if (name == "ZS.System.Vec2")
 	{
 		Vec2 v(AnyAsFloat(args.at(0)), AnyAsFloat(args.at(1)));
