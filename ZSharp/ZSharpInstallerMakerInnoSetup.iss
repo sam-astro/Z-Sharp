@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Z-Sharp"
-#define MyAppVersion "2.1.1-alpha"
+#define MyAppVersion "2.1.2-alpha"
 #define MyAppPublisher "AstroSam"
 #define MyAppURL "https://github.com/sam-astro/Z-Sharp"
 #define MyAppExeName "ZSharp.exe"
@@ -25,6 +25,7 @@ DefaultDirName={autopf}\ZSharp
 DisableDirPage=yes
 ChangesAssociations=yes
 DisableProgramGroupPage=yes
+ChangesEnvironment=true
 LicenseFile=D:\Code\Z-Sharp\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
@@ -35,6 +36,21 @@ SetupIconFile=D:\Code\Z-Sharp\ExtraResources\installer-icon.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
+
+[Tasks]
+Name: modifypath; Description: Add application directory to your environmental path (This allows you to easily use from command line); Flags: unchecked
+
+[Code]
+const
+    ModPathName = 'modifypath';
+    ModPathType = 'system';
+
+function ModPathDir(): TArrayOfString;
+begin
+    setArrayLength(Result, 1)
+    Result[0] := ExpandConstant('{app}');
+end;
+#include "modpath.iss"
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

@@ -5,7 +5,7 @@
 //bool DEVELOPER_MESSAGES = true;
 #define DEVELOPER_MESSAGES false
 #define EXAMPLE_PROJECT false
-#define NAMEVERSION "ZSharp v2.1.1-alpha"
+#define NAMEVERSION "ZSharp v2.1.2-alpha"
 
 #if defined(__unix__)
 #define UNIX true
@@ -78,12 +78,12 @@ boost::any GetVariableValue(const string& varName, const unordered_map<string, b
 // Check if there is a variable with the specified name
 bool IsVar(const string& varName, const unordered_map<string, boost::any>& variableValues)
 {
-	if(split(varName, '.')[0] == "ZS")
+	if (split(varName, '.')[0] == "ZS")
 		return false;
-	
+
 	if (variableValues.find(split(varName, '.')[0]) != variableValues.end())
 		return true;
-	
+
 	return false;
 }
 
@@ -163,7 +163,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 			string insideFunArgs = betweenChars(expression, '(', ')');
 			vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
 #if DEVELOPER_MESSAGES == true
-			cout << "[" << unWrapVec(argList) << "]" << endl;
+			cout << split(expression, '(')[0] << "  [" << unWrapVec(argList) << "]" << endl;
 			printVarValues(argList, variableValues);
 #endif
 			vector<boost::any> funcArgs = VarValues(argList, variableValues);
@@ -176,7 +176,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 			string insideFunArgs = betweenChars(expression, '(', ')');
 			vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
 #if DEVELOPER_MESSAGES == true
-			cout << split(expression, '(')[0]<< "  [" << unWrapVec(argList) << "]" << endl;
+			cout << split(expression, '(')[0] << "  [" << unWrapVec(argList) << "]" << endl;
 			printVarValues(argList, variableValues);
 #endif
 			vector<boost::any> funcArgs = VarValues(argList, variableValues);
@@ -288,9 +288,9 @@ bool BooleanLogic(const string& valA, const string& comparer, const string& valB
 {
 	boost::any valARealValue;
 	boost::any valBRealValue;
-	if(valA != "")
+	if (valA != "")
 		valARealValue = EvalExpression(valA, variableValues);
-	if(valB != "")
+	if (valB != "")
 		valBRealValue = EvalExpression(valB, variableValues);
 #if DEVELOPER_MESSAGES == true
 	InterpreterLog(AnyAsString(valARealValue) + " " + comparer + " " + AnyAsString(valBRealValue) + " : " + AnyAsString(valA) + " " + comparer + " " + AnyAsString(valB) + " : " + to_string(AnyAsString(valARealValue) == AnyAsString(valBRealValue)));
@@ -419,22 +419,16 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 	// Check if it is function call
 	else if (IsFunction(split(words.at(lineNum).at(0), '(')[0]))
 	{
-		// No args provided
-		if (indexInStr(words.at(lineNum).at(0), ')') - indexInStr(words.at(lineNum).at(0), '(')<=1)
-			ExecuteFunction(split(words.at(lineNum).at(0), '(')[0], vector<boost::any>());
-		else
-		{ // Args provided, parse them first
-			// start -> FuncCall(0, x, OtherFunc(a))
-			// changeto -> 0, x, OtherFunc(a)
-			string insideFunArgs = betweenChars(unWrapVec(words.at(lineNum)), '(', ')');
-			vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
+		// start -> FuncCall(0, x, OtherFunc(a))
+		// changeto -> 0, x, OtherFunc(a)
+		string insideFunArgs = betweenChars(unWrapVec(words.at(lineNum)), '(', ')');
+		vector<string> argList = splitNoOverlap(insideFunArgs, ',', '(', ')');
 #if DEVELOPER_MESSAGES == true
-			cout << unWrapVec(argList) << endl;
-			printVarValues(argList, variableValues);
+		cout << unWrapVec(argList) << endl;
+		printVarValues(argList, variableValues);
 #endif
-			vector<boost::any> funcArgs = VarValues(argList, variableValues);
-			ExecuteFunction(split(words.at(lineNum).at(0), '(')[0], funcArgs);
-		}
+		vector<boost::any> funcArgs = VarValues(argList, variableValues);
+		ExecuteFunction(split(words.at(lineNum).at(0), '(')[0], funcArgs);
 		return nullType;
 	}
 
@@ -520,9 +514,9 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 				break;
 			}
 		}
-		
+
 		// If the statement is already false, don't bother gathering the contents
-		if(BooleanLogic(whileParameters.at(0), whileParameters.at(1), whileParameters.at(2), variableValues) == false){
+		if (BooleanLogic(whileParameters.at(0), whileParameters.at(1), whileParameters.at(2), variableValues) == false) {
 			lineNum++;
 			while (lineNum < (int)words.size())
 			{
@@ -553,9 +547,9 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 			//Iterate through all lines in while loop
 			for (int lineNum = 0; lineNum < (int)whileContents.size(); lineNum++)
 			{
-				if(whileContents.at(lineNum).at(0)== "continue")
+				if (whileContents.at(lineNum).at(0) == "continue")
 					break; // Stops iterating through lines and return to beginning
-				if(whileContents.at(lineNum).at(0)== "break")
+				if (whileContents.at(lineNum).at(0) == "break")
 					return nullType; // Stops iterating through lines and leave while loop
 				boost::any returnVal = ProcessLine(whileContents, lineNum, variableValues);
 				if (!returnVal.empty()) {
@@ -594,7 +588,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 		}
 
 		// If the statement is already false, don't bother gathering the contents
-		if(BooleanLogic(ifParameters.at(0), ifParameters.at(1), ifParameters.at(2), variableValues) == false){
+		if (BooleanLogic(ifParameters.at(0), ifParameters.at(1), ifParameters.at(2), variableValues) == false) {
 			lineNum++;
 			while (lineNum < (int)words.size())
 			{
@@ -605,7 +599,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 			}
 			return nullType;
 		}
-		
+
 		// Gather the contents
 		lineNum++;
 		while (lineNum < (int)words.size())
@@ -624,7 +618,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 			//Iterate through all lines in if statement
 			for (int l = 0; l < (int)ifContents.size(); l++)
 			{
-				if(ifContents.at(l).at(0)== "break")
+				if (ifContents.at(l).at(0) == "break")
 					return breakReOp; // Stops iterating through lines and leave while loop
 				boost::any returnVal = ProcessLine(ifContents, l, variableValues);
 				if (!returnVal.empty())
@@ -718,8 +712,8 @@ int parseZSharp(string script)
 	// Split the script by newline, signifying a line ending
 	vector<string> beforeProcessLines = split(script, '\n');
 	vector<string> lines;
-	for (int i = 0; i < (int)beforeProcessLines.size(); i++){ // Then split said lines into indiviual words
-		if(!startsWith(trim(beforeProcessLines.at(i)), "//") && trim(beforeProcessLines.at(i)) != "")
+	for (int i = 0; i < (int)beforeProcessLines.size(); i++) { // Then split said lines into indiviual words
+		if (!startsWith(trim(beforeProcessLines.at(i)), "//") && trim(beforeProcessLines.at(i)) != "")
 		{ // dont include line if it is a comment or if it is blank
 			lines.push_back(trim(beforeProcessLines.at(i)));
 		}
@@ -836,7 +830,7 @@ int parseZSharp(string script)
 				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
 #endif
 			}
-			
+
 			// Iterate through all types to see if line inits or
 			// re-inits a variable then store it with it's value
 			else if (countInVector(types, trim(words.at(lineNum).at(0))) > 0)
@@ -844,24 +838,24 @@ int parseZSharp(string script)
 				//cout << words.at(lineNum).at(1) << "=" << unWrapVec(slice(words.at(lineNum), 3, -1)) << "=" << AnyAsString(EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), variableValues)) << endl;
 				globalVariableValues[words.at(lineNum).at(1)] = EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), globalVariableValues);
 			}
-//			else if (words.at(lineNum).at(0) == "int") {
-//				globalVariableValues[words.at(lineNum).at(1)] = stoi(words.at(lineNum).at(3));
-//#if DEVELOPER_MESSAGES == true
-//				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
-//#endif
-//			}
-//			else if (words.at(lineNum).at(0) == "float") {
-//				globalVariableValues[words.at(lineNum).at(1)] = stof(words.at(lineNum).at(3));
-//#if DEVELOPER_MESSAGES == true
-//				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
-//#endif
-//			}
-//			else if (words.at(lineNum).at(0) == "bool") {
-//				globalVariableValues[words.at(lineNum).at(1)] = stob(words.at(lineNum).at(3));
-//#if DEVELOPER_MESSAGES == true
-//				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
-//#endif
-//			}
+			//			else if (words.at(lineNum).at(0) == "int") {
+			//				globalVariableValues[words.at(lineNum).at(1)] = stoi(words.at(lineNum).at(3));
+			//#if DEVELOPER_MESSAGES == true
+			//				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
+			//#endif
+			//			}
+			//			else if (words.at(lineNum).at(0) == "float") {
+			//				globalVariableValues[words.at(lineNum).at(1)] = stof(words.at(lineNum).at(3));
+			//#if DEVELOPER_MESSAGES == true
+			//				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
+			//#endif
+			//			}
+			//			else if (words.at(lineNum).at(0) == "bool") {
+			//				globalVariableValues[words.at(lineNum).at(1)] = stob(words.at(lineNum).at(3));
+			//#if DEVELOPER_MESSAGES == true
+			//				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
+			//#endif
+			//			}
 			else
 				LogWarning("unrecognized type \'" + words.at(lineNum).at(0) + "\' on line: " + to_string(lineNum));
 		}

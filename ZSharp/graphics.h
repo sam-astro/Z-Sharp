@@ -761,6 +761,12 @@ int cleanupGraphics()
 	return 0;
 }
 
+//void DrawPixel(int x, int y, int r, int g, int b) {
+//	SDL_SetRenderDrawColor(gRenderer, r, g, b, 255);
+//	SDL_RenderDrawPoint(gRenderer, x, y);
+//	SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0);
+//}
+
 
 int updateLoop()
 {

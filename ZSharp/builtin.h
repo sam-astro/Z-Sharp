@@ -409,29 +409,42 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 	}
 	else if (name == "ZS.Graphics.Sprite")
 	{
-		if (!fileExists(StringRaw(AnyAsString(args.at(0)))))
-			LogCriticalError("Failed to create 'Sprite' object: \"" + StringRaw(AnyAsString(args.at(0))) + "\"");
+		string path = StringRaw(AnyAsString(args.at(0)));
+		if (count(path, '/') == 0)
+			path = "./" + path;
+		if (!fileExists(path))
+			LogCriticalError("Failed to create 'Sprite' object: \"" + path + "\"");
 
 		Sprite s(StringRaw(AnyAsString(args.at(0))), any_cast<Vec2>(args.at(1)), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)));
 		return s;
 	}
+	else if (name == "ZS.Graphics.DrawPixel")
+	{
+		SDL_SetRenderDrawColor(gRenderer, AnyAsInt(args.at(2)), AnyAsInt(args.at(3)), AnyAsInt(args.at(4)), 255);
+		SDL_RenderDrawPoint(gRenderer, AnyAsInt(args.at(0)), AnyAsInt(args.at(1)));
+		SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0);
+	}
+		//DrawPixel(AnyAsInt(args.at(0)), AnyAsInt(args.at(1)), AnyAsInt(args.at(2)), AnyAsInt(args.at(3)), AnyAsInt(args.at(4)));
 	else if (name == "ZS.Graphics.Draw")
 		any_cast<Sprite>(args.at(0)).Draw();
 	else if (name == "ZS.Graphics.Load")
 		any_cast<Sprite>(args.at(0)).Load();
 	else if (name == "ZS.Graphics.Text")
 	{
-		if (!fileExists(StringRaw(AnyAsString(args.at(1)))))
-			LogCriticalError("Failed to create 'Text' object: \"" + StringRaw(AnyAsString(args.at(1))) + "\"");
+		string path = StringRaw(AnyAsString(args.at(1)));
+		if (count(path, '/') == 0)
+			path = "./" + path;
+		if (!fileExists(path))
+			LogCriticalError("Failed to create 'Text' object: \"" + path + "\"");
 
 		if (args.size() <= 8)
 		{
-			Text t(StringRaw(AnyAsString(args.at(0))), StringRaw(AnyAsString(args.at(1))), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)), AnyAsFloat(args.at(4)), (Uint8)AnyAsFloat(args.at(5)), (Uint8)AnyAsFloat(args.at(6)), (Uint8)AnyAsFloat(args.at(7)), true);
+			Text t(StringRaw(AnyAsString(args.at(0))), path, any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)), AnyAsFloat(args.at(4)), (Uint8)AnyAsFloat(args.at(5)), (Uint8)AnyAsFloat(args.at(6)), (Uint8)AnyAsFloat(args.at(7)), true);
 			return t;
 		}
 		else
 		{
-			Text t(StringRaw(AnyAsString(args.at(0))), StringRaw(AnyAsString(args.at(1))), any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)), AnyAsFloat(args.at(4)), (Uint8)AnyAsFloat(args.at(5)), (Uint8)AnyAsFloat(args.at(6)), (Uint8)AnyAsFloat(args.at(7)), AnyAsBool(args.at(8)));
+			Text t(StringRaw(AnyAsString(args.at(0))), path, any_cast<Vec2>(args.at(2)), AnyAsFloat(args.at(3)), AnyAsFloat(args.at(4)), (Uint8)AnyAsFloat(args.at(5)), (Uint8)AnyAsFloat(args.at(6)), (Uint8)AnyAsFloat(args.at(7)), AnyAsBool(args.at(8)));
 			return t;
 		}
 	}
@@ -446,9 +459,9 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 	else if (name == "ZS.Input.GetKey")
 		return KEYS[StringRaw(any_cast<string>(args.at(0)))] == 1;
 	else if (name == "ZS.System.Print")
-		cout << StringRaw(AnyAsString(args.at(0))) << StringRaw(AnyAsString(args.at(0))).length();
+		cout << StringRaw(AnyAsString(args.at(0)));
 	else if (name == "ZS.System.PrintLine")
-		cout << StringRaw(AnyAsString(args.at(0))) << StringRaw(AnyAsString(args.at(0))).length() << endl;
+		cout << StringRaw(AnyAsString(args.at(0))) << endl;
 	else if (name == "ZS.System.Vec2")
 	{
 		Vec2 v(AnyAsFloat(args.at(0)), AnyAsFloat(args.at(1)));
