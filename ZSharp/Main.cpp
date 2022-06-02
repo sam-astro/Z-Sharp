@@ -131,10 +131,7 @@ void printVarValues(const vector<string>& vec, unordered_map<string, boost::any>
 
 bool IsFunction(const string& funcName)
 {
-	if (functionValues.find(funcName) != functionValues.end())
-		return true;
-	else
-		return false;
+	return (functionValues.find(funcName) != functionValues.end());
 }
 bool IsZSFunction(const string& funcName)
 {
@@ -145,11 +142,7 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 {
 	string expression = trim(ex);
 	bool inQuotes = false;
-
-#if DEVELOPER_MESSAGES == true
-	//InterpreterLog("	old expression: |" + expression + "|");
-#endif
-
+	
 	bool isFunc = IsFunction(split(expression, '(')[0]);
 	bool isZS = split(expression, '.')[0] == "ZS";
 	// If no operations are applied, then return self
@@ -249,9 +242,6 @@ boost::any EvalExpression(const string& ex, unordered_map<string, boost::any>& v
 			newExpression += expression[i];
 		}
 	}
-#if DEVELOPER_MESSAGES == true
-	//InterpreterLog("	new expression: |" + newExpression + "|");
-#endif
 
 	bool addStrings = false;
 	for (int i = 0; i < (int)newExpression.size(); i++)
@@ -295,19 +285,32 @@ bool BooleanLogic(const string& valA, const string& comparer, const string& valB
 #if DEVELOPER_MESSAGES == true
 	InterpreterLog(AnyAsString(valARealValue) + " " + comparer + " " + AnyAsString(valBRealValue) + " : " + AnyAsString(valA) + " " + comparer + " " + AnyAsString(valB) + " : " + to_string(AnyAsString(valARealValue) == AnyAsString(valBRealValue)));
 #endif
-	if (comparer == "==")
-		return any_compare(valARealValue, valBRealValue);
-	else if (comparer == "!=")
-		return !any_compare(valARealValue, valBRealValue);
-	else if (comparer == ">=")
-		return AnyAsFloat(valARealValue) >= AnyAsFloat(valBRealValue);
-	else if (comparer == "<=")
-		return AnyAsFloat(valARealValue) <= AnyAsFloat(valBRealValue);
-	else if (comparer == ">")
-		return AnyAsFloat(valARealValue) > AnyAsFloat(valBRealValue);
-	else if (comparer == "<")
-		return AnyAsFloat(valARealValue) < AnyAsFloat(valBRealValue);
-	else if (comparer == "")
+	switch(comparer){
+		case "==":
+			return any_compare(valARealValue, valBRealValue);
+		break;
+			
+		case "!=":
+			return !any_compare(valARealValue, valBRealValue);
+		break;
+		
+		case ">=":
+			return AnyAsFloat(valARealValue) >= AnyAsFloat(valBRealValue);
+		break;
+			
+		case "<=":
+			return AnyAsFloat(valARealValue) <= AnyAsFloat(valBRealValue);
+		break;
+			
+		case ">":
+			return AnyAsFloat(valARealValue) > AnyAsFloat(valBRealValue);
+		break;
+			
+		case "<":
+			return AnyAsFloat(valARealValue) < AnyAsFloat(valBRealValue);
+		break;
+	}
+	if (comparer == "")
 		return AnyAsBool(valARealValue) == true;
 	else
 		LogWarning("unrecognized comparer \'" + comparer + "\'");
@@ -322,35 +325,60 @@ int varOperation(const vector<string>& str, unordered_map<string, boost::any>& v
 		// Checks if type is simple, like int or string
 		if (any_type(variableValues[str.at(0)]) <= 3)
 		{
-			if (str.at(1) == "=")
-				variableValues[str.at(0)] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-			else if (str.at(1) == "+=")
-				variableValues[str.at(0)] = EvalExpression(str.at(0) + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
-			else if (str.at(1) == "-=")
-				variableValues[str.at(0)] = AnyAsFloat(variableValues[str.at(0)]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-			else if (str.at(1) == "*=")
-				variableValues[str.at(0)] = AnyAsFloat(variableValues[str.at(0)]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-			else if (str.at(1) == "/=")
-				variableValues[str.at(0)] = AnyAsFloat(variableValues[str.at(0)]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-			else
-				LogWarning("unrecognized operator \'" + str.at(1) + "\'");
+			switch(str.at(1)){
+				case "=":
+					variableValues[str.at(0)] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+				break;
+				
+				case "+=":
+					variableValues[str.at(0)] = EvalExpression(str.at(0) + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+				break;
+					
+				case "-=":
+					variableValues[str.at(0)] = AnyAsFloat(variableValues[str.at(0)]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+				break;
+					
+				case "*=":
+					variableValues[str.at(0)] = AnyAsFloat(variableValues[str.at(0)]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+				break;
+					
+				case "/=":
+					variableValues[str.at(0)] = AnyAsFloat(variableValues[str.at(0)]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+				break;
+					
+				default:
+					LogWarning("unrecognized operator \'" + str.at(1) + "\'");
+			}
 		}
 		// Else it is a Vec2. No other complex class can be operated on it's base form (ex. you can't do: Sprite += Sprite)
 		else if (any_type(variableValues[str.at(0)]) == 5)
 		{
 			boost::any otherExpression = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-			if (str.at(1) == "=")
-				variableValues[str.at(0)] = otherExpression;
-			else if (str.at(1) == "+=")
-				variableValues[str.at(0)] = AnyAsVec2(variableValues[str.at(0)]) + AnyAsVec2(otherExpression);
-			else if (str.at(1) == "-=")
-				variableValues[str.at(0)] = AnyAsVec2(variableValues[str.at(0)]) - AnyAsVec2(otherExpression);
-			else if (str.at(1) == "*=")
-				variableValues[str.at(0)] = AnyAsVec2(variableValues[str.at(0)]) * AnyAsFloat(otherExpression);
-			else if (str.at(1) == "/=")
-				variableValues[str.at(0)] = AnyAsVec2(variableValues[str.at(0)]) / AnyAsFloat(otherExpression);
-			else
-				LogWarning("unrecognized operator \'" + str.at(1) + "\'");
+			switch(str.at(1)){
+				case "=":
+					variableValues[str.at(0)] = otherExpression;
+				break;
+				
+				case "+=":
+					variableValues[str.at(0)] = AnyAsVec2(variableValues[str.at(0)]) + AnyAsVec2(otherExpression);
+				break;
+					
+				case "-=":
+					variableValues[str.at(0)] = AnyAsVec2(variableValues[str.at(0)]) - AnyAsVec2(otherExpression);
+				break;
+					
+				case "*=":
+					variableValues[str.at(0)] = AnyAsVec2(variableValues[str.at(0)]) * AnyAsFloat(otherExpression);
+				break;
+					
+				case "/=":
+					variableValues[str.at(0)] = AnyAsVec2(variableValues[str.at(0)]) / AnyAsFloat(otherExpression);
+				break;
+					
+				default:
+					LogWarning("unrecognized operator \'" + str.at(1) + "\'");
+			}
+				
 		}
 		return 0;
 	}
@@ -359,35 +387,59 @@ int varOperation(const vector<string>& str, unordered_map<string, boost::any>& v
 		// Checks if type is simple, like int or string
 		if (any_type(globalVariableValues[str.at(0)]) <= 3)
 		{
-			if (str.at(1) == "=")
-				globalVariableValues[str.at(0)] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-			else if (str.at(1) == "+=")
-				globalVariableValues[str.at(0)] = EvalExpression(str.at(0) + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
-			else if (str.at(1) == "-=")
-				globalVariableValues[str.at(0)] = AnyAsFloat(globalVariableValues[str.at(0)]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-			else if (str.at(1) == "*=")
-				globalVariableValues[str.at(0)] = AnyAsFloat(globalVariableValues[str.at(0)]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-			else if (str.at(1) == "/=")
-				globalVariableValues[str.at(0)] = AnyAsFloat(globalVariableValues[str.at(0)]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
-			else
-				LogWarning("unrecognized operator \'" + str.at(1) + "\'");
+			switch(str.at(1)){
+				case "=":
+					globalVariableValues[str.at(0)] = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
+				break;
+					
+				case "+=":
+					globalVariableValues[str.at(0)] = EvalExpression(str.at(0) + "+(" + unWrapVec(vector<string>(str.begin() + 2, str.end())) + ")", variableValues);
+				break;
+					
+				case "-=":
+					globalVariableValues[str.at(0)] = AnyAsFloat(globalVariableValues[str.at(0)]) - AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+				break;
+					
+				case "*=":
+					globalVariableValues[str.at(0)] = AnyAsFloat(globalVariableValues[str.at(0)]) * AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+				break;
+					
+				case "/=":
+					globalVariableValues[str.at(0)] = AnyAsFloat(globalVariableValues[str.at(0)]) / AnyAsFloat(EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues));
+				break;
+				
+				default:
+					LogWarning("unrecognized operator \'" + str.at(1) + "\'");
+			}
 		}
 		// Else it is a Vec2. No other complex class can be operated on it's base form (ex. you can't do: Sprite += Sprite)
 		else if (any_type(globalVariableValues[str.at(0)]) == 5)
 		{
 			boost::any otherExpression = EvalExpression(unWrapVec(vector<string>(str.begin() + 2, str.end())), variableValues);
-			if (str.at(1) == "=")
-				globalVariableValues[str.at(0)] = otherExpression;
-			else if (str.at(1) == "+=")
-				globalVariableValues[str.at(0)] = AnyAsVec2(globalVariableValues[str.at(0)]) + AnyAsVec2(otherExpression);
-			else if (str.at(1) == "-=")
-				globalVariableValues[str.at(0)] = AnyAsVec2(globalVariableValues[str.at(0)]) - AnyAsVec2(otherExpression);
-			else if (str.at(1) == "*=")
-				globalVariableValues[str.at(0)] = AnyAsVec2(globalVariableValues[str.at(0)]) * AnyAsFloat(otherExpression);
-			else if (str.at(1) == "/=")
-				globalVariableValues[str.at(0)] = AnyAsVec2(globalVariableValues[str.at(0)]) / AnyAsFloat(otherExpression);
-			else
-				LogWarning("unrecognized operator \'" + str.at(1) + "\'");
+			switch(str.at(1)){
+				case "=":
+					globalVariableValues[str.at(0)] = otherExpression;
+				break;
+
+				case "+=":
+					globalVariableValues[str.at(0)] = AnyAsVec2(globalVariableValues[str.at(0)]) + AnyAsVec2(otherExpression);
+				break;
+
+				case "-=":
+					globalVariableValues[str.at(0)] = AnyAsVec2(globalVariableValues[str.at(0)]) - AnyAsVec2(otherExpression);
+				break;
+				
+				case "*=":
+					globalVariableValues[str.at(0)] = AnyAsVec2(globalVariableValues[str.at(0)]) * AnyAsFloat(otherExpression);
+				break;
+				
+				case "/="
+					globalVariableValues[str.at(0)] = AnyAsVec2(globalVariableValues[str.at(0)]) / AnyAsFloat(otherExpression);
+				break;
+					
+				default:
+					LogWarning("unrecognized operator \'" + str.at(1) + "\'");
+			}
 		}
 		return 0;
 	}
@@ -437,14 +489,7 @@ boost::any ProcessLine(const vector<vector<string>>& words, int& lineNum, unorde
 	{
 		vector<string> lineContents = words.at(lineNum);
 		cout << "New Thread: " << words.at(lineNum).at(0) << endl;
-		//lineContents.at(0) = betweenChars(lineContents.at(0), '(', ')');
-
-		//cout << "debug: " << lineContents.at(0) << endl;
-
-		//if (betweenChars(lineContents.at(0), '(', ')') == "")
-		//	std::thread thread_obj(ExecuteFunction, trim(split(lineContents.at(0), '(')[0]), vector<boost::any>());
-		//else
-		//	std::thread thread_obj(ExecuteFunction, trim(split(lineContents.at(0), '(')[0]), VarValues(split(RMParenthesis("(" + split(unWrapVec(rangeInVec(lineContents, 0, (int)lineContents.size() - 2)), '(')[1]), ','), variableValues));
+		
 		return nullType;
 	}
 
@@ -707,8 +752,6 @@ boost::any ExecuteFunction(const string& functionName, const vector<boost::any>&
 
 int parseZSharp(string script)
 {
-	//script = replace(script, "    ", "\t"); // Replace spaces with tabs (not really required, and will break purposefull whitespace in strings etc.)
-
 	// Split the script by newline, signifying a line ending
 	vector<string> beforeProcessLines = split(script, '\n');
 	vector<string> lines;
@@ -746,14 +789,6 @@ int parseZSharp(string script)
 #if DEVELOPER_MESSAGES == true
 			InterpreterLog("Load script function " + functName + "...");
 #endif
-
-			//string args = "";
-			//if (indexInStr(unWrapVec(words.at(lineNum)), ')') - indexInStr(unWrapVec(words.at(lineNum)), '(') > 1)
-			//	for (int w = 0; w < (int)words.at(lineNum).size(); w++) // Get all words from the instantiation line: these are the args
-			//	{
-			//		if (count(words.at(lineNum).at(w), '{') == 0)
-			//			args += replace(replace(words.at(lineNum).at(w), "(", " "), ")", "");
-			//	}
 			string args = betweenChars(unWrapVec(words.at(lineNum)), '(', ')');
 			//cout << functName << "<" << args << ">" << endl;
 
@@ -773,23 +808,6 @@ int parseZSharp(string script)
 				//cout << functName << "<" << args << ">" << endl;
 				lineNum++;
 			}
-			//functionContents = removeTabsWdArry(functionContents, 1);
-
-			/*int numOfBrackets = 0;
-			for (int w = 1; w < (int)words.at(lineNum).size(); w++) {
-				if (count(words.at(lineNum).at(w), '{') != 0) {
-					numOfBrackets = 1;
-					break;
-				}
-			}
-
-			for (int p = lineNum + 1; p < (int)words.size(); p++)
-			{
-				numOfBrackets += countInVector(words.at(p), "{") - countInVector(words.at(p), "}");
-				if (numOfBrackets == 0)
-					break;
-				functionContents.push_back(removeTabs(words.at(p), 1));
-			}*/
 			functionValues[functName] = functionContents;
 		}
 		else
@@ -838,24 +856,6 @@ int parseZSharp(string script)
 				//cout << words.at(lineNum).at(1) << "=" << unWrapVec(slice(words.at(lineNum), 3, -1)) << "=" << AnyAsString(EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), variableValues)) << endl;
 				globalVariableValues[words.at(lineNum).at(1)] = EvalExpression(unWrapVec(slice(words.at(lineNum), 3, -1)), globalVariableValues);
 			}
-			//			else if (words.at(lineNum).at(0) == "int") {
-			//				globalVariableValues[words.at(lineNum).at(1)] = stoi(words.at(lineNum).at(3));
-			//#if DEVELOPER_MESSAGES == true
-			//				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
-			//#endif
-			//			}
-			//			else if (words.at(lineNum).at(0) == "float") {
-			//				globalVariableValues[words.at(lineNum).at(1)] = stof(words.at(lineNum).at(3));
-			//#if DEVELOPER_MESSAGES == true
-			//				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
-			//#endif
-			//			}
-			//			else if (words.at(lineNum).at(0) == "bool") {
-			//				globalVariableValues[words.at(lineNum).at(1)] = stob(words.at(lineNum).at(3));
-			//#if DEVELOPER_MESSAGES == true
-			//				InterpreterLog("Load script variable " + words.at(lineNum).at(1) + "...");
-			//#endif
-			//			}
 			else
 				LogWarning("unrecognized type \'" + words.at(lineNum).at(0) + "\' on line: " + to_string(lineNum));
 		}
