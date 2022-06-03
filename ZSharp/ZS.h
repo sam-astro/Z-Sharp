@@ -145,14 +145,6 @@ func GetKey(keyName)
 	return b
 }
 
-// WIP
-//func SplitThread(function)
-//{
-//	ZS.System.SplitThread(function)
-//}
-
-
-
 ////////////////////////////
 // ↓ MADE BY KAPUTCHINO ↓ //
 ////////////////////////////
@@ -213,5 +205,19 @@ func Perm(n, r)
     return Fac(n) / Fac(n - r)
 }
 
+//////////////////////////////////////////
+// ↓ MADE BY CONCHETUMARE_PRODUCTIONS ↓ //
+//////////////////////////////////////////
+func GetPercent(value, percent)
+{
+	float temp = value * percent / 100
+	return temp
+}
+//gets 100% of number
+func PercentToHundred(value, percent)
+{
+	float temp = value * 100 / percent
+	return temp
+}
 )"
 ;
