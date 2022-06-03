@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/sam-astro/Z-Sharp/master/ExtraResources/ZS-Gem-Icon-Small.png"/><img src="https://raw.githubusercontent.com/sam-astro/Z-Sharp/master/ExtraResources/ZS-Logo-Light-Small.png"/>
+<img src="https://raw.githubusercontent.com/VyaCHACHsel/Z-Sharp/master/ExtraResources/ZS-Logo-Small.png"/>
 
 > Z-Sharp is no longer in development! This project was never meant to go beyond the scope of a simple thing I could make pong in, yet people continue to ask for features and fixes, and I continue to oblige. So sadly, even though this was a cool project in which I learned a lot, it will be ending now. I will eventually make some docs and standards for the syntax, and will still leave this repository open. This way anybody can make their own interpreter or compiler for it. I will also still accept pull requests for any changes to this repository.
 
