@@ -28,35 +28,18 @@ Downloading or installing is very simple, here is how depending on your version 
 > If you don't want to install ZSharp on your device, or you want easier acces to the executable and .DLLs, another version is provided called `ZS_Win_Base_Raw.zip`. This just contains all of the files the installer puts on your computer.
 ### Linux
 1. Install requirements:
-   * You need the package ***libsdl2-dev***. 
 
-   For Debian based operating systems you can install it with
-   
-      ```$ sudo apt install libsdl2-dev```
+#### Debian
 
-   For Arch based operating systems you can install it with
+```
+$ sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-ttf-dev
+```
 
-   	  ```$ sudo pacman -S sdl2```
-      
-   * You also need the package ***libsdl2-image-dev***. 
+#### Arch
 
-   For Debian based operating systems you can install it with
-   
-      ```$ sudo apt install libsdl2-image-dev```
-
-   For Arch based operating systems you can install it with
-
-   	  ```$ sudo pacman -S sdl2_image```
-      
-   * You also need the package ***libsdl2-ttf-dev***. 
-
-   For Debian based operating systems you can install it with
-   
-      ```$ sudo apt install libsdl2-ttf-dev```
-
-   For Arch based operating systems you can install it with
-
-   	  ```$ sudo pacman -S sdl2_ttf```
+```
+$ sudo pacman -S sdl2 sdl2_image sdl2_ttf
+```
 
 2. Navigate to [the most recent release](https://github.com/sam-astro/Z-Sharp/releases) and download `ZSharp-Linux.zip`.
 3. Unzip `ZSharp-Linux.zip` and open the unzipped folder.
