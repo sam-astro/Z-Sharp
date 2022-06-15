@@ -10,7 +10,7 @@ There is ***no documentation***, ***strings*** barely work, ***performance*** is
 If you are trying to use a common programming language feature, ask yourself this: ***Is this feature required to play pong?*** If not, then most likely that feature ***has not been implemented yet***. I initially only made the language so I could create pong and make a video about it, so it really is the ***bare minimum***.
 
 ## Documentation and getting started:
-[The docs and tutorial](https://stevenrafft.github.io/ZSharpDocs/#/README)
+[The docs and tutorial](https://spazelectro.github.io/ZSharpDocs/#/README)
 
 ## Installation
 Downloading or installing is very simple, here is how depending on your version and operating system:
