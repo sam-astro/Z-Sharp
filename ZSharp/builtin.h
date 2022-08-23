@@ -13,6 +13,7 @@
 #include <ctime>
 #include <math.h>
 #include <sys/stat.h>
+#include <cstdlib> // for console command printing
 
 #include "strops.h"
 #include "graphics.h"
@@ -467,6 +468,8 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 		Vec2 v(AnyAsFloat(args.at(0)), AnyAsFloat(args.at(1)));
 		return v;
 	}
+	else if (name == "ZS.System.Command")
+		temp = system(StringRaw(AnyAsString(args.at(0))));
 	else
 		LogWarning("ZS function \'" + name + "\' does not exist.");
 
