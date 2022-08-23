@@ -469,7 +469,7 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 		return v;
 	}
 	else if (name == "ZS.System.Command")
-		temp = system(StringRaw(AnyAsString(args.at(0))));
+		int temp = system(StringRaw(AnyAsString(args.at(0))));
 	else
 		LogWarning("ZS function \'" + name + "\' does not exist.");
 
