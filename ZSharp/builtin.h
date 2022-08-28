@@ -1,6 +1,14 @@
 #ifndef BUILTIN_H
 #define BUILTIN_H
 
+#if defined(__unix__)
+#define UNIX true
+#define WINDOWS false
+#elif defined(_MSC_VER)
+#define UNIX false
+#define WINDOWS true
+#endif
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -470,10 +478,10 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 	}
 	else if (name == "ZS.System.Command"){
 		string command = StringRaw(AnyAsString(args.at(0)));
-		int command_len = command.length();
-		char command_char_arr[command_len + 1];
-		strcpy(command_char_arr, command.c_str()); // string into char arr
-		int k = system(command_char_arr);
+		//int command_len = command.length();
+		//char* command_char_arr=new char[command_len + 1];
+		//strcpy(command_char_arr, command.c_str()); // string into char arr
+		int k = system(command.c_str());
 	}
 	else
 		LogWarning("ZS function \'" + name + "\' does not exist.");
