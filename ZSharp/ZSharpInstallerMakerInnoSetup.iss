@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Z-Sharp"
-#define MyAppVersion "2.1.2-alpha"
+#define MyAppVersion "2.1.3-alpha"
 #define MyAppPublisher "AstroSam"
 #define MyAppURL "https://github.com/sam-astro/Z-Sharp"
 #define MyAppExeName "ZSharp.exe"
