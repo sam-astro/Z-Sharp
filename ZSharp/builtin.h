@@ -1,6 +1,14 @@
 #ifndef BUILTIN_H
 #define BUILTIN_H
 
+#if defined(__unix__)
+#define UNIX true
+#define WINDOWS false
+#elif defined(_MSC_VER)
+#define UNIX false
+#define WINDOWS true
+#endif
+
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -13,6 +21,7 @@
 #include <ctime>
 #include <math.h>
 #include <sys/stat.h>
+#include <cstdlib> // for console command printing
 
 #include "strops.h"
 #include "graphics.h"
@@ -466,6 +475,13 @@ boost::any ZSFunction(const string& name, const vector<boost::any>& args)
 	{
 		Vec2 v(AnyAsFloat(args.at(0)), AnyAsFloat(args.at(1)));
 		return v;
+	}
+	else if (name == "ZS.System.Command"){
+		string command = StringRaw(AnyAsString(args.at(0)));
+		//int command_len = command.length();
+		//char* command_char_arr=new char[command_len + 1];
+		//strcpy(command_char_arr, command.c_str()); // string into char arr
+		int k = system(command.c_str());
 	}
 	else
 		LogWarning("ZS function \'" + name + "\' does not exist.");
