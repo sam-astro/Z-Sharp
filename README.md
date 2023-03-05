@@ -27,7 +27,7 @@ Downloading or installing is very simple, here is how depending on your version 
 6. Feel free to use and edit the `Pong-Example-Project`. It is a single script called `script.zs`, and you can open it with any of the methods above. It is also located on the releases page.
 > If you don't want to install ZSharp on your device, or you want easier acces to the executable and .DLLs, another version is provided called `ZS_Win_Base_Raw.zip`. This just contains all of the files the installer puts on your computer.
 ### Linux
-1. Install requirements:
+1. Install requirements: `SDL2, SDL2 Image, SDL2 TTF` Commands for `apt` and `pacman` below:
 
 #### Debian
 
