@@ -13,7 +13,7 @@ If you are trying to use a common programming language feature, ask yourself thi
 [The docs and tutorial](https://spazelectro.github.io/ZSharpDocs/#/README)
 
 ## Installation
-Downloading or installing is very simple, here is how depending on your version and operating system:
+It is very simple to download or install on your machine, here is how depending on your version and operating system:
 ### Windows
 1. Navigate to [the most recent release](https://github.com/sam-astro/Z-Sharp/releases) and download `ZSharp-Win-Installer.zip`.
 2. Unzip `ZSharp-Win-Installer.zip` and open the unzipped folder.
