@@ -128,7 +128,7 @@ SDL_Surface* loadSurface(std::string path)
 	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 	if (loadedSurface == NULL)
 	{
-		printf("Unable to load image %s! SDL_image Error: %s\n", path.c_str(), IMG_GetError());
+		printf("Unable to load image %s! Due to SDL2_image Error: %s\n", path.c_str(), IMG_GetError());
 	}
 	else
 	{
@@ -136,7 +136,7 @@ SDL_Surface* loadSurface(std::string path)
 		optimizedSurface = SDL_ConvertSurface(loadedSurface, gScreenSurface->format, 0);
 		if (optimizedSurface == NULL)
 		{
-			printf("Unable to optimize image %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+			printf("Unable to optimize image %s! Due to SDL2 Error: %s\n", path.c_str(), SDL_GetError());
 		}
 
 		//Get rid of old loaded surface
